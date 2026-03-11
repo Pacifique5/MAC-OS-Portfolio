@@ -74,10 +74,26 @@ export default function Home() {
   };
   const handleCloseWindow = (folderId: string) => {
     setOpenWindows(openWindows.filter(id => id !== folderId));
+    setMinimizedWindows(minimizedWindows.filter(id => id !== folderId));
   };
+
+  const handleMinimizeWindow = (folderId: string) => {
+    if (!minimizedWindows.includes(folderId)) {
+      setMinimizedWindows([...minimizedWindows, folderId]);
+    }
+  };
+
+  const handleRestoreWindow = (folderId: string) => {
+    setMinimizedWindows(minimizedWindows.filter(id => id !== folderId));
+  };
+
   const handleDockClick = (appId: string) => {
     if (['about', 'projects', 'skills', 'experience', 'testimonials', 'contact'].includes(appId)) {
-      if (!openWindows.includes(appId)) {
+      if (minimizedWindows.includes(appId)) {
+        // Restore minimized window
+        handleRestoreWindow(appId);
+      } else if (!openWindows.includes(appId)) {
+        // Open new window
         setOpenWindows([...openWindows, appId]);
       }
     }
@@ -234,20 +250,34 @@ export default function Home() {
           </div>
         ))}
       </div>
-      {openWindows.map((windowId, index) => (
-        <MacWindow key={windowId} title={`${folders.find(f => f.id === windowId)?.label || 'Portfolio'}`} onClose={() => handleCloseWindow(windowId)} style={{ top: `${100 + index * 30}px`, left: `${300 + index * 30}px` }}>
-          <div className="h-full overflow-y-auto bg-white dark:bg-gray-900 p-8">{renderSection(windowId)}</div>
-        </MacWindow>
-      ))}
+      {openWindows.map((windowId, index) => {
+        const isMinimized = minimizedWindows.includes(windowId);
+        if (isMinimized) return null;
+        
+        return (
+          <MacWindow 
+            key={windowId} 
+            title={`${folders.find(f => f.id === windowId)?.label || 'Portfolio'}`} 
+            onClose={() => handleCloseWindow(windowId)}
+            onMinimize={() => handleMinimizeWindow(windowId)}
+            style={{ top: `${100 + index * 30}px`, left: `${300 + index * 30}px` }}
+          >
+            <div className="h-full overflow-y-auto bg-white dark:bg-gray-900 p-8">{renderSection(windowId)}</div>
+          </MacWindow>
+        );
+      })}
       <div className="absolute bottom-1 left-1/2 -translate-x-1/2 z-50">
         <div className="bg-white/10 backdrop-blur-2xl rounded-2xl px-2 py-2 shadow-2xl border border-white/20">
           <div className="flex items-end gap-1">
             {dockApps.map((app) => {
               if (app.id === 'divider') return <div key="divider" className="w-px h-12 bg-white/30 mx-1"></div>;
+              const isOpen = openWindows.includes(app.id);
+              const isMinimized = minimizedWindows.includes(app.id);
+              
               return (
                 <button key={app.id} onClick={() => handleDockClick(app.id)} onContextMenu={(e) => handleContextMenu(e, app.id)} className="relative group" title={app.label}>
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-b ${app.color} backdrop-blur-sm shadow-lg hover:scale-125 hover:-translate-y-2 transition-all duration-200 flex items-center justify-center text-3xl border border-white/20`}>{app.icon}</div>
-                  {openWindows.includes(app.id) && <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>}
+                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-b ${app.color} backdrop-blur-sm shadow-lg hover:scale-125 hover:-translate-y-2 transition-all duration-200 flex items-center justify-center text-3xl border border-white/20 ${isMinimized ? 'opacity-60' : ''}`}>{app.icon}</div>
+                  {isOpen && <div className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${isMinimized ? 'bg-yellow-400' : 'bg-white'}`}></div>}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">{app.label}</div>
                 </button>
               );
