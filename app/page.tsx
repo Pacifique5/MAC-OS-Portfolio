@@ -53,6 +53,17 @@ const dockApps = [
   { id: 'divider3',     label: '',             gradient: [],                               Icon: FiSearch,        action: 'divider' },
   { id: 'trash',        label: 'Trash',        gradient: ['#9ca3af','#6b7280','#4b5563'], Icon: FaTrash,         action: 'system' },
 ];
+// WiFi signal strength indicator
+function WifiSignal({ bars, active }: { bars: number; active: boolean }) {
+  return (
+    <div className="flex items-end gap-[2px] h-3.5">
+      {[1, 2, 3].map(b => (
+        <div key={b} className={`w-1 rounded-sm transition-colors ${b <= bars ? (active ? 'bg-blue-400' : 'bg-white') : 'bg-white/20'}`} style={{ height: `${b * 33}%` }}></div>
+      ))}
+    </div>
+  );
+}
+
 export default function Home() {
   const [openWindows, setOpenWindows] = useState<string[]>([]);
   const [minimizedWindows, setMinimizedWindows] = useState<string[]>([]);
@@ -63,6 +74,65 @@ export default function Home() {
   const [spotlightOpen, setSpotlightOpen] = useState(false);
   const [spotlightQuery, setSpotlightQuery] = useState('');
   const [showNotificationCenter, setShowNotificationCenter] = useState(false);
+  // Functional system state
+  const [brightness, setBrightness] = useState(80);
+  const [volume, setVolume] = useState(75);
+
+  // Real Bluetooth state
+  const [btDevices, setBtDevices] = useState<{ id: string; name: string }[]>([]);
+  const [btScanning, setBtScanning] = useState(false);
+  const [btSupported, setBtSupported] = useState(false);
+
+  // WiFi state
+  const [wifiOn, setWifiOn] = useState(true);
+  const [connectedNetwork, setConnectedNetwork] = useState('Home Network');
+  const [scanningWifi, setScanningWifi] = useState(false);
+  const wifiNetworks = [
+    { name: 'Home Network', signal: 3, lock: true },
+    { name: 'Office_5G', signal: 3, lock: true },
+    { name: 'Guest_WiFi', signal: 2, lock: false },
+    { name: 'iPhone Hotspot', signal: 2, lock: true },
+    { name: 'Neighbor_2.4G', signal: 1, lock: true },
+    { name: 'CoffeeShop_Free', signal: 2, lock: false },
+  ];
+
+  const handleWifiToggle = () => {
+    if (wifiOn) { setWifiOn(false); setConnectedNetwork(''); }
+    else {
+      setWifiOn(true);
+      setScanningWifi(true);
+      setTimeout(() => { setScanningWifi(false); setConnectedNetwork('Home Network'); }, 2000);
+    }
+  };
+
+  const handleConnectNetwork = (name: string) => {
+    if (connectedNetwork === name) return;
+    setScanningWifi(true);
+    setTimeout(() => { setConnectedNetwork(name); setScanningWifi(false); }, 1500);
+  };
+
+  useEffect(() => {
+    setBtSupported(typeof navigator !== 'undefined' && 'bluetooth' in navigator);
+  }, []);
+
+  const handleBtScan = async () => {
+    if (!btSupported) return;
+    setBtScanning(true);
+    try {
+      // Web Bluetooth API — opens browser's native device picker
+      const device = await (navigator as Navigator & { bluetooth: { requestDevice: (o: object) => Promise<{ id: string; name?: string }> } }).bluetooth.requestDevice({
+        acceptAllDevices: true,
+      });
+      setBtDevices(prev => {
+        if (prev.find(d => d.id === device.id)) return prev;
+        return [...prev, { id: device.id, name: device.name ?? 'Unknown Device' }];
+      });
+    } catch {
+      // user cancelled or denied — that's fine
+    } finally {
+      setBtScanning(false);
+    }
+  };
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -154,6 +224,8 @@ export default function Home() {
   };
   return (
     <div className="relative w-full h-screen overflow-hidden select-none" onClick={handleDesktopClick}>
+      {/* Brightness overlay */}
+      <div className="absolute inset-0 bg-black pointer-events-none z-[45]" style={{ opacity: (100 - brightness) / 100 * 0.85 }}></div>
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-700/30 via-transparent to-transparent"></div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-purple-700/30 via-transparent to-transparent"></div>
@@ -313,34 +385,49 @@ export default function Home() {
           <div className="px-4 pb-2 flex items-center justify-between">
             <span className="font-semibold text-base">Wi-Fi</span>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-white/50">On</span>
-              <div className="w-10 h-5 bg-green-500 rounded-full relative cursor-pointer">
-                <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow"></div>
-              </div>
+              <span className="text-xs text-white/50">{wifiOn ? 'On' : 'Off'}</span>
+              <button onClick={handleWifiToggle} className={`w-10 h-5 rounded-full relative transition-colors ${wifiOn ? 'bg-green-500' : 'bg-white/20'}`}>
+                <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${wifiOn ? 'right-0.5' : 'left-0.5'}`}></div>
+              </button>
             </div>
           </div>
           <div className="h-px bg-white/10 mx-4 mb-2"></div>
-          <div className="px-2">
-            <div className="px-2 py-1.5 text-xs text-white/50 uppercase tracking-wider">Preferred Networks</div>
-            {[
-              { name: 'Home Network', bars: 3, lock: true, connected: true },
-              { name: 'Office_5G', bars: 3, lock: true, connected: false },
-              { name: 'Guest_WiFi', bars: 2, lock: false, connected: false },
-              { name: 'iPhone Hotspot', bars: 2, lock: true, connected: false },
-            ].map(net => (
-              <button key={net.name} className="w-full flex items-center justify-between px-2 py-2 rounded-lg hover:bg-white/10">
-                <div className="flex items-center gap-2">
-                  {net.connected && <span className="text-blue-400">✓</span>}
-                  {!net.connected && <span className="w-4"></span>}
+          {!wifiOn ? (
+            <div className="px-4 py-6 text-center text-white/40 text-xs">Wi-Fi is turned off</div>
+          ) : scanningWifi ? (
+            <div className="px-4 py-6 text-center">
+              <div className="inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mb-2"></div>
+              <div className="text-xs text-white/50">Scanning for networks…</div>
+            </div>
+          ) : (
+            <div className="px-2">
+              {connectedNetwork && (
+                <>
+                  <div className="px-2 py-1 text-xs text-white/50 uppercase tracking-wider">Connected</div>
+                  <div className="flex items-center justify-between px-2 py-2 rounded-lg bg-white/10 mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-blue-400">✓</span>
+                      <span className="font-medium">{connectedNetwork}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {wifiNetworks.find(n => n.name === connectedNetwork)?.lock && <span className="text-xs">🔒</span>}
+                      <WifiSignal bars={wifiNetworks.find(n => n.name === connectedNetwork)?.signal ?? 3} active />
+                    </div>
+                  </div>
+                </>
+              )}
+              <div className="px-2 py-1 text-xs text-white/50 uppercase tracking-wider mt-1">Other Networks</div>
+              {wifiNetworks.filter(n => n.name !== connectedNetwork).map(net => (
+                <button key={net.name} onClick={() => handleConnectNetwork(net.name)} className="w-full flex items-center justify-between px-2 py-2 rounded-lg hover:bg-white/10">
                   <span>{net.name}</span>
-                </div>
-                <div className="flex items-center gap-1 text-white/50">
-                  {net.lock && <span className="text-xs">🔒</span>}
-                  <FaWifi className={`text-sm ${net.bars === 3 ? 'text-white' : 'text-white/50'}`} />
-                </div>
-              </button>
-            ))}
-          </div>
+                  <div className="flex items-center gap-1 text-white/50">
+                    {net.lock && <span className="text-xs">🔒</span>}
+                    <WifiSignal bars={net.signal} active={false} />
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
           <div className="h-px bg-white/10 mx-4 my-2"></div>
           <button className="w-full text-left px-4 py-2 hover:bg-white/10 text-blue-400">Network Preferences…</button>
         </div>
@@ -350,33 +437,59 @@ export default function Home() {
           <div className="px-4 pb-2 flex items-center justify-between">
             <span className="font-semibold text-base">Bluetooth</span>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-white/50">On</span>
-              <div className="w-10 h-5 bg-blue-500 rounded-full relative cursor-pointer">
-                <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow"></div>
+              <span className="text-xs text-white/50">{btSupported ? 'On' : 'N/A'}</span>
+              <div className={`w-10 h-5 rounded-full relative ${btSupported ? 'bg-blue-500' : 'bg-white/20'}`}>
+                <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow ${btSupported ? 'right-0.5' : 'left-0.5'}`}></div>
               </div>
             </div>
           </div>
-          <div className="h-px bg-white/10 mx-4 mb-2"></div>
-          <div className="px-2">
-            <div className="px-2 py-1 text-xs text-white/50 uppercase tracking-wider">My Devices</div>
-            {[
-              { name: 'AirPods Pro', icon: '🎧', status: 'Connected', battery: '82%' },
-              { name: 'Magic Mouse', icon: '🖱️', status: 'Connected', battery: '91%' },
-              { name: 'Magic Keyboard', icon: '⌨️', status: 'Connected', battery: '100%' },
-              { name: 'iPad Pro', icon: '📱', status: 'Not Connected', battery: null },
-            ].map(dev => (
-              <div key={dev.name} className="flex items-center justify-between px-2 py-2 rounded-lg hover:bg-white/10 cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <span>{dev.icon}</span>
-                  <div>
-                    <div className="text-sm">{dev.name}</div>
-                    <div className="text-xs text-white/50">{dev.status}{dev.battery ? ` · ${dev.battery}` : ''}</div>
-                  </div>
+          <div className="h-px bg-white/10 mx-4 mb-3"></div>
+          {!btSupported ? (
+            <div className="px-4 py-4 text-center">
+              <FiBluetooth className="text-3xl text-white/20 mx-auto mb-2" />
+              <div className="text-xs text-white/40">Bluetooth not supported in this browser</div>
+            </div>
+          ) : (
+            <div className="px-4 space-y-3">
+              {btDevices.length > 0 && (
+                <div>
+                  <div className="text-xs text-white/50 uppercase tracking-wider mb-2">Paired Devices</div>
+                  {btDevices.map(dev => (
+                    <div key={dev.id} className="flex items-center gap-3 p-2 rounded-xl bg-blue-500/20 border border-blue-500/30 mb-1">
+                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <FiBluetooth className="text-white text-sm" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-sm">{dev.name}</div>
+                        <div className="text-xs text-blue-400">Connected</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
+              )}
+              <button
+                onClick={handleBtScan}
+                disabled={btScanning}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-50"
+              >
+                {btScanning ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span className="text-sm">Scanning…</span>
+                  </>
+                ) : (
+                  <>
+                    <FiBluetooth className="text-sm" />
+                    <span className="text-sm">Scan for Devices</span>
+                  </>
+                )}
+              </button>
+              <div className="text-xs text-white/30 text-center">
+                Opens browser&apos;s Bluetooth device picker
               </div>
-            ))}
-          </div>
-          <div className="h-px bg-white/10 mx-4 my-2"></div>
+            </div>
+          )}
+          <div className="h-px bg-white/10 mx-4 my-3"></div>
           <button className="w-full text-left px-4 py-2 hover:bg-white/10 text-blue-400">Bluetooth Preferences…</button>
         </div>
       )}
@@ -388,14 +501,19 @@ export default function Home() {
           <div className="h-px bg-white/10 mx-4 mb-3"></div>
           <div className="px-4 space-y-3">
             <div>
-              <div className="text-xs text-white/50 mb-1.5">Output Volume</div>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="text-xs text-white/50">Output Volume</div>
+                <span className="text-xs text-white/70">{volume}%</span>
+              </div>
               <div className="flex items-center gap-2">
-                <FaVolumeUp className="text-white/50 text-xs" />
-                <div className="flex-1 h-1.5 bg-white/20 rounded-full relative cursor-pointer">
-                  <div className="absolute left-0 top-0 h-full w-3/4 bg-white rounded-full"></div>
-                  <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md" style={{ left: 'calc(75% - 6px)' }}></div>
-                </div>
-                <span className="text-xs text-white/50 w-8 text-right">75%</span>
+                <FaVolumeUp className="text-white/40 text-xs flex-shrink-0" />
+                <input
+                  type="range" min={0} max={100} value={volume}
+                  onChange={(e) => setVolume(Number(e.target.value))}
+                  className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
+                  style={{ background: `linear-gradient(to right, white ${volume}%, rgba(255,255,255,0.2) ${volume}%)` }}
+                />
+                <FaVolumeUp className="text-white text-base flex-shrink-0" />
               </div>
             </div>
             <div className="h-px bg-white/10"></div>
@@ -462,14 +580,19 @@ export default function Home() {
           <div className="h-px bg-white/10 mx-4 mb-3"></div>
           <div className="px-4 space-y-4">
             <div>
-              <div className="text-xs text-white/50 mb-1.5">Brightness</div>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="text-xs text-white/50">Brightness</div>
+                <span className="text-xs text-white/70">{brightness}%</span>
+              </div>
               <div className="flex items-center gap-2">
-                <MdBrightness6 className="text-white/50 text-xs" />
-                <div className="flex-1 h-1.5 bg-white/20 rounded-full relative cursor-pointer">
-                  <div className="absolute left-0 top-0 h-full w-4/5 bg-white rounded-full"></div>
-                  <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md" style={{ left: 'calc(80% - 6px)' }}></div>
-                </div>
-                <MdBrightness6 className="text-white text-base" />
+                <MdBrightness6 className="text-white/40 text-sm flex-shrink-0" />
+                <input
+                  type="range" min={10} max={100} value={brightness}
+                  onChange={(e) => setBrightness(Number(e.target.value))}
+                  className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
+                  style={{ background: `linear-gradient(to right, white ${brightness}%, rgba(255,255,255,0.2) ${brightness}%)` }}
+                />
+                <MdBrightness6 className="text-white text-lg flex-shrink-0" />
               </div>
             </div>
             <div className="flex items-center justify-between">
@@ -492,17 +615,15 @@ export default function Home() {
       {activeMenu === 'controlcenter' && (
         <div className="absolute top-7 right-2 w-80 bg-gray-800/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 z-50 p-3 text-white" onClick={(e) => e.stopPropagation()}>
           <div className="grid grid-cols-2 gap-2 mb-2">
-            {/* WiFi tile */}
-            <div className="bg-white/10 rounded-xl p-3 cursor-pointer hover:bg-white/20">
+            <button onClick={handleWifiToggle} className={`rounded-xl p-3 cursor-pointer text-left transition-colors ${wifiOn ? 'bg-blue-500/30 hover:bg-blue-500/40' : 'bg-white/10 hover:bg-white/20'}`}>
               <div className="flex items-center gap-2 mb-1">
-                <div className="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center">
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center ${wifiOn ? 'bg-blue-500' : 'bg-white/20'}`}>
                   <FaWifi className="text-white text-xs" />
                 </div>
                 <span className="text-sm font-medium">Wi-Fi</span>
               </div>
-              <div className="text-xs text-white/50">Home Network</div>
-            </div>
-            {/* Bluetooth tile */}
+              <div className="text-xs text-white/50">{wifiOn ? (connectedNetwork || 'On') : 'Off'}</div>
+            </button>
             <div className="bg-white/10 rounded-xl p-3 cursor-pointer hover:bg-white/20">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center">
@@ -512,7 +633,6 @@ export default function Home() {
               </div>
               <div className="text-xs text-white/50">On · 3 devices</div>
             </div>
-            {/* AirDrop tile */}
             <div className="bg-white/10 rounded-xl p-3 cursor-pointer hover:bg-white/20">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center">
@@ -522,7 +642,6 @@ export default function Home() {
               </div>
               <div className="text-xs text-white/50">Contacts Only</div>
             </div>
-            {/* Focus tile */}
             <div className="bg-white/10 rounded-xl p-3 cursor-pointer hover:bg-white/20">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-7 h-7 bg-indigo-500 rounded-full flex items-center justify-center">
@@ -533,22 +652,22 @@ export default function Home() {
               <div className="text-xs text-white/50">Off</div>
             </div>
           </div>
-          {/* Display + Sound row */}
-          <div className="bg-white/10 rounded-xl p-3 mb-2">
-            <div className="flex items-center gap-2 mb-2">
-              <MdBrightness6 className="text-white/70 text-sm" />
-              <div className="flex-1 h-1.5 bg-white/20 rounded-full">
-                <div className="h-full w-4/5 bg-white rounded-full"></div>
-              </div>
+          <div className="bg-white/10 rounded-xl p-3 mb-2 space-y-3">
+            <div className="flex items-center gap-2">
+              <MdBrightness6 className="text-white/60 text-sm flex-shrink-0" />
+              <input type="range" min={10} max={100} value={brightness} onChange={(e) => setBrightness(Number(e.target.value))}
+                className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
+                style={{ background: `linear-gradient(to right, white ${brightness}%, rgba(255,255,255,0.2) ${brightness}%)` }} />
+              <span className="text-xs text-white/50 w-8 text-right">{brightness}%</span>
             </div>
             <div className="flex items-center gap-2">
-              <FaVolumeUp className="text-white/70 text-sm" />
-              <div className="flex-1 h-1.5 bg-white/20 rounded-full">
-                <div className="h-full w-3/4 bg-white rounded-full"></div>
-              </div>
+              <FaVolumeUp className="text-white/60 text-sm flex-shrink-0" />
+              <input type="range" min={0} max={100} value={volume} onChange={(e) => setVolume(Number(e.target.value))}
+                className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
+                style={{ background: `linear-gradient(to right, white ${volume}%, rgba(255,255,255,0.2) ${volume}%)` }} />
+              <span className="text-xs text-white/50 w-8 text-right">{volume}%</span>
             </div>
           </div>
-          {/* Battery row */}
           <div className="bg-white/10 rounded-xl p-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <BsBatteryFull className="text-green-400 text-lg" />
