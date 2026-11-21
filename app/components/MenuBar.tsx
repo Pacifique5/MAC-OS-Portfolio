@@ -23,6 +23,14 @@ export interface MenuActions {
   openLaunchpad: () => void;
   sleep: () => void;
   openSelected: () => void;
+  zoomActive: () => void;
+  /** Copy text to the clipboard and show a confirmation */
+  copy: (text: string, confirmation: string) => void;
+  setWallpaper: (index: number) => void;
+  wallpapers: string[];
+  wallpaper: number;
+  fullscreen: boolean;
+  selectedLabel: string | null;
   windows: WindowId[];
   activeWindow: WindowId | null;
 }
@@ -160,18 +168,15 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
             <MenuItem onClick={run(() => actions.openWindow('about'))}>About This Mac</MenuItem>
             <MenuSeparator />
             <MenuItem onClick={() => setOpenMenu({ id: 'controlcenter', side: 'right', x: 8 })}>System Settings…</MenuItem>
-            <MenuItem onClick={run(() => window.open('https://github.com/Pacifique5', '_blank'))}>App Store…</MenuItem>
+            <MenuItem onClick={run(actions.openLaunchpad)}>Applications…</MenuItem>
             <MenuSeparator />
-            <MenuItem onClick={run(actions.openLaunchpad)}>Recent Items</MenuItem>
-            <MenuSeparator />
-            <MenuItem shortcut="⌥⌘⎋" onClick={run(actions.closeAll)} disabled={actions.windows.length === 0}>Force Quit…</MenuItem>
-            <MenuSeparator />
+            {actions.windows.length > 0 && <MenuItem onClick={run(actions.closeAll)}>Close All Windows</MenuItem>}
+            {actions.windows.length > 0 && <MenuSeparator />}
             <MenuItem onClick={run(actions.sleep)}>Sleep</MenuItem>
             <MenuItem onClick={run(() => window.location.reload())}>Restart…</MenuItem>
             <MenuItem onClick={run(actions.sleep)}>Shut Down…</MenuItem>
             <MenuSeparator />
-            <MenuItem shortcut="⌃⌘Q" onClick={run(actions.sleep)}>Lock Screen</MenuItem>
-            <MenuItem shortcut="⇧⌘Q" onClick={run(actions.sleep)}>Log Out Mugisha Pacifique…</MenuItem>
+            <MenuItem onClick={run(actions.sleep)}>Lock Screen</MenuItem>
           </>
         );
       case 'app':
@@ -179,15 +184,14 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
           <>
             <MenuItem onClick={run(() => actions.openWindow('about'))}>About {appName}</MenuItem>
             <MenuSeparator />
-            <MenuItem shortcut="⌘," onClick={() => setOpenMenu({ id: 'controlcenter', side: 'right', x: 8 })}>Settings…</MenuItem>
+            <MenuItem onClick={() => setOpenMenu({ id: 'controlcenter', side: 'right', x: 8 })}>Settings…</MenuItem>
             <MenuSeparator />
-            <MenuItem shortcut="⌘H" onClick={run(actions.minimizeActive)} disabled={!actions.activeWindow}>Hide {appName}</MenuItem>
-            <MenuItem shortcut="⌥⌘H" disabled>Hide Others</MenuItem>
-            <MenuItem onClick={run(actions.bringAllToFront)}>Show All</MenuItem>
-            {appName !== 'Finder' && (
+            {actions.activeWindow && <MenuItem onClick={run(actions.minimizeActive)}>Hide {appName}</MenuItem>}
+            <MenuItem onClick={run(actions.bringAllToFront)}>Show All Windows</MenuItem>
+            {actions.activeWindow && (
               <>
                 <MenuSeparator />
-                <MenuItem shortcut="⌘Q" onClick={run(actions.closeActive)}>Quit {appName}</MenuItem>
+                <MenuItem onClick={run(actions.closeActive)}>Quit {appName}</MenuItem>
               </>
             )}
           </>
@@ -195,72 +199,82 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
       case 'file':
         return (
           <>
-            <MenuItem shortcut="⌘N" onClick={run(() => actions.openWindow('finder'))}>New Finder Window</MenuItem>
-            <MenuItem shortcut="⇧⌘N" disabled>New Folder</MenuItem>
-            <MenuItem shortcut="⌘O" onClick={run(actions.openSelected)}>Open</MenuItem>
+            <MenuItem onClick={run(() => actions.openWindow('finder'))}>New Finder Window</MenuItem>
+            {actions.selectedLabel && <MenuItem onClick={run(actions.openSelected)}>Open “{actions.selectedLabel}”</MenuItem>}
+            {actions.activeWindow && <MenuItem onClick={run(actions.closeActive)}>Close Window</MenuItem>}
             <MenuSeparator />
-            <MenuItem shortcut="⌘W" onClick={run(actions.closeActive)} disabled={!actions.activeWindow}>Close Window</MenuItem>
+            <MenuItem onClick={run(() => window.open('/MUGISHA PACIFIQUE.pdf', '_blank'))}>Download CV</MenuItem>
+            <MenuItem onClick={run(() => { window.location.href = 'mailto:Pacifiquem58@gmail.com'; })}>New Email to Pacifique</MenuItem>
             <MenuSeparator />
-            <MenuItem shortcut="⌘F" onClick={run(actions.openSpotlight)}>Find</MenuItem>
+            <MenuItem onClick={run(actions.openSpotlight)}>Find…</MenuItem>
           </>
         );
       case 'edit':
         return (
           <>
-            <MenuItem shortcut="⌘Z" disabled>Undo</MenuItem>
-            <MenuItem shortcut="⇧⌘Z" disabled>Redo</MenuItem>
+            <MenuItem onClick={run(() => actions.copy('Pacifiquem58@gmail.com', 'Email address copied'))}>Copy Email Address</MenuItem>
+            <MenuItem onClick={run(() => actions.copy('+250 795 653 123', 'Phone number copied'))}>Copy Phone Number</MenuItem>
+            <MenuItem onClick={run(() => actions.copy('https://github.com/Pacifique5', 'GitHub link copied'))}>Copy GitHub Link</MenuItem>
+            <MenuItem onClick={run(() => actions.copy('https://linkedin.com/in/mugisha-pacifique', 'LinkedIn link copied'))}>Copy LinkedIn Link</MenuItem>
             <MenuSeparator />
-            <MenuItem shortcut="⌘X" disabled>Cut</MenuItem>
-            <MenuItem shortcut="⌘C" onClick={run(() => document.execCommand('copy'))}>Copy</MenuItem>
-            <MenuItem shortcut="⌘V" disabled>Paste</MenuItem>
-            <MenuItem shortcut="⌘A" onClick={run(() => document.execCommand('selectAll'))}>Select All</MenuItem>
-            <MenuSeparator />
-            <MenuItem shortcut="⌃⌘Space">Emoji &amp; Symbols</MenuItem>
+            <MenuItem onClick={run(() => actions.copy(window.location.href, 'Portfolio link copied'))}>Copy Portfolio Link</MenuItem>
           </>
         );
       case 'view':
         return (
           <>
-            <MenuItem shortcut="⌘1" checked>as Icons</MenuItem>
-            <MenuItem shortcut="⌘2" disabled>as List</MenuItem>
-            <MenuItem shortcut="⌘3" disabled>as Columns</MenuItem>
-            <MenuItem shortcut="⌘4" disabled>as Gallery</MenuItem>
+            <div className="mac-menu-heading">Wallpaper</div>
+            {actions.wallpapers.map((name, i) => (
+              <MenuItem key={name} checked={i === actions.wallpaper} onClick={run(() => actions.setWallpaper(i))}>{name}</MenuItem>
+            ))}
             <MenuSeparator />
-            <MenuItem shortcut="⌥⌘P" disabled>Show Path Bar</MenuItem>
-            <MenuItem shortcut="⌘/" disabled>Show Status Bar</MenuItem>
+            <MenuItem onClick={run(actions.openLaunchpad)}>Show Launchpad</MenuItem>
+            <MenuItem onClick={() => setOpenMenu({ id: 'controlcenter', side: 'right', x: 8 })}>Show Control Center</MenuItem>
             <MenuSeparator />
-            <MenuItem shortcut="⌃⌘F" onClick={run(() => {
+            <MenuItem onClick={run(() => {
               if (document.fullscreenElement) document.exitFullscreen();
               else document.documentElement.requestFullscreen?.();
-            })}>Enter Full Screen</MenuItem>
+            })}>{actions.fullscreen ? 'Exit Full Screen' : 'Enter Full Screen'}</MenuItem>
           </>
         );
       case 'go':
         return (
           <>
-            <MenuItem shortcut="⌘[" disabled>Back</MenuItem>
-            <MenuItem shortcut="⌘]" disabled>Forward</MenuItem>
-            <MenuSeparator />
-            {SECTION_IDS.map((sid, i) => (
-              <MenuItem key={sid} shortcut={`⇧⌘${i + 1}`} onClick={run(() => actions.openWindow(sid))}>{APPS[sid].label}</MenuItem>
+            {SECTION_IDS.map(sid => (
+              <MenuItem key={sid} checked={actions.activeWindow === sid} onClick={run(() => actions.openWindow(sid))}>{APPS[sid].label}</MenuItem>
             ))}
             <MenuSeparator />
-            <MenuItem shortcut="⇧⌘A" onClick={run(actions.openLaunchpad)}>Applications</MenuItem>
-            <MenuItem shortcut="⇧⌘G" onClick={run(actions.openSpotlight)}>Go to Folder…</MenuItem>
-            <MenuItem shortcut="⌘K" onClick={run(() => actions.openWindow('contact'))}>Connect to Server…</MenuItem>
+            <MenuItem onClick={run(() => actions.openWindow('finder'))}>Desktop</MenuItem>
+            <MenuItem onClick={run(actions.openLaunchpad)}>Applications</MenuItem>
+            <MenuSeparator />
+            <MenuItem onClick={run(() => window.open('https://github.com/Pacifique5', '_blank', 'noopener'))}>GitHub Profile</MenuItem>
+            <MenuItem onClick={run(() => window.open('https://linkedin.com/in/mugisha-pacifique', '_blank', 'noopener'))}>LinkedIn Profile</MenuItem>
           </>
         );
       case 'window':
         return (
           <>
-            <MenuItem shortcut="⌘M" onClick={run(actions.minimizeActive)} disabled={!actions.activeWindow}>Minimize</MenuItem>
-            <MenuItem disabled={!actions.activeWindow}>Zoom</MenuItem>
-            <MenuSeparator />
-            <MenuItem onClick={run(actions.bringAllToFront)} disabled={actions.windows.length === 0}>Bring All to Front</MenuItem>
-            {actions.windows.length > 0 && <MenuSeparator />}
+            {actions.activeWindow ? (
+              <>
+                <MenuItem onClick={run(actions.minimizeActive)}>Minimize</MenuItem>
+                <MenuItem onClick={run(actions.zoomActive)}>Zoom</MenuItem>
+                <MenuItem onClick={run(actions.closeActive)}>Close</MenuItem>
+                <MenuSeparator />
+              </>
+            ) : (
+              <div className="px-[9px] py-1 text-[12px] opacity-60">No open windows</div>
+            )}
+            {actions.windows.length > 0 && (
+              <>
+                <MenuItem onClick={run(actions.bringAllToFront)}>Bring All to Front</MenuItem>
+                <MenuItem onClick={run(actions.closeAll)}>Close All</MenuItem>
+                <MenuSeparator />
+              </>
+            )}
             {actions.windows.map(w => (
               <MenuItem key={w} checked={w === actions.activeWindow} onClick={run(() => actions.restoreWindow(w))}>{WINDOW_TITLES[w]}</MenuItem>
             ))}
+            {actions.windows.length === 0 && <MenuItem onClick={run(() => actions.openWindow('finder'))}>New Finder Window</MenuItem>}
           </>
         );
       case 'help': {
@@ -277,22 +291,24 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
             </div>
             {hits.length > 0 && (
               <>
-                <div className="mac-menu-heading">Menu Items</div>
-                {hits.map(s => <MenuItem key={s} onClick={run(() => { setHelpQuery(''); actions.openWindow(s); })}>Go ▸ {APPS[s].label}</MenuItem>)}
+                <div className="mac-menu-heading">Sections</div>
+                {hits.map(s => <MenuItem key={s} onClick={run(() => { setHelpQuery(''); actions.openWindow(s); })}>Open {APPS[s].label}</MenuItem>)}
                 <MenuSeparator />
               </>
             )}
-            <MenuItem onClick={run(() => actions.openWindow('about'))}>Portfolio Help</MenuItem>
+            {q && hits.length === 0 && <div className="px-[9px] py-1 text-[12px] opacity-60">No results</div>}
             <MenuItem onClick={run(() => actions.openWindow('finder'))}>Getting Started</MenuItem>
+            <MenuItem onClick={run(() => actions.openWindow('about'))}>About This Portfolio</MenuItem>
             <MenuSeparator />
-            <MenuItem onClick={run(() => actions.openWindow('contact'))}>Send Feedback…</MenuItem>
+            <MenuItem onClick={run(() => actions.openWindow('contact'))}>Contact Me</MenuItem>
+            <MenuItem onClick={run(() => window.open('https://github.com/Pacifique5/MAC-OS-Portfolio/issues', '_blank', 'noopener'))}>Report an Issue</MenuItem>
           </>
         );
       }
       case 'wifi':
-        return <WifiMenu sys={sys} close={() => setOpenMenu(null)} />;
+        return <WifiMenu sys={sys} close={() => setOpenMenu({ id: 'controlcenter', side: 'right', x: 8 })} />;
       case 'bluetooth':
-        return <BluetoothMenu sys={sys} close={() => setOpenMenu(null)} />;
+        return <BluetoothMenu sys={sys} close={() => setOpenMenu({ id: 'controlcenter', side: 'right', x: 8 })} />;
       case 'sound':
         return (
           <>
@@ -312,7 +328,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
               );
             })}
             <MenuSeparator />
-            <MenuItem onClick={() => setOpenMenu(null)}>Sound Settings…</MenuItem>
+            <MenuItem onClick={() => setOpenMenu({ id: 'controlcenter', side: 'right', x: 8 })}>Sound Settings…</MenuItem>
           </>
         );
       case 'battery':
@@ -330,7 +346,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
             <div className="mac-menu-heading">Using Significant Energy</div>
             <div className="px-[9px] pb-1 text-[12px] opacity-60">No Apps Using Significant Energy</div>
             <MenuSeparator />
-            <MenuItem onClick={() => setOpenMenu(null)}>Battery Settings…</MenuItem>
+            <MenuItem onClick={() => setOpenMenu({ id: 'controlcenter', side: 'right', x: 8 })}>Battery Settings…</MenuItem>
           </>
         );
       default:
