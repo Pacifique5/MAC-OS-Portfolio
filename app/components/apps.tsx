@@ -9,15 +9,12 @@ import {
 
 export type WindowId = 'finder' | 'photos' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
 
-/**
- * Social links used by the Dock, Launchpad and Spotlight — edit them here.
- * TODO: replace `slack` with your workspace invite link and `x` with your X profile URL.
- */
+/** Social links used by the Dock, Launchpad and Spotlight — edit them here. */
 export const SOCIAL_LINKS = {
   github: 'https://github.com/Pacifique5',
   linkedin: 'https://linkedin.com/in/mugisha-pacifique',
-  slack: 'https://slack.com/',
-  x: 'https://x.com/',
+  slack: 'https://codewithpacifique.slack.com',
+  x: 'https://x.com/_fiquem',
 };
 
 export type AppAction =
