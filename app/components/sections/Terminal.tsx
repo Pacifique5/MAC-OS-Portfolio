@@ -1,11 +1,11 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { IoTrashOutline } from 'react-icons/io5';
+import { IoTrashOutline, IoPlay, IoPause } from 'react-icons/io5';
 import { WindowLayout } from '../MacWindow';
 import { ToolbarButton } from '../ui/mac';
 import {
   CANCELLED, COMMAND_NAMES, FILE_NAMES, OPEN_TARGETS, THEMES, LineKind, TerminalContext, ThemeName,
-  bannerLines, findCommand, suggest, tokenize,
+  LIVE_COMMAND_COUNT, bannerLines, findCommand, randomLiveCommand, suggest, tokenize,
 } from '../terminal/commands';
 
 interface Line {
@@ -107,6 +107,8 @@ export default function Terminal({ onOpen, onClose }: { onOpen: (id: string) => 
   const histIndexRef = useRef<number | null>(null);
   const startedAt = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const lastActivityRef = useRef(0);
+  const liveStateRef = useRef({ busy: true, autoplaying: false, input: '' });
   const inputRef = useRef<HTMLInputElement>(null);
 
   const color = THEMES[theme];
@@ -136,12 +138,18 @@ export default function Terminal({ onOpen, onClose }: { onOpen: (id: string) => 
   });
 
   /* ---------------- run a command line ---------------- */
-  const execute = async (raw: string, token = ++tokenRef.current) => {
+  const execute = async (raw: string, token = ++tokenRef.current, record = true) => {
     push(raw, 'in', { cwd: cwdRef.current });
     const trimmed = raw.trim();
     if (!trimmed) return;
-    historyRef.current.push(trimmed);
-    histIndexRef.current = null;
+    if (record) {
+      historyRef.current.push(trimmed);
+      histIndexRef.current = null;
+    }
+    if (trimmed === 'live') {
+      startLive();
+      return;
+    }
 
     const [name, ...args] = tokenize(trimmed);
     const cmd = findCommand(name.toLowerCase());
@@ -159,6 +167,34 @@ export default function Terminal({ onOpen, onClose }: { onOpen: (id: string) => 
     } finally {
       if (tokenRef.current === token) setBusy(false);
     }
+  };
+
+  /** Type a command character by character, then run it. */
+  const typeAndRun = async (cmd: string, token: number, ctx: TerminalContext, speed: number) => {
+    for (let i = 1; i <= cmd.length; i++) {
+      setInput(cmd.slice(0, i));
+      await ctx.sleep(speed + Math.random() * speed);
+    }
+    await ctx.sleep(180);
+    setInput('');
+    await execute(cmd, token, false);
+  };
+
+  /** Endless live feed: keeps generating and running commands until a key is pressed. */
+  const runLive = async (token: number) => {
+    const ctx = makeCtx(token);
+    setAutoplaying(true);
+    for (;;) {
+      await typeAndRun(randomLiveCommand(), token, ctx, 14);
+      await ctx.sleep(500 + Math.random() * 900);
+    }
+  };
+
+  const startLive = () => {
+    const token = ++tokenRef.current;
+    setBusy(false);
+    push(`[live] Streaming ${LIVE_COMMAND_COUNT.toLocaleString()}+ unique operations — press any key to take control.`, 'accent');
+    runLive(token).catch(() => { /* stopped by a key press */ });
   };
 
   /** Invalidate every pending sleep/animation (unmount, Ctrl+C). */
@@ -207,12 +243,29 @@ export default function Terminal({ onOpen, onClose }: { onOpen: (id: string) => 
         setInput('');
         await execute(cmd, token);
       }
-      setAutoplaying(false);
+      await ctx.sleep(600);
+      push(`[live] Streaming ${LIVE_COMMAND_COUNT.toLocaleString()}+ unique operations — press any key to take control.`, 'accent');
+      await runLive(token);
     };
 
     boot().catch(() => { /* cancelled by user input or unmount */ });
     return cancelPending;
     // Boot exactly once per window open.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* ---------------- resume the live feed after 40s idle ---------------- */
+  useEffect(() => {
+    liveStateRef.current = { busy, autoplaying, input };
+  }, [busy, autoplaying, input]);
+
+  useEffect(() => {
+    lastActivityRef.current = Date.now();
+    const timer = setInterval(() => {
+      const st = liveStateRef.current;
+      if (!st.busy && !st.autoplaying && st.input === '' && Date.now() - lastActivityRef.current > 40000) startLive();
+    }, 5000);
+    return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -239,6 +292,7 @@ export default function Terminal({ onOpen, onClose }: { onOpen: (id: string) => 
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    lastActivityRef.current = Date.now();
     if (matrix) { e.preventDefault(); setMatrix(false); return; }
     if (e.ctrlKey && e.key.toLowerCase() === 'c') { e.preventDefault(); interrupt(); return; }
     if (e.ctrlKey && e.key.toLowerCase() === 'l') { e.preventDefault(); setLines([]); return; }
@@ -287,6 +341,11 @@ export default function Terminal({ onOpen, onClose }: { onOpen: (id: string) => 
 
   const toolbar = (
     <>
+      <button type="button" onClick={() => (autoplaying ? interrupt() : startLive())}
+        title={autoplaying ? 'Stop the live feed' : 'Start the live feed'}
+        className={`h-6 px-2 mr-1 rounded-full flex items-center gap-1.5 text-[11px] font-semibold transition-colors ${autoplaying ? 'bg-macblue text-white' : 'bg-black/6 dark:bg-white/10 text-black/60 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/15'}`}>
+        {autoplaying ? <><span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> LIVE <IoPause className="text-[11px]" /></> : <><IoPlay className="text-[11px]" /> Go Live</>}
+      </button>
       {(Object.keys(THEMES) as ThemeName[]).map(t => (
         <button key={t} type="button" title={`${t} theme`} onClick={() => setTheme(t)}
           className={`w-3.5 h-3.5 rounded-full mx-0.5 transition-transform ${theme === t ? 'scale-125 ring-2 ring-offset-1 ring-black/20 dark:ring-white/40 ring-offset-transparent' : 'hover:scale-110'}`}

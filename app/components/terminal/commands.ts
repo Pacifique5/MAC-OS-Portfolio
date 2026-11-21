@@ -5,6 +5,8 @@
 // Network-recon tools (nmap, whois, traceroute, dig, netstat…) are *simulations*:
 // they never send packets anywhere, and say so in their output.
 
+import { PROJECTS as REPOS } from '../projects-data';
+
 export type LineKind = 'in' | 'out' | 'ok' | 'warn' | 'err' | 'info' | 'dim' | 'accent' | 'banner';
 
 export const CANCELLED = Symbol('cancelled');
@@ -33,7 +35,7 @@ export const THEMES: Record<ThemeName, string> = {
   purple: '#c58bff',
 };
 
-type Group = 'portfolio' | 'system' | 'security' | 'fun';
+type Group = 'portfolio' | 'system' | 'security' | 'ops' | 'fun';
 
 interface Command {
   name: string;
@@ -176,14 +178,8 @@ const FILES: Record<string, string[]> = {
   ],
 };
 
-const PROJECTS = [
-  ['next-portfolio', 'macOS-style portfolio (this site) — Next.js, TypeScript, Tailwind'],
-  ['cachenet', 'Offline content caching for education — Next.js, React Native, PWA'],
-  ['farm-pro', 'Farm management system — Laravel, MySQL, Chart.js'],
-  ['library-ms', 'Library management system — Laravel, MySQL'],
-  ['umurava', 'Youth mentorship platform — Next.js, Prisma, PostgreSQL'],
-  ['vehicle-ms', 'Parking & vehicle management — PHP, MySQL'],
-];
+/** Real repositories from github.com/Pacifique5 */
+const PROJECTS = REPOS.map(p => [p.repo.split('/').pop()!.toLowerCase(), `${p.name} — ${p.stack.slice(0, 3).join(', ')}`]);
 
 /** Hash-cracking demo wordlist (top leaked passwords). */
 const WORDLIST = [
@@ -215,7 +211,8 @@ export const COMMANDS: Command[] = [
   {
     name: 'projects', usage: 'projects', desc: 'Things I have built', group: 'portfolio',
     run: (_a, c) => {
-      PROJECTS.forEach(([n, d]) => c.print(`${pad(n, 16)}${d}`));
+      const width = Math.max(...PROJECTS.map(([n]) => n.length)) + 2;
+      PROJECTS.forEach(([n, d]) => c.print(`${pad(n, width)}${d}`));
       c.print("Run 'open projects' to see them in the Projects app.", 'dim');
     },
   },
@@ -245,7 +242,7 @@ export const COMMANDS: Command[] = [
     name: 'help', usage: 'help', desc: 'List all commands', group: 'system',
     run: (_a, c) => {
       const groups: [Group, string][] = [
-        ['portfolio', 'PORTFOLIO'], ['security', 'SECURITY TOOLS'], ['system', 'SYSTEM'], ['fun', 'FUN'],
+        ['portfolio', 'PORTFOLIO'], ['security', 'SECURITY TOOLS'], ['ops', 'LIVE OPS (simulated)'], ['system', 'SYSTEM'], ['fun', 'FUN'],
       ];
       groups.forEach(([g, title]) => {
         c.print('');
@@ -425,7 +422,7 @@ export const COMMANDS: Command[] = [
   {
     name: 'whois', usage: 'whois <domain>', desc: 'Domain registration lookup (simulated)', group: 'security',
     run: async (a, c) => {
-      const d = a[0] ?? 'portfolio.local';
+      const d = a.filter(x => !x.startsWith('-') && !/^\d+$/.test(x))[0] ?? 'portfolio.local';
       const r = seeded(d);
       const year = 2005 + Math.floor(r() * 18);
       c.print(`[Querying whois.iana.org for ${d}]`, 'dim');
@@ -447,7 +444,7 @@ export const COMMANDS: Command[] = [
   {
     name: 'dig', usage: 'dig <domain>', desc: 'DNS lookup (simulated)', group: 'security',
     run: async (a, c) => {
-      const d = a[0] ?? window.location.hostname;
+      const d = a.filter(x => !x.startsWith('-') && !/^\d+$/.test(x))[0] ?? window.location.hostname;
       c.print(`; <<>> DiG 9.18.24 <<>> ${d}`, 'dim');
       await c.sleep(450);
       c.print(';; ANSWER SECTION:', 'info');
@@ -460,7 +457,7 @@ export const COMMANDS: Command[] = [
   {
     name: 'ping', usage: 'ping [host]', desc: 'Latency test (real for this site)', group: 'security',
     run: async (a, c) => {
-      const host = a[0] ?? window.location.host;
+      const host = a.filter(x => !x.startsWith('-') && !/^\d+$/.test(x))[0] ?? window.location.host;
       const own = host === window.location.host || host === window.location.hostname || host === 'portfolio.local';
       c.print(`PING ${host}: 56 data bytes${own ? ' (real HTTP round-trip to this site)' : ''}`);
       const times: number[] = [];
@@ -488,7 +485,7 @@ export const COMMANDS: Command[] = [
   {
     name: 'traceroute', usage: 'traceroute <host>', desc: 'Route tracing (simulated)', group: 'security',
     run: async (a, c) => {
-      const host = a[0] ?? 'github.com';
+      const host = a.filter(x => !x.startsWith('-') && !/^\d+$/.test(x))[0] ?? 'github.com';
       const r = seeded(host);
       c.print(`traceroute to ${host} (${fakeIp(host)}), 30 hops max, 60 byte packets`);
       const hops = ['router.local (192.168.1.1)', 'isp-gw.kigali.rw', 'core1.kgl.liquidtelecom.net', 'ae-12.nbo.seacom.net', 'ix-mba.cloudflare.net', `edge.${host}`];
@@ -681,6 +678,288 @@ export const COMMANDS: Command[] = [
     },
   },
 ];
+
+/* ------------------------------------------------------------------ */
+/* Live ops — simulated day-to-day dev & blue-team commands            */
+/* ------------------------------------------------------------------ */
+
+const LAB_HOSTS = [
+  'portfolio.local', 'gateway.lan', 'db.internal', 'api.internal', 'cache-01.internal', 'cache-02.internal',
+  'vpn.edge.lab', 'honeypot.lab', 'k8s-node-1.lab', 'k8s-node-2.lab', 'k8s-node-3.lab', 'siem.lab',
+  'mail.corp.test', 'files.corp.test', 'staging.corp.test', 'ci.corp.test', 'grafana.lab', 'vault.internal',
+  '10.0.13.1', '10.0.13.10', '10.0.13.21', '10.0.13.37', '10.0.13.42', '10.0.13.77', '10.0.13.99',
+  '192.168.56.10', '192.168.56.20', '172.16.4.2', '172.16.4.8', '172.16.4.33',
+];
+const LAB_DOMAINS = [
+  'example.com', 'example.net', 'example.org', 'portfolio.local', 'corp.test', 'staging.corp.test',
+  'lab.internal', 'honeypot.lab', 'blue-team.test', 'kigali.lab', 'secure-campus.test', 'cyberforge.test',
+];
+const WORDS = [
+  'hire-pacifique', 'zero-trust', 'defense-in-depth', 'blue-team', 'least-privilege', 'kigali', 'portfolio',
+  'nextjs', 'incident-42', 'patch-tuesday', 'mfa-everywhere', 'secure-by-design', 'threat-model', 'rotate-keys',
+  'audit-log', 'backup-3-2-1', 'cyber-forge', 'secure-campus', 'edusphere', 'symptom-ai', 'bio-access',
+  'webauthn', 'jwt-rotation', 'rbac', 'owasp-top-10', 'csp-strict', 'hsts-preload', 'sbom', 'sast', 'dast',
+];
+const SERVICES = ['nginx', 'postgresql', 'redis', 'docker', 'sshd', 'fail2ban', 'suricata', 'node-api', 'grafana', 'prometheus'];
+const REPO_SLUGS = REPOS.map(p => p.repo.split('/').pop()!);
+const ATTACKER_IPS = ['185.220.101.4', '45.95.147.12', '103.145.13.90', '194.26.29.113', '89.248.165.52', '141.98.11.7', '61.177.172.140', '218.92.0.31'];
+
+const pick = <T,>(arr: T[], r: () => number) => arr[Math.floor(r() * arr.length)];
+const rnd = () => Math.random();
+const stamp = () => new Date().toTimeString().slice(0, 8);
+
+const OPS_COMMANDS: Command[] = [
+  {
+    name: 'git', usage: 'git <status|log|pull>', desc: 'Repository status (simulated)', group: 'ops',
+    run: async (a, c) => {
+      const sub = a[0] ?? 'status';
+      const repo = a.find(x => REPO_SLUGS.includes(x)) ?? pick(REPO_SLUGS, rnd);
+      if (sub === 'log') {
+        ['feat: add role-based dashboards', 'fix: sanitize user input', 'chore: bump dependencies', 'test: cover auth flows', 'perf: cache API responses']
+          .forEach(m => c.print(`${Math.random().toString(16).slice(2, 9)} ${m}`, 'out'));
+        return;
+      }
+      if (sub === 'pull') {
+        c.print(`From github.com:Pacifique5/${repo}`, 'dim');
+        await c.sleep(350);
+        c.print(` * branch            main       -> FETCH_HEAD`, 'dim');
+        c.print(`Fast-forward  ${Math.ceil(rnd() * 9)} files changed, ${Math.ceil(rnd() * 240)} insertions(+), ${Math.ceil(rnd() * 60)} deletions(-)`, 'ok');
+        return;
+      }
+      c.print(`On branch main — ${repo}`, 'info');
+      c.print("Your branch is up to date with 'origin/main'.");
+      c.print('nothing to commit, working tree clean', 'ok');
+    },
+  },
+  {
+    name: 'docker', usage: 'docker ps', desc: 'Running containers (simulated)', group: 'ops',
+    run: (_a, c) => {
+      c.print(`${pad('CONTAINER ID', 15)}${pad('IMAGE', 24)}${pad('STATUS', 18)}PORTS`, 'info');
+      [['api', 'node:20-alpine', '3000'], ['db', 'postgres:16', '5432'], ['cache', 'redis:7', '6379'], ['proxy', 'nginx:1.25', '443']]
+        .forEach(([n, img, port]) => c.print(`${pad(Math.random().toString(16).slice(2, 14), 15)}${pad(img, 24)}${pad(`Up ${Math.ceil(rnd() * 72)} hours`, 18)}0.0.0.0:${port}->${port}/tcp  ${n}`, 'out'));
+    },
+  },
+  {
+    name: 'npm', usage: 'npm <run build|audit>', desc: 'Build and audit (simulated)', group: 'ops',
+    run: async (a, c) => {
+      if (a[0] === 'audit') {
+        c.print(`audited ${800 + Math.floor(rnd() * 600)} packages in ${(rnd() * 3 + 1).toFixed(1)}s`);
+        c.print('found 0 vulnerabilities', 'ok');
+        return;
+      }
+      c.print('> next build', 'dim');
+      await c.sleep(500);
+      c.print('  Creating an optimized production build ...', 'dim');
+      await c.sleep(700);
+      c.print(`✓ Compiled successfully in ${(rnd() * 20 + 8).toFixed(1)}s`, 'ok');
+      c.print('✓ Generating static pages (4/4)', 'ok');
+    },
+  },
+  {
+    name: 'tail', usage: 'tail /var/log/auth.log', desc: 'Watch auth log (simulated)', group: 'ops',
+    run: async (_a, c) => {
+      for (let i = 0; i < 4; i++) {
+        await c.sleep(260);
+        const ip = pick(ATTACKER_IPS, rnd);
+        const user = pick(['root', 'admin', 'test', 'oracle', 'ubuntu'], rnd);
+        c.print(`${stamp()} sshd[${1000 + Math.floor(rnd() * 9000)}]: Failed password for invalid user ${user} from ${ip} port ${30000 + Math.floor(rnd() * 30000)} ssh2`, 'warn');
+      }
+      c.print(`${stamp()} fail2ban.actions: NOTICE [sshd] Ban ${pick(ATTACKER_IPS, rnd)}`, 'ok');
+    },
+  },
+  {
+    name: 'ufw', usage: 'ufw status', desc: 'Firewall rules (simulated)', group: 'ops',
+    run: (_a, c) => {
+      c.print('Status: active', 'ok');
+      c.print(`${pad('To', 22)}${pad('Action', 12)}From`, 'info');
+      [['22/tcp (OpenSSH)', 'LIMIT', 'Anywhere'], ['443/tcp', 'ALLOW', 'Anywhere'], ['80/tcp', 'ALLOW', 'Anywhere'], ['5432/tcp', 'DENY', 'Anywhere']]
+        .forEach(([t, act, f]) => c.print(`${pad(t, 22)}${pad(act, 12)}${f}`, act === 'DENY' ? 'warn' : 'out'));
+    },
+  },
+  {
+    name: 'fail2ban-client', usage: 'fail2ban-client status sshd', desc: 'Intrusion prevention (simulated)', group: 'ops',
+    run: (_a, c) => {
+      const banned = ATTACKER_IPS.filter(() => rnd() > 0.5);
+      c.print('Status for the jail: sshd', 'info');
+      c.print(`|- Filter  Currently failed: ${Math.floor(rnd() * 12)}  Total failed: ${200 + Math.floor(rnd() * 900)}`);
+      c.print(`\`- Actions Currently banned: ${banned.length}  Total banned: ${40 + Math.floor(rnd() * 200)}`);
+      if (banned.length) c.print(`   Banned IP list: ${banned.join(' ')}`, 'warn');
+    },
+  },
+  {
+    name: 'lynis', usage: 'lynis audit system', desc: 'Hardening audit (simulated)', group: 'ops',
+    run: async (_a, c) => {
+      for (const t of ['Boot and services', 'Kernel hardening', 'Authentication', 'File permissions', 'SSH configuration', 'Firewalls']) {
+        await c.sleep(180);
+        c.print(`[+] ${pad(t, 26)}[ ${rnd() > 0.15 ? 'OK' : 'SUGGESTION'} ]`, 'ok');
+      }
+      c.print(`Hardening index : ${78 + Math.floor(rnd() * 15)} [##############      ]`, 'accent');
+    },
+  },
+  {
+    name: 'clamscan', usage: 'clamscan -r <dir>', desc: 'Malware scan (simulated)', group: 'ops',
+    run: async (a, c) => {
+      const dir = a.find(x => !x.startsWith('-')) ?? '~/Downloads';
+      c.print(`Scanning ${dir} …`, 'dim');
+      await c.sleep(700);
+      c.print('----------- SCAN SUMMARY -----------', 'info');
+      c.print(`Scanned files: ${100 + Math.floor(rnd() * 900)}`);
+      c.print('Infected files: 0', 'ok');
+    },
+  },
+  {
+    name: 'ss', usage: 'ss -tulpn', desc: 'Listening sockets (simulated)', group: 'ops',
+    run: (_a, c) => {
+      c.print(`${pad('Netid', 7)}${pad('State', 9)}${pad('Local Address:Port', 24)}Process`, 'info');
+      [['tcp', '0.0.0.0:22', 'sshd'], ['tcp', '0.0.0.0:443', 'nginx'], ['tcp', '127.0.0.1:5432', 'postgres'], ['tcp', '127.0.0.1:6379', 'redis-server'], ['udp', '0.0.0.0:51820', 'wireguard']]
+        .forEach(([n, addr, p]) => c.print(`${pad(n, 7)}${pad('LISTEN', 9)}${pad(addr, 24)}users:(("${p}"))`));
+    },
+  },
+  {
+    name: 'systemctl', usage: 'systemctl status <service>', desc: 'Service health (simulated)', group: 'ops',
+    run: (a, c) => {
+      const svc = a.find(x => SERVICES.includes(x)) ?? pick(SERVICES, rnd);
+      c.print(`● ${svc}.service`, 'info');
+      c.print(`     Active: active (running) since ${new Date(Date.now() - rnd() * 6e8).toUTCString()}`, 'ok');
+      c.print(`     Memory: ${(rnd() * 180 + 12).toFixed(1)}M   CPU: ${(rnd() * 40).toFixed(2)}s`);
+    },
+  },
+  {
+    name: 'curl', usage: 'curl -I <url>', desc: 'HTTP headers (simulated)', group: 'ops',
+    run: (a, c) => {
+      const url = a.find(x => !x.startsWith('-')) ?? 'https://portfolio.local';
+      c.print('HTTP/2 200', 'ok');
+      [`server: nginx`, `content-type: text/html; charset=utf-8`, `strict-transport-security: max-age=63072000; includeSubDomains; preload`, `x-frame-options: DENY`, `x-content-type-options: nosniff`, `content-security-policy: default-src 'self'`]
+        .forEach(h => c.print(h, 'dim'));
+      c.print(`# ${url}`, 'dim');
+    },
+  },
+  {
+    name: 'ps', usage: 'ps aux', desc: 'Top processes (simulated)', group: 'ops',
+    run: (_a, c) => {
+      c.print(`${pad('USER', 11)}${pad('PID', 7)}${pad('%CPU', 6)}${pad('%MEM', 6)}COMMAND`, 'info');
+      ['node server.js', 'postgres: writer', 'nginx: worker', 'suricata -c /etc/suricata', 'redis-server *:6379'].forEach(cmd =>
+        c.print(`${pad(cmd.startsWith('postgres') ? 'postgres' : 'pacifique', 11)}${pad(String(1000 + Math.floor(rnd() * 30000)), 7)}${pad((rnd() * 25).toFixed(1), 6)}${pad((rnd() * 9).toFixed(1), 6)}${cmd}`));
+    },
+  },
+  {
+    name: 'tcpdump', usage: 'tcpdump -c 5 -i en0', desc: 'Packet capture (simulated)', group: 'ops',
+    run: async (_a, c) => {
+      c.print('listening on en0, link-type EN10MB (Ethernet), snapshot length 262144 bytes', 'dim');
+      for (let i = 0; i < 5; i++) {
+        await c.sleep(220);
+        const src = pick(LAB_HOSTS, rnd);
+        c.print(`${stamp()}.${String(Math.floor(rnd() * 999999)).padStart(6, '0')} IP ${src}.${40000 + Math.floor(rnd() * 20000)} > 10.0.13.37.443: Flags [P.], length ${Math.floor(rnd() * 1400)}`);
+      }
+      c.print('5 packets captured', 'ok');
+      c.print(SIM_NOTE, 'dim');
+    },
+  },
+  {
+    name: 'suricata', usage: 'suricata --alerts', desc: 'IDS alerts (simulated)', group: 'ops',
+    run: async (_a, c) => {
+      const sigs = ['ET SCAN Nmap Scripting Engine User-Agent', 'ET POLICY SSH session on non-standard port', 'ET WEB_SERVER Possible SQL Injection Attempt', 'ET SCAN Potential SSH Scan', 'GPL ICMP_INFO PING *NIX'];
+      for (let i = 0; i < 3; i++) {
+        await c.sleep(300);
+        c.print(`[**] [1:${2000000 + Math.floor(rnd() * 99999)}:3] ${pick(sigs, rnd)} [**] {TCP} ${pick(ATTACKER_IPS, rnd)} -> 10.0.13.37:443`, 'warn');
+      }
+      c.print('[+] Offending sources added to blocklist', 'ok');
+    },
+  },
+  {
+    name: 'journalctl', usage: 'journalctl -p err', desc: 'System errors (simulated)', group: 'ops',
+    run: (_a, c) => {
+      c.print('-- No entries in the last hour --', 'ok');
+      c.print(`${stamp()} kernel: audit: type=1400 apparmor="ALLOWED" profile="node-api"`, 'dim');
+    },
+  },
+  {
+    name: 'sha256sum', usage: 'sha256sum <file>', desc: 'Verify a release checksum (real hash of the name)', group: 'ops',
+    run: async (a, c) => {
+      const file = a[0] ?? 'release.tar.gz';
+      c.print(`${await digest('SHA-256', file)}  ${file}`, 'ok');
+    },
+  },
+  {
+    name: 'kubectl', usage: 'kubectl get pods', desc: 'Cluster workloads (simulated)', group: 'ops',
+    run: (_a, c) => {
+      c.print(`${pad('NAME', 34)}${pad('READY', 8)}${pad('STATUS', 10)}AGE`, 'info');
+      ['api-7d9f8c6b5-x2kqp', 'web-5c7b9d8f4-m8wzn', 'worker-6f8d7c9b-q4jrt', 'postgres-0'].forEach(p =>
+        c.print(`${pad(p, 34)}${pad('1/1', 8)}${pad('Running', 10)}${Math.ceil(rnd() * 20)}d`, 'ok'));
+    },
+  },
+  {
+    name: 'openssl-cert', usage: 'openssl-cert <host>', desc: 'TLS certificate check (simulated)', group: 'ops',
+    run: (a, c) => {
+      const host = a[0] ?? 'portfolio.local';
+      c.print(`subject=CN = ${host}`, 'info');
+      c.print("issuer=C = US, O = Let's Encrypt, CN = R11");
+      c.print(`notAfter=${new Date(Date.now() + (20 + rnd() * 60) * 864e5).toUTCString()}`, 'ok');
+      c.print('Verify return code: 0 (ok)', 'ok');
+    },
+  },
+  {
+    name: 'live', usage: 'live', desc: 'Start the endless live ops feed (any key stops it)', group: 'ops',
+    // Handled by the Terminal component; listed here for help/autocomplete.
+    run: () => {},
+  },
+];
+
+COMMANDS.push(...OPS_COMMANDS);
+
+/* ------------------------------------------------------------------ */
+/* Endless live feed generator                                         */
+/* ------------------------------------------------------------------ */
+
+type Template = { weight: number; options: string[][]; build: (parts: string[]) => string };
+
+const SUFFIXES = ['', ...Array.from({ length: 24 }, (_, i) => `-${i + 1}`)];
+const NMAP_FLAGS = ['-sV', '-sS -T4', '-Pn -p 1-1024', '-A', '-sU --top-ports 50', '-p 22,80,443', '-sC -sV', '-T3 -F'];
+const RECORD_TYPES = ['A', 'AAAA', 'MX', 'TXT', 'NS', 'CNAME'];
+const CURL_PATHS = ['/', '/login', '/api/health', '/admin', '/.well-known/security.txt'];
+
+const LIVE_TEMPLATES: Template[] = [
+  { weight: 3, options: [LAB_HOSTS, NMAP_FLAGS], build: ([h, f]) => `nmap ${f} ${h}` },
+  { weight: 2, options: [LAB_HOSTS.filter(h => h !== 'portfolio.local'), ['3', '4', '5', '8']], build: ([h, n]) => `ping -c ${n} ${h}` },
+  { weight: 2, options: [LAB_DOMAINS, RECORD_TYPES], build: ([d, t]) => `dig ${d} ${t}` },
+  { weight: 1, options: [LAB_DOMAINS], build: ([d]) => `whois ${d}` },
+  { weight: 1, options: [LAB_HOSTS], build: ([h]) => `traceroute ${h}` },
+  { weight: 3, options: [['sha1', 'sha256', 'sha512'], WORDS, SUFFIXES], build: ([alg, w, n]) => `hash ${alg} ${w}${n}` },
+  { weight: 2, options: [WORDS, SUFFIXES], build: ([w, n]) => `base64 ${w}${n}` },
+  { weight: 1, options: [Array.from({ length: 64 }, (_, i) => String(i + 1))], build: ([n]) => `openssl rand -hex ${n}` },
+  { weight: 1, options: [Array.from({ length: 57 }, (_, i) => String(i + 8))], build: ([n]) => `passgen ${n}` },
+  { weight: 2, options: [['status', 'log', 'pull'], REPO_SLUGS], build: ([s, r]) => `git ${s} ${r}` },
+  { weight: 1, options: [['ps']], build: () => 'docker ps' },
+  { weight: 1, options: [['run build', 'audit']], build: ([s]) => `npm ${s}` },
+  { weight: 2, options: [['/var/log/auth.log']], build: ([f]) => `tail ${f}` },
+  { weight: 1, options: [['status']], build: () => 'ufw status' },
+  { weight: 2, options: [['sshd']], build: () => 'fail2ban-client status sshd' },
+  { weight: 1, options: [['system']], build: () => 'lynis audit system' },
+  { weight: 1, options: [['~/Downloads', '/var/www', '/tmp', '~/projects']], build: ([d]) => `clamscan -r ${d}` },
+  { weight: 1, options: [['-tulpn']], build: () => 'ss -tulpn' },
+  { weight: 2, options: [SERVICES], build: ([s]) => `systemctl status ${s}` },
+  { weight: 1, options: [LAB_DOMAINS, CURL_PATHS], build: ([d, p]) => `curl -I https://${d}${p}` },
+  { weight: 1, options: [['aux']], build: () => 'ps aux' },
+  { weight: 1, options: [['en0', 'utun3']], build: ([i]) => `tcpdump -c 5 -i ${i}` },
+  { weight: 2, options: [['--alerts']], build: () => 'suricata --alerts' },
+  { weight: 1, options: [['err']], build: () => 'journalctl -p err' },
+  { weight: 1, options: [REPO_SLUGS], build: ([r]) => `sha256sum ${r.toLowerCase()}-release.tar.gz` },
+  { weight: 1, options: [['pods']], build: () => 'kubectl get pods' },
+  { weight: 1, options: [LAB_DOMAINS], build: ([d]) => `openssl-cert ${d}` },
+  { weight: 1, options: [['']], build: () => 'netstat' },
+  { weight: 1, options: [['']], build: () => 'ifconfig' },
+];
+
+/** Number of distinct commands the live feed can generate. */
+export const LIVE_COMMAND_COUNT = LIVE_TEMPLATES.reduce((sum, t) => sum + t.options.reduce((n, o) => n * o.length, 1), 0);
+
+const TOTAL_WEIGHT = LIVE_TEMPLATES.reduce((s, t) => s + t.weight, 0);
+
+export function randomLiveCommand() {
+  let roll = Math.random() * TOTAL_WEIGHT;
+  const t = LIVE_TEMPLATES.find(tpl => (roll -= tpl.weight) < 0) ?? LIVE_TEMPLATES[0];
+  return t.build(t.options.map(o => pick(o, rnd)));
+}
 
 export const COMMAND_NAMES = COMMANDS.map(c => c.name);
 export const FILE_NAMES = [...Object.keys(FILES), 'projects/', '.secrets', '.zshrc'];
