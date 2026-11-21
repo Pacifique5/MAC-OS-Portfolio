@@ -1,12 +1,15 @@
 'use client';
 import { useState } from 'react';
-import { FaGithub, FaLinkedin, FaEnvelope, FaPhone, FaPaperPlane, FaCheckCircle, FaMapMarkerAlt, FaDownload } from 'react-icons/fa';
+import { IoPaperPlane, IoMail, IoCall, IoLogoGithub, IoLogoLinkedin, IoDownloadOutline, IoCheckmarkCircle, IoAttach, IoText } from 'react-icons/io5';
+import { WindowLayout } from '../MacWindow';
+import { InsetGroup, GroupRow, SymbolTile, ToolbarButton, PushButton } from '../ui/mac';
+import { ChevronGlyph, Spinner } from '../icons/SystemIcons';
 
 const contactLinks = [
-  { icon: <FaEnvelope />, label: 'Email', value: 'Pacifiquem58@gmail.com', href: 'mailto:Pacifiquem58@gmail.com', color: 'text-violet-500', bg: 'bg-violet-50 dark:bg-violet-900/20', border: 'hover:border-violet-300 dark:hover:border-violet-600' },
-  { icon: <FaPhone />, label: 'Phone', value: '+250 795 653 123', href: 'tel:+250795653123', color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-900/20', border: 'hover:border-green-300 dark:hover:border-green-600' },
-  { icon: <FaGithub />, label: 'GitHub', value: 'github.com/Pacifique5', href: 'https://github.com/Pacifique5', color: 'text-gray-700 dark:text-gray-300', bg: 'bg-gray-50 dark:bg-gray-700/50', border: 'hover:border-gray-400 dark:hover:border-gray-500' },
-  { icon: <FaLinkedin />, label: 'LinkedIn', value: 'mugisha-pacifique', href: 'https://linkedin.com/in/mugisha-pacifique', color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20', border: 'hover:border-blue-300 dark:hover:border-blue-600' },
+  { Glyph: IoMail, color: '#007aff', label: 'Email', value: 'Pacifiquem58@gmail.com', href: 'mailto:Pacifiquem58@gmail.com' },
+  { Glyph: IoCall, color: '#34c759', label: 'Phone', value: '+250 795 653 123', href: 'tel:+250795653123' },
+  { Glyph: IoLogoGithub, color: '#1d1d1f', label: 'GitHub', value: 'github.com/Pacifique5', href: 'https://github.com/Pacifique5' },
+  { Glyph: IoLogoLinkedin, color: '#0a66c2', label: 'LinkedIn', value: 'mugisha-pacifique', href: 'https://linkedin.com/in/mugisha-pacifique' },
 ];
 
 const faqs = [
@@ -16,133 +19,114 @@ const faqs = [
 ];
 
 export default function Contact() {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const canSend = form.name && form.email && form.subject && form.message;
+
+  const send = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!canSend) return;
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
       setSent(true);
-      setFormData({ name: '', email: '', subject: '', message: '' });
+      setForm({ name: '', email: '', subject: '', message: '' });
       setTimeout(() => setSent(false), 5000);
     }, 1200);
   };
 
+  const field = 'flex-1 bg-transparent outline-none text-[13px] placeholder:text-black/30 dark:placeholder:text-white/30';
+
   return (
-    <div className="min-h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800 overflow-y-auto">
-
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-600 px-8 py-8">
-        <h2 className="text-2xl font-extrabold text-white mb-1">Get In Touch</h2>
-        <p className="text-white/80 text-sm mb-3">I'm always open to new opportunities and collaborations</p>
-        <div className="flex items-center gap-2 text-white/70 text-xs">
-          <FaMapMarkerAlt className="text-red-300" /> Rwanda, Africa · Available for remote work worldwide
-        </div>
-      </div>
-
-      <div className="p-6 space-y-5">
-
-        {/* Contact links */}
-        <div className="grid grid-cols-2 gap-3">
-          {contactLinks.map(item => (
-            <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer"
-              className={`flex items-center gap-3 ${item.bg} rounded-xl p-3.5 border border-gray-100 dark:border-gray-700 ${item.border} hover:shadow-md hover:scale-[1.02] transition-all group`}>
-              <div className={`text-lg flex-shrink-0 ${item.color}`}>{item.icon}</div>
-              <div className="min-w-0">
-                <p className="text-xs text-gray-400">{item.label}</p>
-                <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 truncate">{item.value}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-
-        {/* Availability badge */}
-        <div className="flex items-center gap-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4">
-          <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse flex-shrink-0" />
-          <div>
-            <p className="text-sm font-semibold text-green-700 dark:text-green-400">Available for new projects</p>
-            <p className="text-xs text-green-600/70 dark:text-green-500/70">Open to full-time, part-time, and freelance opportunities</p>
+    <WindowLayout
+      title="New Message"
+      subtitle="To: Mugisha Pacifique"
+      toolbar={
+        <>
+          <ToolbarButton title="Attach"><IoAttach className="text-[17px]" /></ToolbarButton>
+          <ToolbarButton title="Format"><IoText className="text-[15px]" /></ToolbarButton>
+          <ToolbarButton title="Send" onClick={() => send()}>
+            {loading ? <Spinner size={15} /> : <IoPaperPlane className={`text-[16px] ${canSend ? 'text-macblue' : ''}`} />}
+          </ToolbarButton>
+        </>
+      }
+    >
+      {/* Compose */}
+      <form onSubmit={send} className="border-b border-[var(--hairline)]">
+        {sent ? (
+          <div className="flex flex-col items-center justify-center py-14 gap-2">
+            <IoCheckmarkCircle className="text-[44px] text-[#34c759]" />
+            <p className="text-[15px] font-semibold">Message Sent</p>
+            <p className="text-[13px] text-black/50 dark:text-white/50">Thanks for reaching out — I’ll reply within 24 hours.</p>
           </div>
-        </div>
-
-        {/* Contact form */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700 shadow-sm">
-          <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-sm">Send a Message</h3>
-          {sent ? (
-            <div className="flex flex-col items-center justify-center py-10 gap-3">
-              <FaCheckCircle className="text-5xl text-green-500" />
-              <p className="font-bold text-gray-800 dark:text-white text-lg">Message sent!</p>
-              <p className="text-sm text-gray-500 text-center">Thanks for reaching out. I'll get back to you within 24 hours.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Name *</label>
-                  <input type="text" required placeholder="Your name"
-                    className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
-                    value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Email *</label>
-                  <input type="email" required placeholder="your@email.com"
-                    className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
-                    value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Subject *</label>
-                <input type="text" required placeholder="What's this about?"
-                  className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
-                  value={formData.subject} onChange={e => setFormData({ ...formData, subject: e.target.value })} />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Message *</label>
-                <textarea required rows={4} placeholder="Tell me about your project or opportunity..."
-                  className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all resize-none"
-                  value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} />
-              </div>
-              <button type="submit" disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold shadow-lg hover:shadow-violet-500/30 hover:scale-[1.02] disabled:opacity-70 disabled:scale-100 transition-all">
-                {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <FaPaperPlane className="text-xs" />}
-                {loading ? 'Sending...' : 'Send Message'}
-              </button>
-            </form>
-          )}
-        </div>
-
-        {/* FAQ */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700 shadow-sm">
-          <h3 className="font-bold text-gray-900 dark:text-white mb-3 text-sm">Frequently Asked Questions</h3>
-          <div className="space-y-2">
-            {faqs.map((faq, i) => (
-              <div key={i} className="border border-gray-100 dark:border-gray-700 rounded-xl overflow-hidden">
-                <button onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                  <span className="text-xs font-semibold text-gray-800 dark:text-gray-200">{faq.q}</span>
-                  <span className="text-gray-400 text-xs ml-2">{openFaq === i ? '▲' : '▼'}</span>
-                </button>
-                {openFaq === i && (
-                  <div className="px-4 pb-3 text-xs text-gray-500 dark:text-gray-400 leading-relaxed border-t border-gray-100 dark:border-gray-700 pt-2">
-                    {faq.a}
-                  </div>
-                )}
+        ) : (
+          <>
+            {[
+              { label: 'To:', node: <span className="inline-flex items-center px-2 h-[20px] rounded-full bg-macblue/15 text-macblue text-[12px]">Mugisha Pacifique</span> },
+              { label: 'From:', node: <input required placeholder="Your name" className={field} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /> },
+              { label: 'Reply-To:', node: <input required type="email" placeholder="your@email.com" className={field} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /> },
+              { label: 'Subject:', node: <input required placeholder="What’s this about?" className={`${field} font-medium`} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} /> },
+            ].map(r => (
+              <div key={r.label} className="flex items-center gap-2 mx-5 h-[34px] border-b border-[var(--hairline)]">
+                <span className="w-[68px] text-right text-[13px] text-black/45 dark:text-white/45 flex-shrink-0">{r.label}</span>
+                {r.node}
               </div>
             ))}
+            <textarea
+              required
+              rows={7}
+              placeholder="Tell me about your project or opportunity…"
+              className="w-full px-5 py-3 bg-transparent outline-none resize-none text-[13px] leading-relaxed placeholder:text-black/30 dark:placeholder:text-white/30"
+              value={form.message}
+              onChange={e => setForm({ ...form, message: e.target.value })}
+            />
+            <div className="flex justify-end px-5 pb-3">
+              <PushButton primary type="submit" disabled={!canSend || loading}>
+                {loading ? <Spinner size={12} /> : <IoPaperPlane />} {loading ? 'Sending…' : 'Send'}
+              </PushButton>
+            </div>
+          </>
+        )}
+      </form>
+
+      <div className="bg-[var(--content-bg)] px-6 py-6">
+        <div className="max-w-[560px] mx-auto">
+          <div className="flex items-center gap-2.5 mb-5 px-3 py-2.5 rounded-[10px] bg-[#34c759]/10 shadow-[0_0_0_0.5px_rgba(52,199,89,0.35)]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#34c759] animate-pulse" />
+            <div>
+              <div className="text-[13px] font-semibold text-[#248a3d] dark:text-[#30d158]">Available for new projects</div>
+              <div className="text-[11px] text-black/50 dark:text-white/50">Rwanda, Africa · Open to remote work worldwide</div>
+            </div>
+          </div>
+
+          <InsetGroup title="Other Ways to Reach Me">
+            {contactLinks.map(c => (
+              <GroupRow key={c.label} href={c.href} icon={<SymbolTile Glyph={c.Glyph} color={c.color} size={24} />} label={c.label}
+                right={<><span className="truncate max-w-[200px]">{c.value}</span><ChevronGlyph size={8} className="opacity-50" /></>} />
+            ))}
+          </InsetGroup>
+
+          <InsetGroup title="Frequently Asked Questions">
+            {faqs.map((f, i) => (
+              <div key={f.q}>
+                <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left text-[13px] hover:bg-black/[0.02] dark:hover:bg-white/[0.03]">
+                  <ChevronGlyph dir={openFaq === i ? 'down' : 'right'} size={9} className="opacity-45" />
+                  {f.q}
+                </button>
+                {openFaq === i && <p className="pl-[34px] pr-4 pb-3 text-[12px] leading-relaxed text-black/60 dark:text-white/60">{f.a}</p>}
+              </div>
+            ))}
+          </InsetGroup>
+
+          <div className="flex justify-center">
+            <PushButton href="/MUGISHA PACIFIQUE.pdf" download><IoDownloadOutline /> Download CV / Resume</PushButton>
           </div>
         </div>
-
-        {/* Download CV */}
-        <a href="/MUGISHA PACIFIQUE.pdf" download
-          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border-2 border-violet-500 text-violet-600 dark:text-violet-400 font-semibold text-sm hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:scale-[1.02] transition-all mb-4">
-          <FaDownload className="text-xs" /> Download My CV / Resume
-        </a>
-
       </div>
-    </div>
+    </WindowLayout>
   );
 }
