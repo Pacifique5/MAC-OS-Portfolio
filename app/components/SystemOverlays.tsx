@@ -196,7 +196,7 @@ export function NotificationBanner({ onOpen, onDismiss }: { onOpen: () => void; 
         <APPS.finder.Icon size={34} />
         <div className="flex-1 min-w-0">
           <div className="flex justify-between text-[13px]"><span className="font-semibold">Welcome to my portfolio</span><span className="opacity-45 text-[11px]">now</span></div>
-          <div className="text-[13px] opacity-80 leading-snug">Double-click a folder on the desktop, or press ⌘ Space to search.</div>
+          <div className="text-[13px] opacity-80 leading-snug">Double-click a folder on the desktop, or use the search icon in the menu bar.</div>
         </div>
       </button>
       <button
@@ -220,7 +220,7 @@ export function Launchpad({ onClose, onOpen }: { onClose: () => void; onOpen: (i
   const apps = Object.values(APPS).filter(a => a.id !== 'trash' && a.id !== 'launchpad' && a.label.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <div className="absolute inset-0 z-[55] bg-black/25 backdrop-blur-[40px] animate-launchpad-in" onClick={onClose}>
+    <div className="absolute inset-0 z-[55] bg-black/45 backdrop-blur-[40px] animate-launchpad-in" onClick={onClose}>
       <div className="flex justify-center pt-12" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-1.5 w-[240px] h-7 px-2.5 rounded-lg bg-white/15 text-white shadow-[inset_0_0_0_0.5px_rgba(255,255,255,0.25)]">
           <SearchGlyph size={12} className="opacity-70" />
@@ -252,59 +252,53 @@ export function Launchpad({ onClose, onOpen }: { onClose: () => void; onOpen: (i
 /* Context menus                                                       */
 /* ------------------------------------------------------------------ */
 
-const TAG_COLORS = ['#ff3b30', '#ff9500', '#ffcc00', '#34c759', '#007aff', '#af52de', '#8e8e93'];
-
 export function ContextMenu({
-  x, y, target, kind, isRunning, onOpen, onQuit, onClose, onChangeWallpaper, onShowInFinder,
+  x, y, target, kind, isRunning, onOpen, onQuit, onClose, onChangeWallpaper, onShowInFinder, onCopyLink, onLaunchpad, onSpotlight, onCloseAll, hasWindows,
 }: {
   x: number; y: number; target: string | null; kind: 'desktop' | 'icon' | 'dock';
-  isRunning: boolean;
+  isRunning: boolean; hasWindows: boolean;
   onOpen: () => void; onQuit: () => void; onClose: () => void; onChangeWallpaper: () => void; onShowInFinder: () => void;
+  onCopyLink: () => void; onLaunchpad: () => void; onSpotlight: () => void; onCloseAll: () => void;
 }) {
   const run = (fn: () => void) => () => { fn(); onClose(); };
-  const left = Math.min(x, (typeof window !== 'undefined' ? window.innerWidth : 1200) - 250);
-  const top = Math.min(y, (typeof window !== 'undefined' ? window.innerHeight : 800) - 300);
+  const left = Math.min(x, (typeof window !== 'undefined' ? window.innerWidth : 1200) - 240);
+  const top = Math.min(y, (typeof window !== 'undefined' ? window.innerHeight : 800) - 240);
+  const app = target ? APPS[target] : undefined;
+  const isLink = app?.action.type === 'link';
+  const isSection = app?.action.type === 'window' && target !== 'finder';
 
   return (
     <div className="absolute z-[62] mac-menu min-w-[220px] animate-fade-in" style={{ left, top }} onClick={(e) => e.stopPropagation()}>
       {kind === 'desktop' && (
         <>
-          <MenuItem disabled>New Folder</MenuItem>
+          <MenuItem onClick={run(onShowInFinder)}>New Finder Window</MenuItem>
+          <MenuItem onClick={run(onChangeWallpaper)}>Change Wallpaper</MenuItem>
           <MenuSeparator />
-          <MenuItem onClick={run(onShowInFinder)}>Get Info</MenuItem>
-          <MenuSeparator />
-          <MenuItem onClick={run(onChangeWallpaper)}>Change Wallpaper…</MenuItem>
-          <MenuItem disabled>Use Stacks</MenuItem>
-          <MenuItem disabled>Sort By</MenuItem>
-          <MenuItem disabled>Clean Up</MenuItem>
-          <MenuItem disabled>Show View Options</MenuItem>
+          <MenuItem onClick={run(onLaunchpad)}>Show Launchpad</MenuItem>
+          <MenuItem onClick={run(onSpotlight)}>Search…</MenuItem>
+          {hasWindows && (
+            <>
+              <MenuSeparator />
+              <MenuItem onClick={run(onCloseAll)}>Close All Windows</MenuItem>
+            </>
+          )}
         </>
       )}
-      {kind === 'icon' && target && (
+      {kind === 'icon' && app && (
         <>
-          <MenuItem onClick={run(onOpen)}>Open</MenuItem>
-          <MenuSeparator />
-          <MenuItem shortcut="⌘⌫" disabled>Move to Trash</MenuItem>
-          <MenuSeparator />
-          <MenuItem shortcut="⌘I" onClick={run(onOpen)}>Get Info</MenuItem>
-          <MenuItem disabled>Rename</MenuItem>
-          <MenuItem disabled>Compress “{APPS[target]?.label}”</MenuItem>
-          <MenuItem disabled>Duplicate</MenuItem>
-          <MenuItem onClick={run(onOpen)}>Quick Look “{APPS[target]?.label}”</MenuItem>
-          <MenuSeparator />
-          <MenuItem disabled>Copy</MenuItem>
-          <MenuSeparator />
-          <div className="flex items-center gap-[7px] px-[9px] py-1">
-            {TAG_COLORS.map(c => <span key={c} className="w-3 h-3 rounded-full" style={{ background: c, boxShadow: 'inset 0 0 0 0.5px rgba(0,0,0,0.2)' }} />)}
-          </div>
-          <MenuItem disabled>Tags…</MenuItem>
-        </>
-      )}
-      {kind === 'dock' && target && (
-        <>
+          <MenuItem onClick={run(onOpen)}>Open “{app.label}”</MenuItem>
           <MenuItem onClick={run(onShowInFinder)}>Show in Finder</MenuItem>
+          {isRunning && <MenuItem onClick={run(onQuit)}>Close Window</MenuItem>}
           <MenuSeparator />
-          {isRunning ? <MenuItem onClick={run(onQuit)}>Quit</MenuItem> : <MenuItem onClick={run(onOpen)}>Open</MenuItem>}
+          <MenuItem onClick={run(onCopyLink)}>Copy Link</MenuItem>
+        </>
+      )}
+      {kind === 'dock' && app && (
+        <>
+          <div className="mac-menu-heading">{app.label}</div>
+          {isRunning ? <MenuItem onClick={run(onQuit)}>Quit</MenuItem> : <MenuItem onClick={run(onOpen)}>{isLink ? 'Open in New Tab' : 'Open'}</MenuItem>}
+          {isSection && <MenuItem onClick={run(onShowInFinder)}>Show in Finder</MenuItem>}
+          {isLink && <MenuItem onClick={run(onCopyLink)}>Copy Link</MenuItem>}
         </>
       )}
     </div>
