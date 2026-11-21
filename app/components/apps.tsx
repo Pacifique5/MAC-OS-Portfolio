@@ -3,7 +3,7 @@ import type { IconType } from 'react-icons';
 import { IoLogoGithub, IoLogoLinkedin, IoPerson, IoHammer, IoSparkles, IoSchool, IoChatbubbles, IoMail } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
 import {
-  FinderIcon, LaunchpadIcon, SafariIcon, TerminalIcon, PhotosIcon, CalendarIcon, SettingsIcon, TrashIcon,
+  FinderIcon, LaunchpadIcon, TerminalIcon, PhotosIcon, CalendarIcon, SettingsIcon, TrashIcon,
   ContactsIcon, ProjectsIcon, SkillsIcon, ExperienceIcon, MessagesIcon, MailIcon, BrandTile, SlackIcon,
 } from './icons/AppIcons';
 
@@ -43,7 +43,6 @@ const XIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#2a2
 export const APPS: Record<string, AppDef> = {
   finder:       { id: 'finder',       label: 'Finder',       kind: 'Application', Icon: FinderIcon,    action: { type: 'window', window: 'finder' } },
   launchpad:    { id: 'launchpad',    label: 'Launchpad',    kind: 'Application', Icon: LaunchpadIcon, action: { type: 'launchpad' } },
-  safari:       { id: 'safari',       label: 'Safari',       kind: 'Application', Icon: SafariIcon,    action: { type: 'link', href: 'https://github.com/Pacifique5/MAC-OS-Portfolio' } },
   terminal:     { id: 'terminal',     label: 'Terminal',     kind: 'Application', Icon: TerminalIcon,  action: { type: 'none' } },
   photos:       { id: 'photos',       label: 'Photos',       kind: 'Application', Icon: PhotosIcon,    action: { type: 'window', window: 'photos' } },
   calendar:     { id: 'calendar',     label: 'Calendar',     kind: 'Application', Icon: CalendarIcon,  action: { type: 'notifications' } },
@@ -68,7 +67,7 @@ export const SECTION_IDS = ['about', 'projects', 'skills', 'experience', 'testim
 
 /** Dock layout — `null` renders a separator. */
 export const DOCK_LAYOUT: (string | null)[] = [
-  'finder', 'launchpad', 'safari', 'terminal', 'photos', 'calendar',
+  'finder', 'launchpad', 'terminal', 'photos', 'calendar',
   null,
   ...SECTION_IDS,
   null,

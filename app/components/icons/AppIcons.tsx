@@ -72,39 +72,6 @@ export function LaunchpadIcon(p: IconProps) {
   );
 }
 
-export function SafariIcon(p: IconProps) {
-  const u = useUid();
-  // Rounded so server- and browser-computed trig values serialize identically (no hydration mismatch).
-  const r = (n: number) => Math.round(n * 1000) / 1000;
-  const ticks = Array.from({ length: 48 }, (_, i) => {
-    const a = (i * Math.PI * 2) / 48;
-    const long = i % 4 === 0;
-    const r1 = long ? 28.5 : 31;
-    return { x1: r(50 + Math.cos(a) * r1), y1: r(50 + Math.sin(a) * r1), x2: r(50 + Math.cos(a) * 34), y2: r(50 + Math.sin(a) * 34), long };
-  });
-  return (
-    <Frame {...p} defs={<>
-      <LinearGrad id={u('bg')} from="#ffffff" to="#dcdce2" />
-      <radialGradient id={u('dial')} cx="0.5" cy="0.25" r="0.8">
-        <stop offset="0" stopColor="#2fd9ff" />
-        <stop offset="1" stopColor="#1453f0" />
-      </radialGradient>
-    </>}>
-      <rect width="100" height="100" fill={`url(#${u('bg')})`} />
-      <circle cx="50" cy="50" r="40" fill="#c7c7cc" />
-      <circle cx="50" cy="50" r="38" fill={`url(#${u('dial')})`} />
-      {ticks.map((t, i) => (
-        <line key={i} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke="white" strokeOpacity={t.long ? 0.95 : 0.6} strokeWidth={t.long ? 1.4 : 0.8} />
-      ))}
-      <g transform="rotate(45 50 50)">
-        <path d="M50 15 L56.5 50 H43.5 Z" fill="#ff3b30" />
-        <path d="M50 85 L56.5 50 H43.5 Z" fill="#f2f2f7" />
-      </g>
-      <circle cx="50" cy="50" r="2.2" fill="#1c1c1e" opacity={0.25} />
-    </Frame>
-  );
-}
-
 export function TerminalIcon(p: IconProps) {
   const u = useUid();
   return (
