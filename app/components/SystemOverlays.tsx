@@ -16,6 +16,9 @@ const SPOTLIGHT_KEYWORDS: Record<string, string> = {
   experience: 'internship education training certificates alx harvard',
   testimonials: 'reviews recommendations references',
   contact: 'email phone hire message reach',
+  photos: 'certificates badges gallery images pictures transcript',
+  slack: 'workspace chat community',
+  x: 'twitter social',
 };
 
 export function Spotlight({ onClose, onOpen }: { onClose: () => void; onOpen: (id: string) => void }) {
