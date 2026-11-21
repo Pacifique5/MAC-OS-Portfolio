@@ -1,10 +1,10 @@
 'use client';
 import type { IconType } from 'react-icons';
 import { IoLogoGithub, IoLogoLinkedin, IoPerson, IoHammer, IoSparkles, IoSchool, IoChatbubbles, IoMail } from 'react-icons/io5';
-import { FaSlack, FaXTwitter } from 'react-icons/fa6';
+import { FaXTwitter } from 'react-icons/fa6';
 import {
   FinderIcon, LaunchpadIcon, SafariIcon, TerminalIcon, PhotosIcon, CalendarIcon, SettingsIcon, TrashIcon,
-  ContactsIcon, ProjectsIcon, SkillsIcon, ExperienceIcon, MessagesIcon, MailIcon, BrandTile,
+  ContactsIcon, ProjectsIcon, SkillsIcon, ExperienceIcon, MessagesIcon, MailIcon, BrandTile, SlackIcon,
 } from './icons/AppIcons';
 
 export type WindowId = 'finder' | 'photos' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
@@ -38,7 +38,6 @@ export interface AppDef {
 
 const GitHubIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#3b4148', '#16191d']} Glyph={IoLogoGithub} />;
 const LinkedInIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#1c8ae6', '#0a58b0']} Glyph={IoLogoLinkedin} glyphScale={0.6} />;
-const SlackIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#611f69', '#3f0e40']} Glyph={FaSlack} glyphScale={0.54} />;
 const XIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#2a2a2c', '#000000']} Glyph={FaXTwitter} glyphScale={0.48} />;
 
 export const APPS: Record<string, AppDef> = {
