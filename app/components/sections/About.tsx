@@ -5,6 +5,7 @@ import { SiNextdotjs, SiReact, SiTypescript, SiTailwindcss, SiNodedotjs, SiPytho
 import { WindowLayout } from '../MacWindow';
 import { CV_URL, SOCIAL_LINKS } from '../apps';
 import { PHOTOS } from '../photos-data';
+import { PROJECTS } from '../projects-data';
 import { InsetGroup, GroupRow, PushButton, SymbolTile } from '../ui/mac';
 
 const roles = ['Full-Stack Developer', 'Cybersecurity', 'AI Enthusiast', 'Open Source'];
@@ -13,7 +14,7 @@ const certificateCount = PHOTOS.filter(p => p.album === 'certificates').length;
 const badgeCount = PHOTOS.filter(p => p.album === 'badges').length;
 
 const stats = [
-  { label: 'Projects', value: '10+', Glyph: IoBriefcase, open: 'projects' },
+  { label: 'Projects', value: `${PROJECTS.length}`, Glyph: IoBriefcase, open: 'projects' },
   { label: 'Certificates', value: `${certificateCount}`, Glyph: IoRibbon, open: 'photos' },
   { label: 'Internships', value: '6', Glyph: IoSchool, open: 'experience' },
   { label: 'Years Coding', value: '3+', Glyph: IoFlash, open: 'skills' },
