@@ -46,10 +46,10 @@ export default function Experience() {
 
   return (
     <WindowLayout title="Experience" subtitle="6 internships · 25+ certificates · 3+ years" surface="grouped">
-      <div className="max-w-[640px] mx-auto px-6 py-6">
+      <div className="max-w-160 mx-auto px-6 py-6">
         <div className="grid grid-cols-3 gap-2.5 mb-6">
           {[['6', 'Internships'], ['25+', 'Certificates'], ['3+', 'Years']].map(([v, l]) => (
-            <div key={l} className="rounded-[10px] bg-[var(--group-bg)] shadow-[0_0_0_0.5px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.08)] py-3 text-center">
+            <div key={l} className="rounded-[10px] bg-(--group-bg) shadow-[0_0_0_0.5px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.08)] py-3 text-center">
               <div className="text-[22px] font-semibold leading-none">{v}</div>
               <div className="text-[11px] text-black/50 dark:text-white/50 mt-1">{l}</div>
             </div>
@@ -62,22 +62,22 @@ export default function Experience() {
             return (
               <div key={exp.company}>
                 <button type="button" onClick={() => setExpanded(open ? null : i)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-black/[0.02] dark:hover:bg-white/[0.03]">
-                  <ChevronGlyph dir={open ? 'down' : 'right'} size={9} className="opacity-45 transition-transform flex-shrink-0" />
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-black/2 dark:hover:bg-white/3">
+                  <ChevronGlyph dir={open ? 'down' : 'right'} size={9} className="opacity-45 transition-transform shrink-0" />
                   <SymbolTile Glyph={exp.Glyph} color={exp.color} size={30} />
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-semibold">{exp.company}</div>
                     <div className="text-[12px] text-black/55 dark:text-white/55 truncate">{exp.role}</div>
                   </div>
-                  <span className="text-[12px] text-black/45 dark:text-white/45 tabular-nums flex-shrink-0">{exp.period}</span>
+                  <span className="text-[12px] text-black/45 dark:text-white/45 tabular-nums shrink-0">{exp.period}</span>
                 </button>
                 {open && (
-                  <div className="pl-[68px] pr-4 pb-3.5 animate-fade-in">
+                  <div className="pl-17 pr-4 pb-3.5 animate-fade-in">
                     <p className="text-[13px] leading-relaxed text-black/70 dark:text-white/70 mb-2.5">{exp.description}</p>
                     <ul className="space-y-1.5">
                       {exp.highlights.map(h => (
                         <li key={h} className="flex items-start gap-2 text-[12px] text-black/70 dark:text-white/70">
-                          <IoCheckmarkCircle className="mt-px flex-shrink-0 text-[14px]" style={{ color: exp.color }} />
+                          <IoCheckmarkCircle className="mt-px shrink-0 text-[14px]" style={{ color: exp.color }} />
                           {h}
                         </li>
                       ))}
@@ -99,7 +99,7 @@ export default function Experience() {
           </div>
           <div className="flex flex-wrap gap-1.5 px-3 py-3">
             {certAreas.map(a => (
-              <span key={a} className="px-2 py-0.5 rounded-[5px] text-[12px] bg-black/[0.05] dark:bg-white/[0.08] text-black/70 dark:text-white/75">{a}</span>
+              <span key={a} className="px-2 py-0.5 rounded-[5px] text-[12px] bg-black/5 dark:bg-white/8 text-black/70 dark:text-white/75">{a}</span>
             ))}
           </div>
         </InsetGroup>

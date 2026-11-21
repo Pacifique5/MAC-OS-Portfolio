@@ -127,7 +127,7 @@ export default function Photos() {
           value={12 - columns}
           onChange={(e) => setColumns(12 - Number(e.target.value))}
           aria-label="Zoom"
-          className="w-24 h-[4px] rounded-full cursor-pointer"
+          className="w-24 h-1 rounded-full cursor-pointer"
           style={{ background: `linear-gradient(to right, var(--mac-blue) ${((12 - columns - 2) / 8) * 100}%, rgba(120,120,128,0.3) ${((12 - columns - 2) / 8) * 100}%)` }}
         />
         <button type="button" title="Larger" onClick={() => setColumns(c => Math.max(2, c - 1))} className="text-black/55 dark:text-white/60 hover:text-black dark:hover:text-white"><IoAdd /></button>
@@ -159,7 +159,7 @@ export default function Photos() {
       {current ? (
         /* ---------------- Single photo viewer ---------------- */
         <div className="flex h-full">
-          <div className="relative flex-1 bg-[var(--content-bg)]" onDoubleClick={() => setViewing(null)}>
+          <div className="relative flex-1 bg-(--content-bg)" onDoubleClick={() => setViewing(null)}>
             <button type="button" onClick={() => setViewing(null)}
               className="absolute top-3 left-3 z-10 flex items-center gap-1 h-7 pl-1.5 pr-2.5 rounded-full text-[12px] mac-panel">
               <IoChevronBack /> {VIEW_TITLES[view]}
@@ -190,12 +190,12 @@ export default function Photos() {
             </div>
           </div>
           {showInfo && (
-            <aside className="w-[230px] flex-shrink-0 border-l border-[var(--hairline)] p-4 text-[12px] space-y-3 overflow-y-auto mac-scroll">
+            <aside className="w-57.5 shrink-0 border-l border-(--hairline) p-4 text-[12px] space-y-3 overflow-y-auto mac-scroll">
               <div>
                 <div className="text-[13px] font-semibold leading-snug">{current.title}</div>
                 <div className="text-black/50 dark:text-white/50 mt-0.5">{ALBUM_LABEL[current.album]}</div>
               </div>
-              <div className="h-px bg-[var(--hairline)]" />
+              <div className="h-px bg-(--hairline)" />
               {[
                 ['Date', longDate(current.date)],
                 ['Dimensions', `${current.width} × ${current.height}`],
@@ -215,18 +215,18 @@ export default function Photos() {
         <div className="h-full flex flex-col items-center justify-center text-center gap-2 px-8">
           <IoHeartOutline className="text-[40px] text-black/25 dark:text-white/25" />
           <div className="text-[15px] font-semibold">No Favorites</div>
-          <div className="text-[12px] text-black/50 dark:text-white/50 max-w-[260px]">Open a photo and click the heart to add it to your Favorites.</div>
+          <div className="text-[12px] text-black/50 dark:text-white/50 max-w-65">Open a photo and click the heart to add it to your Favorites.</div>
         </div>
       ) : (
         /* ---------------- Grid ---------------- */
         <div className="pb-4" onClick={() => setSelected(null)}>
           {groups.map(([month, items]) => (
             <section key={month}>
-              <div className="sticky top-0 z-10 px-4 pt-3 pb-2 bg-[var(--toolbar-bg)] backdrop-blur-xl flex items-baseline gap-2">
+              <div className="sticky top-0 z-10 px-4 pt-3 pb-2 bg-(--toolbar-bg) backdrop-blur-xl flex items-baseline gap-2">
                 <h3 className="text-[15px] font-bold">{month}</h3>
                 <span className="text-[11px] text-black/45 dark:text-white/45">{items.length} {items.length === 1 ? 'item' : 'items'}</span>
               </div>
-              <div className="grid gap-[2px] px-[2px]" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
+              <div className="grid gap-0.5 px-0.5" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
                 {items.map(p => {
                   const index = photos.indexOf(p);
                   const isSelected = selected === p.id;
@@ -237,7 +237,7 @@ export default function Photos() {
                       title={p.title}
                       onClick={(e) => { e.stopPropagation(); setSelected(p.id); }}
                       onDoubleClick={() => setViewing(index)}
-                      className="relative aspect-square overflow-hidden bg-black/[0.04] dark:bg-white/[0.05] outline-none group"
+                      className="relative aspect-square overflow-hidden bg-black/4 dark:bg-white/5 outline-none group"
                     >
                       <Image
                         src={p.src}
@@ -249,7 +249,7 @@ export default function Photos() {
                       {favorites.includes(p.id) && (
                         <IoHeart className="absolute bottom-1.5 left-1.5 text-[13px] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]" />
                       )}
-                      {isSelected && <span className="absolute inset-0 ring-[3px] ring-inset ring-[var(--mac-blue)]" />}
+                      {isSelected && <span className="absolute inset-0 ring-[3px] ring-inset ring-macblue" />}
                     </button>
                   );
                 })}

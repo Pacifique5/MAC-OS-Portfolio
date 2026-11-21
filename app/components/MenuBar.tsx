@@ -87,9 +87,9 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
   const pressed = light ? 'bg-black/15' : 'bg-white/25';
   const hover = light ? 'hover:bg-black/[0.07]' : 'hover:bg-white/10';
   const titleCls = (id: string) =>
-    `h-[22px] px-[9px] rounded-[4px] flex items-center transition-colors ${openMenu?.id === id ? pressed : hover}`;
+    `h-5.5 px-2.25 rounded-sm flex items-center transition-colors ${openMenu?.id === id ? pressed : hover}`;
   const statusCls = (id: string) =>
-    `h-[22px] px-[7px] rounded-[4px] flex items-center gap-1.5 transition-colors ${openMenu?.id === id ? pressed : hover}`;
+    `h-5.5 px-1.75 rounded-sm flex items-center gap-1.5 transition-colors ${openMenu?.id === id ? pressed : hover}`;
 
   const labels: Record<(typeof LEFT_MENUS)[number], ReactNode> = {
     apple: <FaApple className="text-[15px] -mt-px" />,
@@ -100,7 +100,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
   return (
     <>
       <div
-        className={`absolute top-0 inset-x-0 h-7 z-[60] flex items-center justify-between px-2 text-[13px] backdrop-blur-2xl select-none transition-colors ${
+        className={`absolute top-0 inset-x-0 h-7 z-60 flex items-center justify-between px-2 text-[13px] backdrop-blur-2xl select-none transition-colors ${
           light ? 'text-black/85 bg-white/35' : 'text-white bg-black/25'
         }`}
         style={{ textShadow: light ? 'none' : '0 0 6px rgba(0,0,0,0.25)' }}
@@ -115,7 +115,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
         </div>
 
         <div className="flex items-center gap-0.5">
-          {sys.focusOn && <span className="h-[22px] px-[7px] flex items-center" title="Do Not Disturb"><MoonGlyph size={13} /></span>}
+          {sys.focusOn && <span className="h-5.5 px-1.75 flex items-center" title="Do Not Disturb"><MoonGlyph size={13} /></span>}
           <button type="button" className={statusCls('bluetooth')} onClick={toggle('bluetooth', 'right')} aria-label="Bluetooth">
             <BluetoothGlyph size={14} className={sys.btOn && sys.btSupported ? '' : 'opacity-50'} />
           </button>
@@ -135,7 +135,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
           <button type="button" className={statusCls('controlcenter')} onClick={toggle('controlcenter', 'right')} aria-label="Control Center">
             <ControlCenterGlyph size={13} />
           </button>
-          <button type="button" className={`h-[22px] px-[7px] rounded-[4px] transition-colors ${notificationsOpen ? pressed : hover}`}
+          <button type="button" className={`h-5.5 px-1.75 rounded-sm transition-colors ${notificationsOpen ? pressed : hover}`}
             onClick={(e) => { e.stopPropagation(); setOpenMenu(null); onToggleNotifications(); }}>
             <span suppressHydrationWarning>{clock}</span>
           </button>
@@ -144,14 +144,14 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
 
       {openMenu && (
         <div
-          className="absolute top-[27px] z-[61] animate-fade-in"
+          className="absolute top-6.75 z-61 animate-fade-in"
           style={openMenu.side === 'left' ? { left: openMenu.x } : { right: openMenu.id === 'controlcenter' ? 8 : Math.max(6, openMenu.x) }}
           onClick={(e) => e.stopPropagation()}
         >
           {openMenu.id === 'controlcenter' ? (
             <ControlCenter sys={sys} />
           ) : (
-            <div className={`mac-menu ${openMenu.side === 'right' ? 'w-[284px]' : 'min-w-[230px]'}`}>
+            <div className={`mac-menu ${openMenu.side === 'right' ? 'w-71' : 'min-w-57.5'}`}>
               {renderMenu(openMenu.id)}
             </div>
           )}
@@ -262,7 +262,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
                 <MenuSeparator />
               </>
             ) : (
-              <div className="px-[9px] py-1 text-[12px] opacity-60">No open windows</div>
+              <div className="px-2.25 py-1 text-[12px] opacity-60">No open windows</div>
             )}
             {actions.windows.length > 0 && (
               <>
@@ -283,10 +283,10 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
         return (
           <>
             <div className="px-1.5 pt-1 pb-1.5">
-              <div className="flex items-center gap-1.5 h-[22px] px-2 rounded-[5px] bg-black/[0.06] dark:bg-white/10 shadow-[inset_0_0_0_0.5px_var(--hairline)]">
+              <div className="flex items-center gap-1.5 h-5.5 px-2 rounded-[5px] bg-black/6 dark:bg-white/10 shadow-[inset_0_0_0_0.5px_var(--hairline)]">
                 <SearchGlyph size={11} className="opacity-50" />
                 <input autoFocus value={helpQuery} onChange={(e) => setHelpQuery(e.target.value)} placeholder="Search"
-                  className="bg-transparent outline-none text-[13px] w-full placeholder:text-[var(--menu-dim)]" />
+                  className="bg-transparent outline-none text-[13px] w-full placeholder:text-(--menu-dim)" />
               </div>
             </div>
             {hits.length > 0 && (
@@ -296,7 +296,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
                 <MenuSeparator />
               </>
             )}
-            {q && hits.length === 0 && <div className="px-[9px] py-1 text-[12px] opacity-60">No results</div>}
+            {q && hits.length === 0 && <div className="px-2.25 py-1 text-[12px] opacity-60">No results</div>}
             <MenuItem onClick={run(() => actions.openWindow('finder'))}>Getting Started</MenuItem>
             <MenuItem onClick={run(() => actions.openWindow('about'))}>About This Portfolio</MenuItem>
             <MenuSeparator />
@@ -312,8 +312,8 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
       case 'sound':
         return (
           <>
-            <div className="px-[9px] pt-1 pb-2 text-[13px] font-semibold">Sound</div>
-            <div className="px-[9px] pb-2">
+            <div className="px-2.25 pt-1 pb-2 text-[13px] font-semibold">Sound</div>
+            <div className="px-2.25 pb-2">
               <CCSlider value={sys.volume} onChange={sys.setVolume} icon={<SpeakerGlyph size={11} level={volumeLevel(sys.volume)} />} />
             </div>
             <MenuSeparator />
@@ -322,7 +322,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
               const active = sys.outputDevice === dev;
               const Glyph = dev.includes('AirPods') ? HeadphonesGlyph : dev.includes('Display') ? DisplayGlyph : LaptopGlyph;
               return (
-                <button key={dev} type="button" className="mac-menu-item !py-1" onClick={() => sys.setOutputDevice(dev)}>
+                <button key={dev} type="button" className="mac-menu-item py-1!" onClick={() => sys.setOutputDevice(dev)}>
                   <span className="flex items-center gap-2"><CircleIcon active={active}><Glyph size={11} /></CircleIcon>{dev}</span>
                 </button>
               );
@@ -334,17 +334,17 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
       case 'battery':
         return (
           <>
-            <div className="px-[9px] pt-1 pb-1 flex items-center justify-between">
+            <div className="px-2.25 pt-1 pb-1 flex items-center justify-between">
               <span className="text-[13px] font-semibold">Battery</span>
               <span className="text-[13px] opacity-60">{sys.battery.level}%</span>
             </div>
-            <div className="px-[9px] pb-1 text-[12px] opacity-60">
+            <div className="px-2.25 pb-1 text-[12px] opacity-60">
               Power Source: {sys.battery.charging ? 'Power Adapter' : 'Battery'}
               {!sys.battery.supported && <span className="block text-[11px] opacity-80">Battery status unavailable in this browser</span>}
             </div>
             <MenuSeparator />
             <div className="mac-menu-heading">Using Significant Energy</div>
-            <div className="px-[9px] pb-1 text-[12px] opacity-60">No Apps Using Significant Energy</div>
+            <div className="px-2.25 pb-1 text-[12px] opacity-60">No Apps Using Significant Energy</div>
             <MenuSeparator />
             <MenuItem onClick={() => setOpenMenu({ id: 'controlcenter', side: 'right', x: 8 })}>Battery Settings…</MenuItem>
           </>
@@ -362,7 +362,7 @@ function WifiMenu({ sys, close }: { sys: SystemState; close: () => void }) {
   const others = WIFI_NETWORKS.filter(n => n.name !== sys.connectedNetwork);
 
   const row = (net: (typeof WIFI_NETWORKS)[number], connected: boolean) => (
-    <button key={net.name} type="button" className="mac-menu-item !py-1 group" onClick={() => sys.connectNetwork(net.name)}>
+    <button key={net.name} type="button" className="mac-menu-item py-1! group" onClick={() => sys.connectNetwork(net.name)}>
       <span className="flex items-center gap-2 min-w-0">
         <CircleIcon active={connected}><WifiGlyph size={10} strength={net.signal} /></CircleIcon>
         <span className="truncate">{net.name}</span>
@@ -375,7 +375,7 @@ function WifiMenu({ sys, close }: { sys: SystemState; close: () => void }) {
 
   return (
     <>
-      <div className="px-[9px] pt-1 pb-1.5 flex items-center justify-between">
+      <div className="px-2.25 pt-1 pb-1.5 flex items-center justify-between">
         <span className="text-[13px] font-semibold">Wi-Fi</span>
         <Toggle on={sys.wifiOn} onChange={sys.toggleWifi} />
       </div>
@@ -383,7 +383,7 @@ function WifiMenu({ sys, close }: { sys: SystemState; close: () => void }) {
         <>
           <MenuSeparator />
           {sys.wifiSearching ? (
-            <div className="flex items-center gap-2 px-[9px] py-2 text-[12px] opacity-60"><Spinner size={13} /> Looking for networks…</div>
+            <div className="flex items-center gap-2 px-2.25 py-2 text-[12px] opacity-60"><Spinner size={13} /> Looking for networks…</div>
           ) : (
             <>
               {current && (
@@ -407,21 +407,21 @@ function WifiMenu({ sys, close }: { sys: SystemState; close: () => void }) {
 function BluetoothMenu({ sys, close }: { sys: SystemState; close: () => void }) {
   return (
     <>
-      <div className="px-[9px] pt-1 pb-1.5 flex items-center justify-between">
+      <div className="px-2.25 pt-1 pb-1.5 flex items-center justify-between">
         <span className="text-[13px] font-semibold">Bluetooth</span>
         <Toggle on={sys.btSupported && sys.btOn} onChange={sys.setBtOn} disabled={!sys.btSupported} />
       </div>
       <MenuSeparator />
       {!sys.btSupported ? (
-        <div className="px-[9px] py-2 text-[12px] opacity-60 leading-snug">Bluetooth isn’t available in this browser. Try Chrome or Edge on desktop.</div>
+        <div className="px-2.25 py-2 text-[12px] opacity-60 leading-snug">Bluetooth isn’t available in this browser. Try Chrome or Edge on desktop.</div>
       ) : !sys.btOn ? (
-        <div className="px-[9px] py-2 text-[12px] opacity-60">Bluetooth is off.</div>
+        <div className="px-2.25 py-2 text-[12px] opacity-60">Bluetooth is off.</div>
       ) : (
         <>
           <div className="mac-menu-heading">Devices</div>
-          {sys.btDevices.length === 0 && <div className="px-[9px] py-1 text-[12px] opacity-50">No devices paired yet</div>}
+          {sys.btDevices.length === 0 && <div className="px-2.25 py-1 text-[12px] opacity-50">No devices paired yet</div>}
           {sys.btDevices.map(d => (
-            <div key={d.id} className="mac-menu-item !py-1">
+            <div key={d.id} className="mac-menu-item py-1!">
               <span className="flex items-center gap-2 min-w-0">
                 <CircleIcon active><HeadphonesGlyph size={11} /></CircleIcon>
                 <span className="truncate">{d.name}</span>

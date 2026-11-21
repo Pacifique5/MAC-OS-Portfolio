@@ -214,7 +214,7 @@ export default function Home() {
 
       {/* Desktop icons — macOS stacks them from the top-right */}
       <div
-        className="absolute top-9 right-3 bottom-[88px] z-10 grid grid-flow-col auto-cols-[96px] grid-rows-[repeat(auto-fill,96px)] gap-x-1"
+        className="absolute top-9 right-3 bottom-22 z-10 grid grid-flow-col auto-cols-[96px] grid-rows-[repeat(auto-fill,96px)] gap-x-1"
         style={{ direction: 'rtl' }}
       >
         {SECTION_IDS.map(id => {
@@ -230,11 +230,11 @@ export default function Home() {
               onDoubleClick={() => launch(id)}
               onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedIcon(id); setContextMenu({ x: e.clientX, y: e.clientY, target: id, kind: 'icon' }); }}
             >
-              <span className={`p-[3px] rounded-[6px] ${sel ? (tone === 'light' ? 'bg-black/10 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]' : 'bg-black/25 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.18)]') : ''}`}>
+              <span className={`p-0.75 rounded-md ${sel ? (tone === 'light' ? 'bg-black/10 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]' : 'bg-black/25 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.18)]') : ''}`}>
                 <FolderIcon size={64} Glyph={app.folderGlyph} />
               </span>
               <span
-                className={`text-[12px] font-medium leading-tight px-[5px] py-px rounded-[4px] ${sel ? 'bg-[#0a5fd6] text-white' : tone === 'light' ? 'text-[#1d1d1f]' : 'text-white'}`}
+                className={`text-[12px] font-medium leading-tight px-1.25 py-px rounded-sm ${sel ? 'bg-[#0a5fd6] text-white' : tone === 'light' ? 'text-[#1d1d1f]' : 'text-white'}`}
                 style={sel ? undefined : tone === 'light'
                   ? { textShadow: '0 0 4px rgba(255,255,255,0.9), 0 1px 1px rgba(255,255,255,0.8)' }
                   : { textShadow: '0 1px 2px rgba(0,0,0,0.75), 0 0 6px rgba(0,0,0,0.35)' }}
@@ -295,8 +295,8 @@ export default function Home() {
 
       {/* Confirmation HUD */}
       {hud && (
-        <div className="absolute inset-0 z-[80] flex items-center justify-center pointer-events-none">
-          <div className="mac-panel !rounded-[18px] px-6 py-4 flex flex-col items-center gap-2 animate-scale-in">
+        <div className="absolute inset-0 z-80 flex items-center justify-center pointer-events-none">
+          <div className="mac-panel rounded-[18px]! px-6 py-4 flex flex-col items-center gap-2 animate-scale-in">
             <svg viewBox="0 0 14 14" width="34" height="34" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7.5 L5.6 10.5 L11.5 3.5" /></svg>
             <span className="text-[13px] font-medium">{hud}</span>
           </div>
@@ -311,11 +311,11 @@ export default function Home() {
       {spotlightOpen && <Spotlight onClose={() => setSpotlightOpen(false)} onOpen={launch} />}
 
       {/* Display brightness */}
-      <div className="absolute inset-0 bg-black pointer-events-none z-[90]" style={{ opacity: ((100 - sys.brightness) / 100) * 0.85 }} />
+      <div className="absolute inset-0 bg-black pointer-events-none z-90" style={{ opacity: ((100 - sys.brightness) / 100) * 0.85 }} />
 
       {/* Sleep / lock */}
       {sleeping && (
-        <div className="absolute inset-0 z-[100] bg-black animate-fade-in flex items-end justify-center pb-16 cursor-pointer" onClick={(e) => { e.stopPropagation(); setSleeping(false); }}>
+        <div className="absolute inset-0 z-100 bg-black animate-fade-in flex items-end justify-center pb-16 cursor-pointer" onClick={(e) => { e.stopPropagation(); setSleeping(false); }}>
           <span className="text-white/30 text-[13px]">Click anywhere to wake</span>
         </div>
       )}

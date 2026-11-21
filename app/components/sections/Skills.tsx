@@ -87,13 +87,13 @@ export default function Skills() {
 
   const sidebar = (
     <>
-      <div className="flex items-center gap-1.5 h-[26px] px-2 mb-3 rounded-md bg-black/[0.06] dark:bg-white/[0.08]">
+      <div className="flex items-center gap-1.5 h-6.5 px-2 mb-3 rounded-md bg-black/6 dark:bg-white/8">
         <IoSearch className="text-[12px] opacity-45" />
         <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search"
           className="bg-transparent outline-none text-[13px] w-full placeholder:text-black/40 dark:placeholder:text-white/40" />
       </div>
       {/* Profile row, like the Apple Account row in System Settings */}
-      <button type="button" onClick={() => setActive(0)} className="w-full flex items-center gap-2.5 px-2 py-2 mb-3 rounded-lg text-left hover:bg-black/[0.04] dark:hover:bg-white/[0.05]">
+      <button type="button" onClick={() => setActive(0)} className="w-full flex items-center gap-2.5 px-2 py-2 mb-3 rounded-lg text-left hover:bg-black/4 dark:hover:bg-white/5">
         <span className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[14px] font-semibold bg-[linear-gradient(180deg,#a8a8b0,#6c6c74)]">MP</span>
         <span className="min-w-0">
           <span className="block text-[13px] font-semibold truncate">Mugisha Pacifique</span>
@@ -106,7 +106,7 @@ export default function Skills() {
           const sel = active === i;
           return (
             <button key={c.title} type="button" onClick={() => setActive(i)}
-              className={`w-full flex items-center gap-2 h-7 px-2 rounded-md text-[13px] text-left ${sel ? 'bg-macblue text-white' : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.05]'}`}>
+              className={`w-full flex items-center gap-2 h-7 px-2 rounded-md text-[13px] text-left ${sel ? 'bg-macblue text-white' : 'hover:bg-black/4 dark:hover:bg-white/5'}`}>
               <SymbolTile Glyph={c.Glyph} color={c.color} size={20} />
               <span className="truncate">{c.title}</span>
             </button>
@@ -114,7 +114,7 @@ export default function Skills() {
         })}
         <div className="h-2" />
         <button type="button" onClick={() => setActive('soft')}
-          className={`w-full flex items-center gap-2 h-7 px-2 rounded-md text-[13px] text-left ${active === 'soft' ? 'bg-macblue text-white' : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.05]'}`}>
+          className={`w-full flex items-center gap-2 h-7 px-2 rounded-md text-[13px] text-left ${active === 'soft' ? 'bg-macblue text-white' : 'hover:bg-black/4 dark:hover:bg-white/5'}`}>
           <SymbolTile Glyph={IoPeople} color="#5ac8fa" size={20} />
           <span>Soft Skills</span>
         </button>
@@ -126,7 +126,7 @@ export default function Skills() {
 
   return (
     <WindowLayout title={cat ? cat.title : 'Soft Skills'} sidebar={sidebar} sidebarWidth={220} surface="grouped">
-      <div className="max-w-[560px] mx-auto px-6 py-6">
+      <div className="max-w-140 mx-auto px-6 py-6">
         {cat ? (
           <>
             <div className="flex flex-col items-center text-center mb-6">
@@ -141,7 +141,7 @@ export default function Skills() {
                   label={<span className={q && s.name.toLowerCase().includes(q) ? 'font-semibold' : ''}>{s.name}</span>}
                   detail={s.desc}
                   right={
-                    <span className="flex items-center gap-2.5 w-[150px]">
+                    <span className="flex items-center gap-2.5 w-37.5">
                       <LevelBar value={s.level} color={cat.color} />
                       <span className="w-8 text-right tabular-nums">{s.level}%</span>
                     </span>

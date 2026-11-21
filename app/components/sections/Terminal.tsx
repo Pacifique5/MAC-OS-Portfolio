@@ -311,7 +311,7 @@ export default function Terminal({ onOpen, onClose }: { onOpen: (id: string) => 
             ) : l.kind === 'banner' ? (
               <pre key={l.id} className="m-0 text-[11px] leading-[1.05] font-bold" style={glow(color, 0.6)}>{l.text}</pre>
             ) : (
-              <div key={l.id} className="whitespace-pre-wrap break-words min-h-[1.45em]" style={glow(l.kind === 'out' ? color : KIND_COLORS[l.kind], l.kind === 'dim' ? 0 : 0.3)}>
+              <div key={l.id} className="whitespace-pre-wrap wrap-break-word min-h-[1.45em]" style={glow(l.kind === 'out' ? color : KIND_COLORS[l.kind], l.kind === 'dim' ? 0 : 0.3)}>
                 {l.text}
               </div>
             ),
@@ -336,7 +336,7 @@ export default function Terminal({ onOpen, onClose }: { onOpen: (id: string) => 
           spellCheck={false}
           autoComplete="off"
           autoCapitalize="off"
-          className="absolute opacity-0 w-px h-px -left-[9999px]"
+          className="absolute opacity-0 w-px h-px -left-2499.75"
         />
       </div>
     </WindowLayout>

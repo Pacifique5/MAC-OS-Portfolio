@@ -29,17 +29,17 @@ function TrafficLights({ active, onClose, onMinimize, onZoom }: { active: boolea
   const ring = { boxShadow: 'inset 0 0 0 0.5px rgba(0,0,0,0.18)' };
   const idle = 'bg-[#d4d4d6] dark:bg-[#4b4b4f]';
   return (
-    <div className="group/lights flex items-center gap-2 flex-shrink-0" data-no-drag onDoubleClick={(e) => e.stopPropagation()}>
+    <div className="group/lights flex items-center gap-2 shrink-0" data-no-drag onDoubleClick={(e) => e.stopPropagation()}>
       <button type="button" aria-label="Close" onClick={(e) => { e.stopPropagation(); onClose?.(); }}
-        className={`${base} ${active ? 'bg-[#ff5f57]' : idle} group-hover/lights:!bg-[#ff5f57]`} style={ring}>
+        className={`${base} ${active ? 'bg-[#ff5f57]' : idle} group-hover/lights:bg-[#ff5f57]!`} style={ring}>
         <span className="opacity-0 group-hover/lights:opacity-100"><CloseMark /></span>
       </button>
       <button type="button" aria-label="Minimize" onClick={(e) => { e.stopPropagation(); onMinimize?.(); }}
-        className={`${base} ${active ? 'bg-[#febc2e]' : idle} group-hover/lights:!bg-[#febc2e]`} style={ring}>
+        className={`${base} ${active ? 'bg-[#febc2e]' : idle} group-hover/lights:bg-[#febc2e]!`} style={ring}>
         <span className="opacity-0 group-hover/lights:opacity-100"><MinimizeMark /></span>
       </button>
       <button type="button" aria-label="Zoom" onClick={(e) => { e.stopPropagation(); onZoom(); }}
-        className={`${base} ${active ? 'bg-[#28c840]' : idle} group-hover/lights:!bg-[#28c840]`} style={ring}>
+        className={`${base} ${active ? 'bg-[#28c840]' : idle} group-hover/lights:bg-[#28c840]!`} style={ring}>
         <span className="opacity-0 group-hover/lights:opacity-100"><ZoomMark /></span>
       </button>
     </div>
@@ -122,7 +122,7 @@ export default function MacWindow({ children, zIndex, active, initialOffset, onC
   return (
     <WindowChromeContext.Provider value={ctx}>
       <div
-        className={`fixed overflow-hidden rounded-[10px] animate-scale-in bg-[var(--window-bg)] text-[#1d1d1f] dark:text-white ${
+        className={`fixed overflow-hidden rounded-[10px] animate-scale-in bg-(--window-bg) text-[#1d1d1f] dark:text-white ${
           dragging ? '' : 'transition-[left,top,width,height,border-radius] duration-300 ease-out'
         }`}
         style={{
@@ -164,13 +164,13 @@ export function WindowLayout({ title, subtitle, sidebar, sidebarWidth = 210, too
   return (
     <div className="flex h-full">
       {sidebar && (
-        <aside className="mac-sidebar flex flex-col flex-shrink-0 border-r border-[var(--hairline)]" style={{ width: sidebarWidth }}>
-          <div className="h-[52px] flex items-center px-[18px] flex-shrink-0" {...drag}>{lights}</div>
+        <aside className="mac-sidebar flex flex-col shrink-0 border-r border-(--hairline)" style={{ width: sidebarWidth }}>
+          <div className="h-13 flex items-center px-4.5 shrink-0" {...drag}>{lights}</div>
           <div className="flex-1 overflow-y-auto mac-scroll px-2.5 pb-3">{sidebar}</div>
         </aside>
       )}
-      <div className={`flex-1 flex flex-col min-w-0 ${surface === 'grouped' ? 'bg-[var(--content-bg)]' : 'bg-[var(--window-bg)]'}`}>
-        <div className="h-[52px] flex items-center gap-3 px-4 flex-shrink-0 border-b border-[var(--hairline)] bg-[var(--toolbar-bg)] backdrop-blur-xl" {...drag}>
+      <div className={`flex-1 flex flex-col min-w-0 ${surface === 'grouped' ? 'bg-(--content-bg)' : 'bg-(--window-bg)'}`}>
+        <div className="h-13 flex items-center gap-3 px-4 shrink-0 border-b border-(--hairline) bg-(--toolbar-bg) backdrop-blur-xl" {...drag}>
           {!sidebar && lights}
           <div className={`min-w-0 ${sidebar ? '' : 'pl-2'} ${active ? '' : 'opacity-50'}`}>
             <div className="text-[15px] font-bold leading-tight truncate">{title}</div>

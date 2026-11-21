@@ -68,7 +68,7 @@ type Filter = 'All' | 'Featured' | 'Web' | 'Mobile';
 function ProjectTile({ title, color, size = 44 }: { title: string; color: string[]; size?: number }) {
   const initials = title.split(/[\s-]+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
   return (
-    <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
       <svg viewBox="0 0 100 100" width={size} height={size} className="absolute inset-0">
         <defs>
           <linearGradient id={`pt-${title.replace(/\W/g, '')}`} x1="0" y1="0" x2="0" y2="1">
@@ -110,17 +110,17 @@ export default function Projects() {
     <WindowLayout title="Projects" subtitle={`${list.length} projects`} sidebar={sidebar} sidebarWidth={190}>
       <div className="flex h-full">
         {/* List column */}
-        <div className="w-[250px] flex-shrink-0 border-r border-[var(--hairline)] overflow-y-auto mac-scroll p-1.5">
+        <div className="w-62.5 shrink-0 border-r border-(--hairline) overflow-y-auto mac-scroll p-1.5">
           {list.map(p => {
             const active = project?.title === p.title;
             return (
               <button key={p.title} type="button" onClick={() => setSelected(p.title)}
-                className={`w-full flex items-center gap-2.5 p-2 rounded-md text-left ${active ? 'bg-macblue text-white' : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.05]'}`}>
+                className={`w-full flex items-center gap-2.5 p-2 rounded-md text-left ${active ? 'bg-macblue text-white' : 'hover:bg-black/4 dark:hover:bg-white/5'}`}>
                 <ProjectTile title={p.title} color={p.color} size={36} />
                 <div className="flex-1 min-w-0">
                   <div className="text-[13px] font-medium truncate flex items-center gap-1">
                     {p.title}
-                    {p.featured && <IoStar className={`text-[10px] flex-shrink-0 ${active ? 'text-white' : 'text-[#ff9f0a]'}`} />}
+                    {p.featured && <IoStar className={`text-[10px] shrink-0 ${active ? 'text-white' : 'text-[#ff9f0a]'}`} />}
                   </div>
                   <div className={`text-[11px] truncate ${active ? 'text-white/75' : 'text-black/50 dark:text-white/50'}`}>{p.category} · {p.year}</div>
                 </div>
@@ -138,7 +138,7 @@ export default function Projects() {
               <div className="flex-1 min-w-0">
                 <h2 className="text-[22px] font-semibold leading-tight">{project.title}</h2>
                 <div className="flex items-center gap-1.5 mt-1.5 text-[11px]">
-                  <span className={`px-1.5 py-px rounded ${project.status === 'Live' ? 'bg-[#34c759]/15 text-[#248a3d] dark:text-[#30d158]' : 'bg-black/[0.06] dark:bg-white/10 text-black/60 dark:text-white/60'}`}>{project.status}</span>
+                  <span className={`px-1.5 py-px rounded ${project.status === 'Live' ? 'bg-[#34c759]/15 text-[#248a3d] dark:text-[#30d158]' : 'bg-black/6 dark:bg-white/10 text-black/60 dark:text-white/60'}`}>{project.status}</span>
                   <span className="text-black/45 dark:text-white/45">{project.category} · {project.year}</span>
                 </div>
                 <div className="flex gap-2 mt-3">
@@ -148,7 +148,7 @@ export default function Projects() {
               </div>
             </div>
 
-            <div className="h-px bg-[var(--hairline)] mb-4" />
+            <div className="h-px bg-(--hairline) mb-4" />
             <h3 className="text-[13px] font-semibold mb-1.5">Description</h3>
             <p className="text-[13px] leading-relaxed text-black/75 dark:text-white/75 mb-3">{project.description}</p>
             <p className="text-[13px] leading-relaxed text-black/60 dark:text-white/60 mb-5">{project.longDesc}</p>
@@ -156,7 +156,7 @@ export default function Projects() {
             <h3 className="text-[13px] font-semibold mb-2">Built With</h3>
             <div className="flex flex-wrap gap-1.5">
               {project.tags.map(tag => (
-                <span key={tag} className="px-2 py-0.5 rounded-[5px] text-[12px] bg-black/[0.05] dark:bg-white/[0.08] text-black/70 dark:text-white/75">{tag}</span>
+                <span key={tag} className="px-2 py-0.5 rounded-[5px] text-[12px] bg-black/5 dark:bg-white/8 text-black/70 dark:text-white/75">{tag}</span>
               ))}
             </div>
           </div>

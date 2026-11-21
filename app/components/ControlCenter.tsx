@@ -47,7 +47,7 @@ export default function ControlCenter({ sys }: { sys: SystemState }) {
           </button>
           <div className="grid grid-cols-2 gap-2.5">
             <button type="button" title="Stage Manager" onClick={() => sys.setStageManager(!sys.stageManager)}
-              className={`mac-tile flex flex-col items-center justify-center gap-1 py-2 ${sys.stageManager ? '!bg-[var(--mac-blue)] !text-white' : ''}`}>
+              className={`mac-tile flex flex-col items-center justify-center gap-1 py-2 ${sys.stageManager ? 'bg-macblue! text-white!' : ''}`}>
               <StageManagerGlyph size={15} />
               <span className="text-[9px] leading-tight text-center opacity-80">Stage<br />Manager</span>
             </button>

@@ -55,7 +55,7 @@ export default function Contact() {
       }
     >
       {/* Compose */}
-      <form onSubmit={send} className="border-b border-[var(--hairline)]">
+      <form onSubmit={send} className="border-b border-(--hairline)">
         {sent ? (
           <div className="flex flex-col items-center justify-center py-14 gap-2">
             <IoCheckmarkCircle className="text-[44px] text-[#34c759]" />
@@ -65,13 +65,13 @@ export default function Contact() {
         ) : (
           <>
             {[
-              { label: 'To:', node: <span className="inline-flex items-center px-2 h-[20px] rounded-full bg-macblue/15 text-macblue text-[12px]">Mugisha Pacifique</span> },
+              { label: 'To:', node: <span className="inline-flex items-center px-2 h-5 rounded-full bg-macblue/15 text-macblue text-[12px]">Mugisha Pacifique</span> },
               { label: 'From:', node: <input required placeholder="Your name" className={field} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /> },
               { label: 'Reply-To:', node: <input required type="email" placeholder="your@email.com" className={field} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /> },
               { label: 'Subject:', node: <input required placeholder="What’s this about?" className={`${field} font-medium`} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} /> },
             ].map(r => (
-              <div key={r.label} className="flex items-center gap-2 mx-5 h-[34px] border-b border-[var(--hairline)]">
-                <span className="w-[68px] text-right text-[13px] text-black/45 dark:text-white/45 flex-shrink-0">{r.label}</span>
+              <div key={r.label} className="flex items-center gap-2 mx-5 h-8.5 border-b border-(--hairline)">
+                <span className="w-17 text-right text-[13px] text-black/45 dark:text-white/45 shrink-0">{r.label}</span>
                 {r.node}
               </div>
             ))}
@@ -92,8 +92,8 @@ export default function Contact() {
         )}
       </form>
 
-      <div className="bg-[var(--content-bg)] px-6 py-6">
-        <div className="max-w-[560px] mx-auto">
+      <div className="bg-(--content-bg) px-6 py-6">
+        <div className="max-w-140 mx-auto">
           <div className="flex items-center gap-2.5 mb-5 px-3 py-2.5 rounded-[10px] bg-[#34c759]/10 shadow-[0_0_0_0.5px_rgba(52,199,89,0.35)]">
             <span className="w-2.5 h-2.5 rounded-full bg-[#34c759] animate-pulse" />
             <div>
@@ -105,7 +105,7 @@ export default function Contact() {
           <InsetGroup title="Other Ways to Reach Me">
             {contactLinks.map(c => (
               <GroupRow key={c.label} href={c.href} icon={<SymbolTile Glyph={c.Glyph} color={c.color} size={24} />} label={c.label}
-                right={<><span className="truncate max-w-[200px]">{c.value}</span><ChevronGlyph size={8} className="opacity-50" /></>} />
+                right={<><span className="truncate max-w-50">{c.value}</span><ChevronGlyph size={8} className="opacity-50" /></>} />
             ))}
           </InsetGroup>
 
@@ -113,11 +113,11 @@ export default function Contact() {
             {faqs.map((f, i) => (
               <div key={f.q}>
                 <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left text-[13px] hover:bg-black/[0.02] dark:hover:bg-white/[0.03]">
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left text-[13px] hover:bg-black/2 dark:hover:bg-white/3">
                   <ChevronGlyph dir={openFaq === i ? 'down' : 'right'} size={9} className="opacity-45" />
                   {f.q}
                 </button>
-                {openFaq === i && <p className="pl-[34px] pr-4 pb-3 text-[12px] leading-relaxed text-black/60 dark:text-white/60">{f.a}</p>}
+                {openFaq === i && <p className="pl-8.5 pr-4 pb-3 text-[12px] leading-relaxed text-black/60 dark:text-white/60">{f.a}</p>}
               </div>
             ))}
           </InsetGroup>

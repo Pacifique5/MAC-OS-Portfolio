@@ -43,7 +43,7 @@ export default function Testimonials() {
 
   const sidebar = (
     <>
-      <div className="flex items-center gap-1.5 h-[26px] px-2 mb-2 rounded-md bg-black/[0.06] dark:bg-white/[0.08]">
+      <div className="flex items-center gap-1.5 h-6.5 px-2 mb-2 rounded-md bg-black/6 dark:bg-white/8">
         <IoSearch className="text-[12px] opacity-45" />
         <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search"
           className="bg-transparent outline-none text-[13px] w-full placeholder:text-black/40 dark:placeholder:text-white/40" />
@@ -53,12 +53,12 @@ export default function Testimonials() {
           const sel = x.i === active;
           return (
             <button key={x.name} type="button" onClick={() => setActive(x.i)}
-              className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-lg text-left ${sel ? 'bg-macblue text-white' : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.05]'}`}>
+              className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-lg text-left ${sel ? 'bg-macblue text-white' : 'hover:bg-black/4 dark:hover:bg-white/5'}`}>
               <Monogram initials={x.avatar} size={36} tint={x.tint} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="text-[13px] font-semibold truncate">{x.name}</span>
-                  <span className={`text-[11px] flex-shrink-0 ${sel ? 'text-white/75' : 'text-black/40 dark:text-white/40'}`}>{x.date.split(' ')[0].slice(0, 3)}</span>
+                  <span className={`text-[11px] shrink-0 ${sel ? 'text-white/75' : 'text-black/40 dark:text-white/40'}`}>{x.date.split(' ')[0].slice(0, 3)}</span>
                 </div>
                 <div className={`text-[12px] leading-snug line-clamp-2 ${sel ? 'text-white/80' : 'text-black/50 dark:text-white/50'}`}>{x.text}</div>
               </div>
@@ -89,25 +89,25 @@ export default function Testimonials() {
           {/* Incoming bubble */}
           <div className="flex items-end gap-2 mb-1.5">
             <Monogram initials={t.avatar} size={26} tint={t.tint} />
-            <div className="relative max-w-[78%] px-3 py-2 rounded-[18px] rounded-bl-[6px] bg-[#e9e9eb] dark:bg-[#3a3a3c] text-[13px] leading-relaxed">
+            <div className="relative max-w-[78%] px-3 py-2 rounded-[18px] rounded-bl-md bg-[#e9e9eb] dark:bg-[#3a3a3c] text-[13px] leading-relaxed">
               {t.text}
             </div>
           </div>
-          <div className="flex items-end gap-2 mb-4 pl-[34px]">
-            <div className="px-3 py-1.5 rounded-[18px] rounded-bl-[6px] bg-[#e9e9eb] dark:bg-[#3a3a3c] flex items-center gap-0.5 text-[#ff9f0a]">
+          <div className="flex items-end gap-2 mb-4 pl-8.5">
+            <div className="px-3 py-1.5 rounded-[18px] rounded-bl-md bg-[#e9e9eb] dark:bg-[#3a3a3c] flex items-center gap-0.5 text-[#ff9f0a]">
               {Array.from({ length: t.rating }).map((_, j) => <IoStar key={j} className="text-[13px]" />)}
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-1.5 pl-[34px] mb-5">
+          <div className="flex flex-wrap gap-1.5 pl-8.5 mb-5">
             {t.tags.map(tag => (
-              <span key={tag} className="px-2 py-0.5 rounded-full text-[11px] border border-[var(--hairline)] text-black/60 dark:text-white/60">{tag}</span>
+              <span key={tag} className="px-2 py-0.5 rounded-full text-[11px] border border-(--hairline) text-black/60 dark:text-white/60">{tag}</span>
             ))}
           </div>
 
           {/* Outgoing reply */}
           <div className="flex justify-end">
-            <div className="max-w-[70%] px-3 py-2 rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#3d9bff,#0a7aff)] text-white text-[13px]">
+            <div className="max-w-[70%] px-3 py-2 rounded-[18px] rounded-br-md bg-[linear-gradient(180deg,#3d9bff,#0a7aff)] text-white text-[13px]">
               Thank you, {t.name.split(' ')[0]}! It was a pleasure working together.
             </div>
           </div>
@@ -115,9 +115,9 @@ export default function Testimonials() {
         </div>
 
         {/* Message field */}
-        <div className="px-4 py-2.5 border-t border-[var(--hairline)] flex items-center gap-2">
+        <div className="px-4 py-2.5 border-t border-(--hairline) flex items-center gap-2">
           <a href="mailto:Pacifiquem58@gmail.com"
-            className="flex-1 h-[28px] px-3 rounded-full border border-[var(--hairline)] flex items-center text-[13px] text-black/40 dark:text-white/40 hover:border-macblue">
+            className="flex-1 h-7 px-3 rounded-full border border-(--hairline) flex items-center text-[13px] text-black/40 dark:text-white/40 hover:border-macblue">
             Want to work together? Send me a message…
           </a>
         </div>

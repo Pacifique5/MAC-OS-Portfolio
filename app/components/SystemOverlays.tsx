@@ -49,27 +49,27 @@ export function Spotlight({ onClose, onOpen }: { onClose: () => void; onOpen: (i
   };
 
   return (
-    <div className="absolute inset-0 z-[70]" onClick={onClose}>
+    <div className="absolute inset-0 z-70" onClick={onClose}>
       <div
-        className="mac-panel !rounded-[14px] absolute top-[20%] left-1/2 -translate-x-1/2 w-[680px] max-w-[calc(100vw-32px)] overflow-hidden animate-scale-in"
+        className="mac-panel rounded-[14px]! absolute top-[20%] left-1/2 -translate-x-1/2 w-170 max-w-[calc(100vw-32px)] overflow-hidden animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-3 h-[54px] px-4">
-          <SearchGlyph size={20} className="opacity-45 flex-shrink-0" />
+        <div className="flex items-center gap-3 h-13.5 px-4">
+          <SearchGlyph size={20} className="opacity-45 shrink-0" />
           <input
             autoFocus
             value={query}
             onChange={(e) => { setQuery(e.target.value); setIndex(0); }}
             onKeyDown={onKey}
             placeholder="Spotlight Search"
-            className="flex-1 bg-transparent outline-none text-[22px] font-light placeholder:text-[var(--menu-dim)]"
+            className="flex-1 bg-transparent outline-none text-[22px] font-light placeholder:text-(--menu-dim)"
           />
-          {selected && <span className="flex items-center gap-1.5 text-[13px] opacity-50 truncate max-w-[180px]">— {selected.label}</span>}
+          {selected && <span className="flex items-center gap-1.5 text-[13px] opacity-50 truncate max-w-45">— {selected.label}</span>}
         </div>
 
         {q && (
-          <div className="flex border-t border-[var(--menu-sep)] h-[300px]">
-            <div className="w-[46%] overflow-y-auto mac-scroll p-1.5 border-r border-[var(--menu-sep)]">
+          <div className="flex border-t border-(--menu-sep) h-75">
+            <div className="w-[46%] overflow-y-auto mac-scroll p-1.5 border-r border-(--menu-sep)">
               {results.length === 0 && <div className="p-4 text-center text-[13px] opacity-50">No Results</div>}
               {groups.map(g => (
                 <div key={g.title}>
@@ -83,7 +83,7 @@ export function Spotlight({ onClose, onOpen }: { onClose: () => void; onOpen: (i
                         type="button"
                         onMouseEnter={() => setIndex(i)}
                         onClick={() => { onOpen(item.id); onClose(); }}
-                        className={`w-full flex items-center gap-2 h-7 px-2 rounded-[5px] text-[13px] text-left ${active ? 'bg-[var(--mac-blue)] text-white' : ''}`}
+                        className={`w-full flex items-center gap-2 h-7 px-2 rounded-[5px] text-[13px] text-left ${active ? 'bg-macblue text-white' : ''}`}
                       >
                         <item.Icon size={20} />
                         <span className="truncate">{item.label}</span>
@@ -123,16 +123,16 @@ function CalendarWidget() {
   const cells: (number | null)[] = [...Array(first).fill(null), ...Array.from({ length: days }, (_, i) => i + 1)];
 
   return (
-    <div className="mac-panel !rounded-[20px] p-3.5">
+    <div className="mac-panel rounded-[20px]! p-3.5">
       <div className="text-[11px] font-bold text-[#ff3b30] uppercase tracking-wide mb-1.5">
         {now.toLocaleDateString('en-US', { month: 'long' })}
       </div>
       <div className="grid grid-cols-7 gap-y-1 text-center text-[10px]">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={i} className="font-semibold opacity-50">{d}</div>)}
         {cells.map((d, i) => (
-          <div key={i} className="flex items-center justify-center h-[18px]">
+          <div key={i} className="flex items-center justify-center h-4.5">
             {d && (
-              <span className={`w-[18px] h-[18px] leading-[18px] rounded-full font-medium ${d === now.getDate() ? 'bg-[#ff3b30] text-white' : (i % 7 === 0 || i % 7 === 6) ? 'opacity-50' : ''}`}>
+              <span className={`w-4.5 h-4.5 leading-4.5 rounded-full font-medium ${d === now.getDate() ? 'bg-[#ff3b30] text-white' : (i % 7 === 0 || i % 7 === 6) ? 'opacity-50' : ''}`}>
                 {d}
               </span>
             )}
@@ -145,12 +145,12 @@ function CalendarWidget() {
 
 export function NotificationCenter({ onOpen, focusOn }: { onOpen: (id: string) => void; focusOn: boolean }) {
   return (
-    <div className="absolute top-9 right-2 z-[60] w-[344px] space-y-2.5 animate-slide-in-right" onClick={(e) => e.stopPropagation()}>
+    <div className="absolute top-9 right-2 z-60 w-86 space-y-2.5 animate-slide-in-right" onClick={(e) => e.stopPropagation()}>
       {focusOn ? (
-        <div className="mac-panel !rounded-[18px] px-4 py-3 text-[13px] opacity-80">Do Not Disturb is on — notifications are silenced.</div>
+        <div className="mac-panel rounded-[18px]! px-4 py-3 text-[13px] opacity-80">Do Not Disturb is on — notifications are silenced.</div>
       ) : (
         <>
-          <button type="button" onClick={() => onOpen('testimonials')} className="mac-panel !rounded-[18px] p-3 flex gap-2.5 w-full text-left">
+          <button type="button" onClick={() => onOpen('testimonials')} className="mac-panel rounded-[18px]! p-3 flex gap-2.5 w-full text-left">
             <MessagesIcon size={34} />
             <div className="flex-1 min-w-0">
               <div className="flex justify-between text-[13px]"><span className="font-semibold">Messages</span><span className="opacity-45 text-[11px]">now</span></div>
@@ -158,7 +158,7 @@ export function NotificationCenter({ onOpen, focusOn }: { onOpen: (id: string) =
               <div className="text-[13px] opacity-75 leading-snug">5 people shared what it’s like working with me. Tap to read.</div>
             </div>
           </button>
-          <button type="button" onClick={() => onOpen('contact')} className="mac-panel !rounded-[18px] p-3 flex gap-2.5 w-full text-left">
+          <button type="button" onClick={() => onOpen('contact')} className="mac-panel rounded-[18px]! p-3 flex gap-2.5 w-full text-left">
             <MailIcon size={34} />
             <div className="flex-1 min-w-0">
               <div className="flex justify-between text-[13px]"><span className="font-semibold">Mail</span><span className="opacity-45 text-[11px]">2m ago</span></div>
@@ -170,17 +170,17 @@ export function NotificationCenter({ onOpen, focusOn }: { onOpen: (id: string) =
       )}
       <div className="grid grid-cols-2 gap-2.5">
         <CalendarWidget />
-        <div className="mac-panel !rounded-[20px] p-3.5 flex flex-col">
+        <div className="mac-panel rounded-[20px]! p-3.5 flex flex-col">
           <div className="text-[11px] font-bold text-[#ff3b30] uppercase tracking-wide">Up Next</div>
           <div className="mt-2 flex gap-2">
-            <span className="w-[3px] rounded-full bg-[#34c759]" />
+            <span className="w-0.75 rounded-full bg-[#34c759]" />
             <div>
               <div className="text-[12px] font-semibold leading-tight">Open to opportunities</div>
               <div className="text-[11px] opacity-55">All day</div>
             </div>
           </div>
           <div className="mt-2 flex gap-2">
-            <span className="w-[3px] rounded-full bg-[#007aff]" />
+            <span className="w-0.75 rounded-full bg-[#007aff]" />
             <div>
               <div className="text-[12px] font-semibold leading-tight">Building with Next.js</div>
               <div className="text-[11px] opacity-55">Every day</div>
@@ -195,8 +195,8 @@ export function NotificationCenter({ onOpen, focusOn }: { onOpen: (id: string) =
 /** Banner that slides in from the top-right, like a macOS notification. */
 export function NotificationBanner({ onOpen, onDismiss }: { onOpen: () => void; onDismiss: () => void }) {
   return (
-    <div className="absolute top-9 right-2 z-[58] w-[344px] animate-slide-in-right group" onClick={(e) => e.stopPropagation()}>
-      <button type="button" onClick={onOpen} className="mac-panel !rounded-[18px] p-3 flex gap-2.5 w-full text-left">
+    <div className="absolute top-9 right-2 z-58 w-86 animate-slide-in-right group" onClick={(e) => e.stopPropagation()}>
+      <button type="button" onClick={onOpen} className="mac-panel rounded-[18px]! p-3 flex gap-2.5 w-full text-left">
         <APPS.finder.Icon size={34} />
         <div className="flex-1 min-w-0">
           <div className="flex justify-between text-[13px]"><span className="font-semibold">Welcome to my portfolio</span><span className="opacity-45 text-[11px]">now</span></div>
@@ -207,7 +207,7 @@ export function NotificationBanner({ onOpen, onDismiss }: { onOpen: () => void; 
         type="button"
         aria-label="Dismiss"
         onClick={onDismiss}
-        className="absolute -top-1.5 -left-1.5 w-5 h-5 mac-panel !rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center"
+        className="absolute -top-1.5 -left-1.5 w-5 h-5 mac-panel rounded-full! opacity-0 group-hover:opacity-100 flex items-center justify-center"
       >
         <svg viewBox="0 0 8 8" width="7" height="7" fill="none" stroke="currentColor" strokeWidth={1.4} strokeLinecap="round"><path d="M1.5 1.5 L6.5 6.5 M6.5 1.5 L1.5 6.5" /></svg>
       </button>
@@ -224,18 +224,18 @@ export function Launchpad({ onClose, onOpen }: { onClose: () => void; onOpen: (i
   const apps = Object.values(APPS).filter(a => a.id !== 'trash' && a.id !== 'launchpad' && a.label.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <div className="absolute inset-0 z-[55] bg-black/45 backdrop-blur-[40px] animate-launchpad-in" onClick={onClose}>
+    <div className="absolute inset-0 z-55 bg-black/45 backdrop-blur-2xl animate-launchpad-in" onClick={onClose}>
       <div className="flex justify-center pt-12" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center gap-1.5 w-[240px] h-7 px-2.5 rounded-lg bg-white/15 text-white shadow-[inset_0_0_0_0.5px_rgba(255,255,255,0.25)]">
+        <div className="flex items-center gap-1.5 w-60 h-7 px-2.5 rounded-lg bg-white/15 text-white shadow-[inset_0_0_0_0.5px_rgba(255,255,255,0.25)]">
           <SearchGlyph size={12} className="opacity-70" />
           <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search"
             onKeyDown={(e) => e.key === 'Escape' && onClose()}
             className="bg-transparent outline-none text-[13px] w-full placeholder:text-white/60" />
         </div>
       </div>
-      <div className="max-w-[1000px] mx-auto mt-14 px-8 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-y-12 justify-items-center">
+      <div className="max-w-250 mx-auto mt-14 px-8 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-y-12 justify-items-center">
         {apps.map(app => (
-          <button key={app.id} type="button" className="flex flex-col items-center gap-2 w-[110px] group"
+          <button key={app.id} type="button" className="flex flex-col items-center gap-2 w-27.5 group"
             onClick={(e) => { e.stopPropagation(); onOpen(app.id); onClose(); }}>
             <span className="transition-transform group-active:scale-90" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}>
               <app.Icon size={84} />
@@ -245,8 +245,8 @@ export function Launchpad({ onClose, onOpen }: { onClose: () => void; onOpen: (i
         ))}
       </div>
       <div className="absolute bottom-28 left-1/2 -translate-x-1/2 flex gap-2">
-        <span className="w-[7px] h-[7px] rounded-full bg-white" />
-        <span className="w-[7px] h-[7px] rounded-full bg-white/35" />
+        <span className="w-1.75 h-1.75 rounded-full bg-white" />
+        <span className="w-1.75 h-1.75 rounded-full bg-white/35" />
       </div>
     </div>
   );
@@ -272,7 +272,7 @@ export function ContextMenu({
   const isSection = app?.action.type === 'window' && target !== 'finder';
 
   return (
-    <div className="absolute z-[62] mac-menu min-w-[220px] animate-fade-in" style={{ left, top }} onClick={(e) => e.stopPropagation()}>
+    <div className="absolute z-62 mac-menu min-w-55 animate-fade-in" style={{ left, top }} onClick={(e) => e.stopPropagation()}>
       {kind === 'desktop' && (
         <>
           <MenuItem onClick={run(onShowInFinder)}>New Finder Window</MenuItem>

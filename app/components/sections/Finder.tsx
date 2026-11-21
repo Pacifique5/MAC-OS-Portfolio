@@ -63,7 +63,7 @@ export default function Finder({ onOpen }: { onOpen: (id: string) => void }) {
                   <button key={id} type="button" className="flex flex-col items-center gap-1 outline-none"
                     onClick={(e) => { e.stopPropagation(); setSelected(id); }}
                     onDoubleClick={() => onOpen(id)}>
-                    <span className={`p-1 rounded-md ${sel ? 'bg-black/[0.08] dark:bg-white/[0.12]' : ''}`}>
+                    <span className={`p-1 rounded-md ${sel ? 'bg-black/8 dark:bg-white/12' : ''}`}>
                       <FolderIcon size={68} Glyph={app.folderGlyph} />
                     </span>
                     <span className={`text-[12px] px-1.5 rounded ${sel ? 'bg-macblue text-white' : ''}`}>{app.label}</span>
@@ -73,14 +73,14 @@ export default function Finder({ onOpen }: { onOpen: (id: string) => void }) {
             </div>
           ) : (
             <div className="text-[13px]">
-              <div className="grid grid-cols-[1fr_120px_90px] px-2 pb-1 text-[11px] font-semibold text-black/50 dark:text-white/50 border-b border-[var(--hairline)]">
+              <div className="grid grid-cols-[1fr_120px_90px] px-2 pb-1 text-[11px] font-semibold text-black/50 dark:text-white/50 border-b border-(--hairline)">
                 <span>Name</span><span>Kind</span><span className="text-right">Items</span>
               </div>
               {SECTION_IDS.map((id, i) => (
                 <button key={id} type="button"
                   onClick={(e) => { e.stopPropagation(); setSelected(id); }}
                   onDoubleClick={() => onOpen(id)}
-                  className={`w-full grid grid-cols-[1fr_120px_90px] items-center px-2 h-7 rounded-md text-left ${selected === id ? 'bg-macblue text-white' : i % 2 ? 'bg-black/[0.03] dark:bg-white/[0.03]' : ''}`}>
+                  className={`w-full grid grid-cols-[1fr_120px_90px] items-center px-2 h-7 rounded-md text-left ${selected === id ? 'bg-macblue text-white' : i % 2 ? 'bg-black/3 dark:bg-white/3' : ''}`}>
                   <span className="flex items-center gap-2"><FolderIcon size={18} />{APPS[id].label}</span>
                   <span className="opacity-60">Folder</span>
                   <span className="opacity-60 text-right">—</span>
@@ -89,7 +89,7 @@ export default function Finder({ onOpen }: { onOpen: (id: string) => void }) {
             </div>
           )}
         </div>
-        <div className="h-6 flex items-center justify-center text-[11px] text-black/45 dark:text-white/45 border-t border-[var(--hairline)]">
+        <div className="h-6 flex items-center justify-center text-[11px] text-black/45 dark:text-white/45 border-t border-(--hairline)">
           {selected ? `1 of ${SECTION_IDS.length} selected` : `${SECTION_IDS.length} items`} · Double-click to open
         </div>
       </div>

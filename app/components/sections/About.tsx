@@ -50,14 +50,14 @@ export default function About() {
       subtitle="Contact Card"
       toolbar={<PushButton href="/MUGISHA PACIFIQUE.pdf" download><IoDownloadOutline /> Download CV</PushButton>}
     >
-      <div className="max-w-[620px] mx-auto px-8 py-8">
+      <div className="max-w-155 mx-auto px-8 py-8">
         {/* Card header */}
         <div className="flex items-center gap-5 mb-6">
           <div className="relative">
-            <div className="w-[88px] h-[88px] rounded-full flex items-center justify-center text-white text-[34px] font-semibold bg-[linear-gradient(180deg,#a8a8b0,#6c6c74)] shadow-[0_1px_3px_rgba(0,0,0,0.2)]">
+            <div className="w-22 h-22 rounded-full flex items-center justify-center text-white text-[34px] font-semibold bg-[linear-gradient(180deg,#a8a8b0,#6c6c74)] shadow-[0_1px_3px_rgba(0,0,0,0.2)]">
               MP
             </div>
-            <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-[#34c759] ring-[3px] ring-[var(--window-bg)]" title="Available" />
+            <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-[#34c759] ring-[3px] ring-(--window-bg)" title="Available" />
           </div>
           <div className="min-w-0">
             <h1 className="text-[26px] font-semibold leading-tight">Mugisha Pacifique</h1>
@@ -70,7 +70,7 @@ export default function About() {
         <div className="flex gap-2.5 mb-7">
           {actions.map(a => (
             <a key={a.label} href={a.href} target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex flex-col items-center gap-1 py-2 rounded-lg bg-black/[0.04] dark:bg-white/[0.07] hover:bg-black/[0.07] dark:hover:bg-white/[0.1] text-macblue">
+              className="flex-1 flex flex-col items-center gap-1 py-2 rounded-lg bg-black/4 dark:bg-white/[0.07] hover:bg-black/[0.07] dark:hover:bg-white/10 text-macblue">
               <a.Glyph className="text-[18px]" />
               <span className="text-[11px]">{a.label}</span>
             </a>
@@ -100,7 +100,7 @@ export default function About() {
         {/* Stats */}
         <div className="grid grid-cols-4 gap-2.5 mb-7">
           {stats.map(s => (
-            <div key={s.label} className="rounded-[10px] bg-black/[0.03] dark:bg-white/[0.06] p-3 flex flex-col items-center gap-1">
+            <div key={s.label} className="rounded-[10px] bg-black/3 dark:bg-white/6 p-3 flex flex-col items-center gap-1">
               <SymbolTile Glyph={s.Glyph} color={s.color} size={24} />
               <div className="text-[20px] font-semibold leading-none mt-1">{s.value}</div>
               <div className="text-[11px] text-black/50 dark:text-white/50">{s.label}</div>

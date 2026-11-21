@@ -79,13 +79,13 @@ export default function Dock({ running, minimized, bouncing, onAppClick, onResto
             <div
               key={entry.key}
               ref={el => { refs.current[i] = el; }}
-              className="relative flex flex-col items-center px-[3px]"
+              className="relative flex flex-col items-center px-0.75"
               onMouseEnter={() => setHovered(entry.key)}
             >
               {hovered === entry.key && (
                 <div className="absolute bottom-full mb-2.5 pointer-events-none animate-fade-in" style={{ marginBottom: 10 + (size - BASE) * 0.15 }}>
-                  <div className="mac-menu !py-[3px] !px-2.5 text-[13px] whitespace-nowrap">{label}</div>
-                  <div className="mx-auto w-2.5 h-2.5 rotate-45 -mt-[6px] bg-[var(--menu-bg)]" style={{ boxShadow: '0.5px 0.5px 0 rgba(0,0,0,0.25)' }} />
+                  <div className="mac-menu py-0.75! px-2.5! text-[13px] whitespace-nowrap">{label}</div>
+                  <div className="mx-auto w-2.5 h-2.5 rotate-45 -mt-1.5 bg-(--menu-bg)" style={{ boxShadow: '0.5px 0.5px 0 rgba(0,0,0,0.25)' }} />
                 </div>
               )}
               <button
@@ -98,7 +98,7 @@ export default function Dock({ running, minimized, bouncing, onAppClick, onResto
               >
                 {entry.kind === 'min' ? <MinimizedThumb id={entry.id!} size={size} /> : <app.Icon size={size} />}
               </button>
-              <span className={`mt-[3px] w-1 h-1 rounded-full ${entry.kind === 'app' && isRunning(entry.id!) ? 'bg-black/70 dark:bg-white/80' : 'bg-transparent'}`} />
+              <span className={`mt-0.75 w-1 h-1 rounded-full ${entry.kind === 'app' && isRunning(entry.id!) ? 'bg-black/70 dark:bg-white/80' : 'bg-transparent'}`} />
             </div>
           );
         })}
@@ -112,16 +112,16 @@ function MinimizedThumb({ id, size }: { id: string; size: number }) {
   const app = APPS[id];
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      <div className="w-[88%] h-[70%] rounded-[4px] bg-white dark:bg-[#2c2c2e] shadow-[0_0_0_0.5px_rgba(0,0,0,0.3)] overflow-hidden">
-        <div className="h-[18%] bg-[#ececec] dark:bg-[#3a3a3c] flex items-center gap-[2px] px-[6%]">
-          <span className="w-[5px] h-[5px] rounded-full bg-[#ff5f57]" />
-          <span className="w-[5px] h-[5px] rounded-full bg-[#febc2e]" />
-          <span className="w-[5px] h-[5px] rounded-full bg-[#28c840]" />
+      <div className="w-[88%] h-[70%] rounded-sm bg-white dark:bg-[#2c2c2e] shadow-[0_0_0_0.5px_rgba(0,0,0,0.3)] overflow-hidden">
+        <div className="h-[18%] bg-[#ececec] dark:bg-[#3a3a3c] flex items-center gap-0.5 px-[6%]">
+          <span className="w-1.25 h-1.25 rounded-full bg-[#ff5f57]" />
+          <span className="w-1.25 h-1.25 rounded-full bg-[#febc2e]" />
+          <span className="w-1.25 h-1.25 rounded-full bg-[#28c840]" />
         </div>
         <div className="p-[8%] space-y-[6%]">
-          <div className="h-[3px] w-3/4 rounded bg-black/10 dark:bg-white/15" />
-          <div className="h-[3px] w-1/2 rounded bg-black/10 dark:bg-white/15" />
-          <div className="h-[3px] w-2/3 rounded bg-black/10 dark:bg-white/15" />
+          <div className="h-0.75 w-3/4 rounded bg-black/10 dark:bg-white/15" />
+          <div className="h-0.75 w-1/2 rounded bg-black/10 dark:bg-white/15" />
+          <div className="h-0.75 w-2/3 rounded bg-black/10 dark:bg-white/15" />
         </div>
       </div>
       <div className="absolute bottom-0 right-0"><app.Icon size={size * 0.42} /></div>
