@@ -1,17 +1,24 @@
 'use client';
 import { useState } from 'react';
-import { IoPaperPlane, IoMail, IoCall, IoLogoGithub, IoLogoLinkedin, IoDownloadOutline, IoCheckmarkCircle, IoAttach, IoText } from 'react-icons/io5';
+import { IoPaperPlane, IoMail, IoCall, IoLogoGithub, IoLogoLinkedin, IoDownloadOutline, IoCheckmarkCircle, IoCopyOutline } from 'react-icons/io5';
+import { FaXTwitter, FaSlack } from 'react-icons/fa6';
 import { WindowLayout } from '../MacWindow';
-import { CV_URL } from '../apps';
+import { CV_URL, SOCIAL_LINKS } from '../apps';
 import { InsetGroup, GroupRow, SymbolTile, ToolbarButton, PushButton } from '../ui/mac';
-import { ChevronGlyph, Spinner } from '../icons/SystemIcons';
+import { ChevronGlyph } from '../icons/SystemIcons';
+
+const EMAIL = 'Pacifiquem58@gmail.com';
 
 const contactLinks = [
-  { Glyph: IoMail, color: '#007aff', label: 'Email', value: 'Pacifiquem58@gmail.com', href: 'mailto:Pacifiquem58@gmail.com' },
+  { Glyph: IoMail, color: '#007aff', label: 'Email', value: EMAIL, href: `mailto:${EMAIL}` },
   { Glyph: IoCall, color: '#34c759', label: 'Phone', value: '+250 795 653 123', href: 'tel:+250795653123' },
-  { Glyph: IoLogoGithub, color: '#1d1d1f', label: 'GitHub', value: 'github.com/Pacifique5', href: 'https://github.com/Pacifique5' },
-  { Glyph: IoLogoLinkedin, color: '#0a66c2', label: 'LinkedIn', value: 'pacifique-mugisha', href: 'https://www.linkedin.com/in/pacifique-mugisha-449a4a3b0/' },
+  { Glyph: IoLogoGithub, color: '#1d1d1f', label: 'GitHub', value: 'github.com/Pacifique5', href: SOCIAL_LINKS.github },
+  { Glyph: IoLogoLinkedin, color: '#0a66c2', label: 'LinkedIn', value: 'pacifique-mugisha', href: SOCIAL_LINKS.linkedin },
+  { Glyph: FaXTwitter, color: '#1d1d1f', label: 'X', value: '@_fiquem', href: SOCIAL_LINKS.x },
+  { Glyph: FaSlack, color: '#4a154b', label: 'Slack', value: 'codewithpacifique', href: SOCIAL_LINKS.slack },
 ];
+
+const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
 const faqs = [
   { q: 'Are you available for freelance work?', a: 'Yes! I am open to freelance projects, especially in web development and AI integration.' },
@@ -22,21 +29,31 @@ const faqs = [
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const canSend = form.name && form.email && form.subject && form.message;
+  const emailInvalid = form.email.length > 0 && !isEmail(form.email);
+  const canSend = Boolean(form.name.trim() && isEmail(form.email) && form.subject.trim() && form.message.trim());
 
+  /** Opens the visitor's email app with the message pre-filled, so it really reaches me. */
   const send = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!canSend) return;
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSent(true);
-      setForm({ name: '', email: '', subject: '', message: '' });
-      setTimeout(() => setSent(false), 5000);
-    }, 1200);
+    const body = `${form.message.trim()}\n\n— ${form.name.trim()}\nReply to: ${form.email.trim()}`;
+    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(form.subject.trim())}&body=${encodeURIComponent(body)}`;
+    setSent(true);
+  };
+
+  const copyEmail = () => {
+    navigator.clipboard?.writeText(EMAIL).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    }, () => {});
+  };
+
+  const reset = () => {
+    setSent(false);
+    setForm({ name: '', email: '', subject: '', message: '' });
   };
 
   const field = 'flex-1 bg-transparent outline-none text-[13px] placeholder:text-black/30 dark:placeholder:text-white/30';
@@ -47,10 +64,11 @@ export default function Contact() {
       subtitle="To: Mugisha Pacifique"
       toolbar={
         <>
-          <ToolbarButton title="Attach"><IoAttach className="text-[17px]" /></ToolbarButton>
-          <ToolbarButton title="Format"><IoText className="text-[15px]" /></ToolbarButton>
-          <ToolbarButton title="Send" onClick={() => send()}>
-            {loading ? <Spinner size={15} /> : <IoPaperPlane className={`text-[16px] ${canSend ? 'text-macblue' : ''}`} />}
+          <ToolbarButton title={copied ? 'Copied' : 'Copy email address'} onClick={copyEmail}>
+            {copied ? <IoCheckmarkCircle className="text-[16px] text-[#34c759]" /> : <IoCopyOutline className="text-[15px]" />}
+          </ToolbarButton>
+          <ToolbarButton title={canSend ? 'Send' : 'Fill in every field to send'} onClick={() => send()}>
+            <IoPaperPlane className={`text-[16px] ${canSend ? 'text-macblue' : 'opacity-40'}`} />
           </ToolbarButton>
         </>
       }
@@ -58,17 +76,29 @@ export default function Contact() {
       {/* Compose */}
       <form onSubmit={send} className="border-b border-(--hairline)">
         {sent ? (
-          <div className="flex flex-col items-center justify-center py-14 gap-2">
+          <div className="flex flex-col items-center justify-center text-center py-12 px-6 gap-2">
             <IoCheckmarkCircle className="text-[44px] text-[#34c759]" />
-            <p className="text-[15px] font-semibold">Message Sent</p>
-            <p className="text-[13px] text-black/50 dark:text-white/50">Thanks for reaching out — I’ll reply within 24 hours.</p>
+            <p className="text-[15px] font-semibold">Your email is ready to send</p>
+            <p className="text-[13px] text-black/55 dark:text-white/55 max-w-90">
+              Your email app opened with the message filled in — just press Send there. Nothing opened? Email me directly at{' '}
+              <a href={`mailto:${EMAIL}`} className="text-macblue hover:underline">{EMAIL}</a>.
+            </p>
+            <div className="flex gap-2 mt-2">
+              <PushButton onClick={copyEmail}><IoCopyOutline /> {copied ? 'Copied' : 'Copy Email'}</PushButton>
+              <PushButton onClick={reset}>New Message</PushButton>
+            </div>
           </div>
         ) : (
           <>
             {[
               { label: 'To:', node: <span className="inline-flex items-center px-2 h-5 rounded-full bg-macblue/15 text-macblue text-[12px]">Mugisha Pacifique</span> },
               { label: 'From:', node: <input required placeholder="Your name" className={field} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /> },
-              { label: 'Reply-To:', node: <input required type="email" placeholder="your@email.com" className={field} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /> },
+              { label: 'Reply-To:', node: (
+                <>
+                  <input required type="email" placeholder="your@email.com" aria-invalid={emailInvalid} className={field} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                  {emailInvalid && <span className="text-[11px] text-[#ff3b30] shrink-0">Enter a valid email</span>}
+                </>
+              ) },
               { label: 'Subject:', node: <input required placeholder="What’s this about?" className={`${field} font-medium`} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} /> },
             ].map(r => (
               <div key={r.label} className="flex items-center gap-2 mx-5 h-8.5 border-b border-(--hairline)">
@@ -84,9 +114,10 @@ export default function Contact() {
               value={form.message}
               onChange={e => setForm({ ...form, message: e.target.value })}
             />
-            <div className="flex justify-end px-5 pb-3">
-              <PushButton primary type="submit" disabled={!canSend || loading}>
-                {loading ? <Spinner size={12} /> : <IoPaperPlane />} {loading ? 'Sending…' : 'Send'}
+            <div className="flex items-center justify-between gap-3 px-5 pb-3">
+              <span className="text-[11px] text-black/40 dark:text-white/40">Opens your email app with this message addressed to me.</span>
+              <PushButton primary type="submit" disabled={!canSend}>
+                <IoPaperPlane /> Send
               </PushButton>
             </div>
           </>
