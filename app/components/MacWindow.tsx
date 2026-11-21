@@ -58,9 +58,12 @@ interface MacWindowProps {
   onClose?: () => void;
   onMinimize?: () => void;
   onFocus?: () => void;
+  /** Zoom state is owned by the window manager so the Window menu can toggle it */
+  zoomed: boolean;
+  onToggleZoom: () => void;
 }
 
-export default function MacWindow({ children, zIndex, active, initialOffset, onClose, onMinimize, onFocus }: MacWindowProps) {
+export default function MacWindow({ children, zIndex, active, initialOffset, onClose, onMinimize, onFocus, zoomed, onToggleZoom }: MacWindowProps) {
   // Size to the viewport, leaving room for the menu bar, Dock and desktop icons.
   const [size] = useState(() => ({
     w: Math.max(320, Math.min(920, window.innerWidth - 150)),
@@ -76,7 +79,6 @@ export default function MacWindow({ children, zIndex, active, initialOffset, onC
     };
   });
   const [dragging, setDragging] = useState(false);
-  const [zoomed, setZoomed] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
 
   const startDrag = (e: React.MouseEvent) => {
@@ -104,7 +106,7 @@ export default function MacWindow({ children, zIndex, active, initialOffset, onC
     };
   }, [dragging]);
 
-  const toggleZoom = () => setZoomed(z => !z);
+  const toggleZoom = onToggleZoom;
 
   const frameStyle: React.CSSProperties = zoomed
     ? { left: 6, top: MENU_BAR_H + 6, width: 'calc(100vw - 12px)', height: `calc(100vh - ${MENU_BAR_H}px - 92px)` }
