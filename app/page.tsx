@@ -181,8 +181,8 @@ export default function Home() {
       case 'about': return <About onOpen={launch} />;
       case 'projects': return <Projects />;
       case 'skills': return <Skills />;
-      case 'experience': return <Experience />;
-      case 'testimonials': return <Testimonials />;
+      case 'experience': return <Experience onOpen={launch} />;
+      case 'testimonials': return <Testimonials onOpen={launch} />;
       case 'contact': return <Contact />;
     }
   };

@@ -1,9 +1,13 @@
 'use client';
 import { useState } from 'react';
 import type { IconType } from 'react-icons';
-import { IoSchool, IoEarth, IoCodeSlash, IoShieldCheckmark, IoGitNetwork, IoTerminal, IoRibbon, IoCheckmarkCircle } from 'react-icons/io5';
+import { IoSchool, IoEarth, IoCodeSlash, IoShieldCheckmark, IoGitNetwork, IoTerminal, IoRibbon, IoCheckmarkCircle, IoImages } from 'react-icons/io5';
 import { WindowLayout } from '../MacWindow';
-import { InsetGroup, SymbolTile } from '../ui/mac';
+import { InsetGroup, PushButton, SymbolTile } from '../ui/mac';
+import { PHOTOS } from '../photos-data';
+
+const certificateCount = PHOTOS.filter(p => p.album === 'certificates').length;
+const badgeCount = PHOTOS.filter(p => p.album === 'badges').length;
 import { ChevronGlyph } from '../icons/SystemIcons';
 
 const experiences: { company: string; role: string; period: string; Glyph: IconType; color: string; description: string; highlights: string[] }[] = [
@@ -41,14 +45,14 @@ const experiences: { company: string; role: string; period: string; Glyph: IconT
 
 const certAreas = ['Cybersecurity', 'Linux', 'AI', 'Python', 'Remote Work', 'Software Engineering', 'DevOps', 'Networking'];
 
-export default function Experience() {
+export default function Experience({ onOpen }: { onOpen: (id: string) => void }) {
   const [expanded, setExpanded] = useState<number | null>(0);
 
   return (
-    <WindowLayout title="Experience" subtitle="6 internships · 25+ certificates · 3+ years" surface="grouped">
+    <WindowLayout title="Experience" subtitle={`6 internships · ${certificateCount} certificates · 3+ years`} surface="grouped">
       <div className="max-w-160 mx-auto px-6 py-6">
         <div className="grid grid-cols-3 gap-2.5 mb-6">
-          {[['6', 'Internships'], ['25+', 'Certificates'], ['3+', 'Years']].map(([v, l]) => (
+          {[['6', 'Internships'], [`${certificateCount}`, 'Certificates'], ['3+', 'Years']].map(([v, l]) => (
             <div key={l} className="rounded-[10px] bg-(--group-bg) shadow-[0_0_0_0.5px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.08)] py-3 text-center">
               <div className="text-[22px] font-semibold leading-none">{v}</div>
               <div className="text-[11px] text-black/50 dark:text-white/50 mt-1">{l}</div>
@@ -92,10 +96,11 @@ export default function Experience() {
         <InsetGroup title="Certificates" footer="Verified across multiple disciplines and platforms.">
           <div className="flex items-center gap-3 px-3 py-3">
             <SymbolTile Glyph={IoRibbon} color="#ff9500" size={36} />
-            <div>
-              <div className="text-[15px] font-semibold">25+ Verified Certificates</div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[15px] font-semibold">{certificateCount} Certificates · {badgeCount} Badges</div>
               <div className="text-[12px] text-black/50 dark:text-white/50">{certAreas.length} areas of study</div>
             </div>
+            <PushButton primary onClick={() => onOpen('photos')}><IoImages /> View All</PushButton>
           </div>
           <div className="flex flex-wrap gap-1.5 px-3 py-3">
             {certAreas.map(a => (

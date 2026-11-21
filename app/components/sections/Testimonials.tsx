@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { IoSearch, IoStar, IoCreateOutline, IoInformationCircleOutline } from 'react-icons/io5';
+import { IoSearch, IoStar, IoCreateOutline, IoArrowUp } from 'react-icons/io5';
 import { WindowLayout } from '../MacWindow';
 import { Monogram } from '../icons/AppIcons';
 import { ToolbarButton } from '../ui/mac';
@@ -33,7 +33,7 @@ const testimonials = [
   },
 ];
 
-export default function Testimonials() {
+export default function Testimonials({ onOpen }: { onOpen: (id: string) => void }) {
   const [active, setActive] = useState(0);
   const [query, setQuery] = useState('');
   const t = testimonials[active];
@@ -75,7 +75,7 @@ export default function Testimonials() {
       subtitle={`${t.role} · ${t.company}`}
       sidebar={sidebar}
       sidebarWidth={260}
-      toolbar={<><ToolbarButton title="Info"><IoInformationCircleOutline className="text-[17px]" /></ToolbarButton><ToolbarButton title="New Message"><IoCreateOutline className="text-[17px]" /></ToolbarButton></>}
+      toolbar={<ToolbarButton title="New Message" onClick={() => onOpen('contact')}><IoCreateOutline className="text-[17px]" /></ToolbarButton>}
     >
       <div className="flex flex-col h-full">
         <div className="flex-1 overflow-y-auto mac-scroll px-5 py-5">
@@ -114,12 +114,16 @@ export default function Testimonials() {
           <div className="text-right text-[11px] text-black/40 dark:text-white/40 mt-1 pr-1">Delivered</div>
         </div>
 
-        {/* Message field */}
+        {/* Message field — opens the Contact app */}
         <div className="px-4 py-2.5 border-t border-(--hairline) flex items-center gap-2">
-          <a href="mailto:Pacifiquem58@gmail.com"
-            className="flex-1 h-7 px-3 rounded-full border border-(--hairline) flex items-center text-[13px] text-black/40 dark:text-white/40 hover:border-macblue">
+          <button type="button" onClick={() => onOpen('contact')}
+            className="flex-1 h-7 px-3 rounded-full border border-(--hairline) flex items-center text-[13px] text-black/40 dark:text-white/40 hover:border-macblue hover:text-black/60 dark:hover:text-white/60 transition-colors text-left">
             Want to work together? Send me a message…
-          </a>
+          </button>
+          <button type="button" aria-label="Send a message" onClick={() => onOpen('contact')}
+            className="w-7 h-7 rounded-full bg-macblue text-white flex items-center justify-center shrink-0 hover:brightness-110">
+            <IoArrowUp className="text-[15px]" />
+          </button>
         </div>
       </div>
     </WindowLayout>
