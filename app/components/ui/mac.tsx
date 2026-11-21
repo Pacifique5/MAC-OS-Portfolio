@@ -1,5 +1,11 @@
 'use client';
 // Shared macOS-style controls.
+
+/**
+ * The single accent used inside portfolio windows (macOS system blue,
+ * adapts to light/dark mode). Keep window content to this one hue plus neutrals.
+ */
+export const ACCENT = 'var(--mac-blue)';
 import { ReactNode } from 'react';
 import type { IconType } from 'react-icons';
 
@@ -90,7 +96,7 @@ export function CircleIcon({ children, active, size = 26 }: { children: ReactNod
 }
 
 /* ---------------- Settings-style coloured symbol tile ---------------- */
-export function SymbolTile({ Glyph, color, size = 22 }: { Glyph: IconType; color: string; size?: number }) {
+export function SymbolTile({ Glyph, color = ACCENT, size = 22 }: { Glyph: IconType; color?: string; size?: number }) {
   return (
     <span
       className="inline-flex items-center justify-center shrink-0"
@@ -178,7 +184,7 @@ export function PushButton({ children, primary, onClick, href, download, type = 
 }
 
 /* ---------------- Level indicator ---------------- */
-export function LevelBar({ value, color = 'var(--mac-blue)' }: { value: number; color?: string }) {
+export function LevelBar({ value, color = ACCENT }: { value: number; color?: string }) {
   return (
     <div className="h-1.25 w-full rounded-full bg-black/8 dark:bg-white/12 overflow-hidden">
       <div className="h-full rounded-full" style={{ width: `${value}%`, background: color }} />
