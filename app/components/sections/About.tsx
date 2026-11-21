@@ -32,7 +32,7 @@ const fields = [
   { label: 'email', value: 'Pacifiquem58@gmail.com', href: 'mailto:Pacifiquem58@gmail.com' },
   { label: 'mobile', value: '+250 795 653 123', href: 'tel:+250795653123' },
   { label: 'GitHub', value: '@Pacifique5', href: 'https://github.com/Pacifique5' },
-  { label: 'LinkedIn', value: 'mugisha-pacifique', href: 'https://linkedin.com/in/mugisha-pacifique' },
+  { label: 'LinkedIn', value: 'pacifique-mugisha', href: 'https://www.linkedin.com/in/pacifique-mugisha-449a4a3b0/' },
   { label: 'address', value: 'Rwanda, Africa' },
 ];
 
@@ -40,7 +40,7 @@ const actions = [
   { Glyph: IoMail, label: 'mail', href: 'mailto:Pacifiquem58@gmail.com' },
   { Glyph: IoCall, label: 'call', href: 'tel:+250795653123' },
   { Glyph: IoLogoGithub, label: 'github', href: 'https://github.com/Pacifique5' },
-  { Glyph: IoLogoLinkedin, label: 'linkedin', href: 'https://linkedin.com/in/mugisha-pacifique' },
+  { Glyph: IoLogoLinkedin, label: 'linkedin', href: 'https://www.linkedin.com/in/pacifique-mugisha-449a4a3b0/' },
 ];
 
 export default function About() {

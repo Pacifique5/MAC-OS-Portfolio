@@ -12,7 +12,7 @@ export type WindowId = 'finder' | 'photos' | 'about' | 'projects' | 'skills' | '
 /** Social links used by the Dock, Launchpad and Spotlight — edit them here. */
 export const SOCIAL_LINKS = {
   github: 'https://github.com/Pacifique5',
-  linkedin: 'https://linkedin.com/in/mugisha-pacifique',
+  linkedin: 'https://www.linkedin.com/in/pacifique-mugisha-449a4a3b0/',
   slack: 'https://codewithpacifique.slack.com',
   x: 'https://x.com/_fiquem',
 };

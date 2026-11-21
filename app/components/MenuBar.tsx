@@ -215,7 +215,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
             <MenuItem onClick={run(() => actions.copy('Pacifiquem58@gmail.com', 'Email address copied'))}>Copy Email Address</MenuItem>
             <MenuItem onClick={run(() => actions.copy('+250 795 653 123', 'Phone number copied'))}>Copy Phone Number</MenuItem>
             <MenuItem onClick={run(() => actions.copy('https://github.com/Pacifique5', 'GitHub link copied'))}>Copy GitHub Link</MenuItem>
-            <MenuItem onClick={run(() => actions.copy('https://linkedin.com/in/mugisha-pacifique', 'LinkedIn link copied'))}>Copy LinkedIn Link</MenuItem>
+            <MenuItem onClick={run(() => actions.copy('https://www.linkedin.com/in/pacifique-mugisha-449a4a3b0/', 'LinkedIn link copied'))}>Copy LinkedIn Link</MenuItem>
             <MenuSeparator />
             <MenuItem onClick={run(() => actions.copy(window.location.href, 'Portfolio link copied'))}>Copy Portfolio Link</MenuItem>
           </>
@@ -248,7 +248,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
             <MenuItem onClick={run(actions.openLaunchpad)}>Applications</MenuItem>
             <MenuSeparator />
             <MenuItem onClick={run(() => window.open('https://github.com/Pacifique5', '_blank', 'noopener'))}>GitHub Profile</MenuItem>
-            <MenuItem onClick={run(() => window.open('https://linkedin.com/in/mugisha-pacifique', '_blank', 'noopener'))}>LinkedIn Profile</MenuItem>
+            <MenuItem onClick={run(() => window.open('https://www.linkedin.com/in/pacifique-mugisha-449a4a3b0/', '_blank', 'noopener'))}>LinkedIn Profile</MenuItem>
           </>
         );
       case 'window':

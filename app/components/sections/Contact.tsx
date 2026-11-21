@@ -9,7 +9,7 @@ const contactLinks = [
   { Glyph: IoMail, color: '#007aff', label: 'Email', value: 'Pacifiquem58@gmail.com', href: 'mailto:Pacifiquem58@gmail.com' },
   { Glyph: IoCall, color: '#34c759', label: 'Phone', value: '+250 795 653 123', href: 'tel:+250795653123' },
   { Glyph: IoLogoGithub, color: '#1d1d1f', label: 'GitHub', value: 'github.com/Pacifique5', href: 'https://github.com/Pacifique5' },
-  { Glyph: IoLogoLinkedin, color: '#0a66c2', label: 'LinkedIn', value: 'mugisha-pacifique', href: 'https://linkedin.com/in/mugisha-pacifique' },
+  { Glyph: IoLogoLinkedin, color: '#0a66c2', label: 'LinkedIn', value: 'pacifique-mugisha', href: 'https://www.linkedin.com/in/pacifique-mugisha-449a4a3b0/' },
 ];
 
 const faqs = [
