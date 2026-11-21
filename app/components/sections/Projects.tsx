@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { IoGridOutline, IoGlobeOutline, IoPhonePortraitOutline, IoStar, IoLogoGithub, IoOpenOutline, IoChevronForward } from 'react-icons/io5';
+import { IoGridOutline, IoGlobeOutline, IoPhonePortraitOutline, IoStar, IoLogoGithub, IoOpenOutline, IoChevronForward, IoCheckmarkCircle } from 'react-icons/io5';
 import { WindowLayout } from '../MacWindow';
 import { SidebarItem, SidebarSection, PushButton } from '../ui/mac';
 import { SQUIRCLE } from '../icons/AppIcons';
@@ -10,6 +10,7 @@ const projects = [
     title: 'Next Portfolio Website',
     description: 'A modern macOS-style portfolio website built with Next.js and Tailwind CSS. Features a fully interactive desktop interface with draggable windows, functional dock, Spotlight search, and real macOS menu bar.',
     longDesc: 'Built from scratch with a focus on pixel-perfect macOS UI replication. Includes working traffic light buttons, context menus, notification center, and smooth animations throughout.',
+    features: ['Draggable, focusable windows with real traffic lights', 'Dock with magnification and running indicators', 'Spotlight search and Launchpad', 'macOS menu bar, context menus and Notification Center'],
     tags: ['Next.js', 'React', 'Tailwind CSS', 'TypeScript', 'React Icons'],
     category: 'Web', featured: true,
     github: 'https://github.com/Pacifique5/MAC-OS-Portfolio', live: 'https://github.com/Pacifique5',
@@ -19,6 +20,7 @@ const projects = [
     title: 'CacheNet',
     description: 'A network caching solution enabling offline content access for education during internet outages — bridging the digital divide in underserved communities.',
     longDesc: 'Uses service workers and local caching strategies to serve educational content even without internet. Supports video, documents, and interactive quizzes offline.',
+    features: ['Service-worker caching for offline access', 'Video and document playback without internet', 'Interactive quizzes that work offline', 'Built for communities with unreliable connectivity'],
     tags: ['Next.js', 'React Native', 'Node.js', 'Service Workers', 'PWA'],
     category: 'Mobile', featured: true,
     github: 'https://github.com/Pacifique5', live: 'https://github.com/Pacifique5',
@@ -28,6 +30,7 @@ const projects = [
     title: 'FARM PRO',
     description: 'A full-stack farm management system with inventory tracking, crop monitoring, weather integration, and a real-time analytics dashboard for modern agriculture.',
     longDesc: 'Helps farmers track crop cycles, manage inventory, monitor weather conditions, and generate reports. Built with Laravel backend and a responsive frontend.',
+    features: ['Crop-cycle tracking', 'Inventory management', 'Weather condition monitoring', 'Reports and analytics dashboard'],
     tags: ['Laravel', 'PHP', 'MySQL', 'Chart.js', 'Bootstrap'],
     category: 'Web', featured: false,
     github: 'https://github.com/Pacifique5', live: 'https://github.com/Pacifique5',
@@ -37,6 +40,7 @@ const projects = [
     title: 'Library Management System',
     description: 'A comprehensive library management solution with book tracking, member management, borrowing history, fine calculation, and a full-featured admin panel.',
     longDesc: 'Supports multiple user roles (admin, librarian, member), automated fine calculation, email notifications for due dates, and detailed reporting.',
+    features: ['Admin, librarian and member roles', 'Automated fine calculation', 'Email reminders for due dates', 'Detailed borrowing reports'],
     tags: ['Laravel', 'PHP', 'MySQL', 'Blade', 'Bootstrap'],
     category: 'Web', featured: false,
     github: 'https://github.com/Pacifique5', live: 'https://github.com/Pacifique5',
@@ -46,6 +50,7 @@ const projects = [
     title: 'Umurava-Website',
     description: 'Youth mentorship platform with full authentication, CRUD operations, mentor matching, and progress tracking — supporting empowerment and leadership development.',
     longDesc: 'Connects young people with mentors in their field. Features profile matching, session scheduling, progress tracking, and a community forum.',
+    features: ['Mentor and profile matching', 'Session scheduling', 'Progress tracking', 'Community forum'],
     tags: ['Next.js', 'Tailwind CSS', 'TypeScript', 'Prisma', 'PostgreSQL'],
     category: 'Web', featured: false,
     github: 'https://github.com/Pacifique5', live: 'https://github.com/Pacifique5',
@@ -55,6 +60,7 @@ const projects = [
     title: 'Vehicle Management System',
     description: 'A complete vehicle management solution for tracking parking spaces, fees, vehicle information, and generating detailed reports with real-time updates.',
     longDesc: 'Manages parking lot operations including space allocation, fee calculation, vehicle entry/exit logging, and monthly revenue reports.',
+    features: ['Parking space allocation', 'Automatic fee calculation', 'Vehicle entry and exit logging', 'Monthly revenue reports'],
     tags: ['HTML', 'CSS', 'PHP', 'MySQL', 'JavaScript'],
     category: 'Web', featured: false,
     github: 'https://github.com/Pacifique5', live: 'https://github.com/Pacifique5',
@@ -118,9 +124,9 @@ export default function Projects() {
                 className={`w-full flex items-center gap-2.5 p-2 rounded-md text-left ${active ? 'bg-macblue text-white' : 'hover:bg-black/4 dark:hover:bg-white/5'}`}>
                 <ProjectTile title={p.title} color={p.color} size={36} />
                 <div className="flex-1 min-w-0">
-                  <div className="text-[13px] font-medium truncate flex items-center gap-1">
+                  <div className="text-[13px] font-medium leading-snug line-clamp-2">
                     {p.title}
-                    {p.featured && <IoStar className={`text-[10px] shrink-0 ${active ? 'text-white' : 'text-[#ff9f0a]'}`} />}
+                    {p.featured && <IoStar className={`inline text-[10px] ml-1 -mt-0.5 ${active ? 'text-white' : 'text-[#ff9f0a]'}`} />}
                   </div>
                   <div className={`text-[11px] truncate ${active ? 'text-white/75' : 'text-black/50 dark:text-white/50'}`}>{p.category} · {p.year}</div>
                 </div>
@@ -133,6 +139,7 @@ export default function Projects() {
         {/* Detail */}
         {project && (
           <div className="flex-1 min-w-0 overflow-y-auto mac-scroll px-7 py-6">
+            <div className="max-w-180">
             <div className="flex items-start gap-4 mb-5">
               <ProjectTile title={project.title} color={project.color} size={72} />
               <div className="flex-1 min-w-0">
@@ -148,16 +155,41 @@ export default function Projects() {
               </div>
             </div>
 
-            <div className="h-px bg-(--hairline) mb-4" />
-            <h3 className="text-[13px] font-semibold mb-1.5">Description</h3>
+            {/* Quick facts */}
+            <div className="grid grid-cols-4 gap-2 mb-6">
+              {[
+                ['Status', project.status],
+                ['Platform', project.category],
+                ['Year', project.year],
+                ['Stack', `${project.tags.length} tools`],
+              ].map(([k, v]) => (
+                <div key={k} className="rounded-lg bg-black/3 dark:bg-white/6 px-3 py-2">
+                  <div className="text-[11px] text-black/45 dark:text-white/45">{k}</div>
+                  <div className="text-[13px] font-medium mt-0.5">{v}</div>
+                </div>
+              ))}
+            </div>
+
+            <h3 className="text-[13px] font-semibold mb-1.5">Overview</h3>
             <p className="text-[13px] leading-relaxed text-black/75 dark:text-white/75 mb-3">{project.description}</p>
-            <p className="text-[13px] leading-relaxed text-black/60 dark:text-white/60 mb-5">{project.longDesc}</p>
+            <p className="text-[13px] leading-relaxed text-black/60 dark:text-white/60 mb-6">{project.longDesc}</p>
+
+            <h3 className="text-[13px] font-semibold mb-2">Key Features</h3>
+            <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 mb-6">
+              {project.features.map(feature => (
+                <li key={feature} className="flex items-start gap-2 text-[13px] text-black/75 dark:text-white/75">
+                  <IoCheckmarkCircle className="mt-0.5 shrink-0 text-[15px]" style={{ color: project.color[0] }} />
+                  {feature}
+                </li>
+              ))}
+            </ul>
 
             <h3 className="text-[13px] font-semibold mb-2">Built With</h3>
             <div className="flex flex-wrap gap-1.5">
               {project.tags.map(tag => (
                 <span key={tag} className="px-2 py-0.5 rounded-[5px] text-[12px] bg-black/5 dark:bg-white/8 text-black/70 dark:text-white/75">{tag}</span>
               ))}
+            </div>
             </div>
           </div>
         )}
