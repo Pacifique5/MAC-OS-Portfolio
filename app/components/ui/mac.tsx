@@ -52,14 +52,18 @@ export function CCSlider({ value, onChange, min = 0, max = 100, icon }: { value:
 }
 
 /* ---------------- Menus ---------------- */
-export function MenuItem({ children, shortcut, onClick, disabled, checked, danger }: { children: ReactNode; shortcut?: string; onClick?: () => void; disabled?: boolean; checked?: boolean; danger?: boolean }) {
+export function MenuItem({ children, onClick, checked, danger, hint }: { children: ReactNode; onClick?: () => void; checked?: boolean; danger?: boolean; hint?: ReactNode }) {
   return (
-    <button type="button" className="mac-menu-item" disabled={disabled} onClick={onClick}>
-      <span className="flex items-center gap-1.5">
-        <span className="w-3 text-[11px] leading-none">{checked ? '✓' : ''}</span>
-        <span className={danger ? 'text-[#ff453a]' : undefined}>{children}</span>
+    <button type="button" className="mac-menu-item" onClick={onClick}>
+      <span className="flex items-center gap-1.5 min-w-0">
+        <span className="w-3 flex items-center justify-center flex-shrink-0">
+          {checked && (
+            <svg viewBox="0 0 14 14" width="10" height="10" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7.5 L5.6 10.5 L11.5 3.5" /></svg>
+          )}
+        </span>
+        <span className={`truncate ${danger ? 'text-[#ff453a]' : ''}`}>{children}</span>
       </span>
-      {shortcut && <span className="mac-shortcut">{shortcut}</span>}
+      {hint && <span className="mac-shortcut">{hint}</span>}
     </button>
   );
 }
