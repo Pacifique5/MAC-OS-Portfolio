@@ -1,12 +1,24 @@
 'use client';
 import type { IconType } from 'react-icons';
 import { IoLogoGithub, IoLogoLinkedin, IoPerson, IoHammer, IoSparkles, IoSchool, IoChatbubbles, IoMail } from 'react-icons/io5';
+import { FaSlack, FaXTwitter } from 'react-icons/fa6';
 import {
   FinderIcon, LaunchpadIcon, SafariIcon, TerminalIcon, PhotosIcon, CalendarIcon, SettingsIcon, TrashIcon,
   ContactsIcon, ProjectsIcon, SkillsIcon, ExperienceIcon, MessagesIcon, MailIcon, BrandTile,
 } from './icons/AppIcons';
 
-export type WindowId = 'finder' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
+export type WindowId = 'finder' | 'photos' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
+
+/**
+ * Social links used by the Dock, Launchpad and Spotlight — edit them here.
+ * TODO: replace `slack` with your workspace invite link and `x` with your X profile URL.
+ */
+export const SOCIAL_LINKS = {
+  github: 'https://github.com/Pacifique5',
+  linkedin: 'https://linkedin.com/in/mugisha-pacifique',
+  slack: 'https://slack.com/',
+  x: 'https://x.com/',
+};
 
 export type AppAction =
   | { type: 'window'; window: WindowId }
@@ -29,13 +41,15 @@ export interface AppDef {
 
 const GitHubIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#3b4148', '#16191d']} Glyph={IoLogoGithub} />;
 const LinkedInIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#1c8ae6', '#0a58b0']} Glyph={IoLogoLinkedin} glyphScale={0.6} />;
+const SlackIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#611f69', '#3f0e40']} Glyph={FaSlack} glyphScale={0.54} />;
+const XIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#2a2a2c', '#000000']} Glyph={FaXTwitter} glyphScale={0.48} />;
 
 export const APPS: Record<string, AppDef> = {
   finder:       { id: 'finder',       label: 'Finder',       kind: 'Application', Icon: FinderIcon,    action: { type: 'window', window: 'finder' } },
   launchpad:    { id: 'launchpad',    label: 'Launchpad',    kind: 'Application', Icon: LaunchpadIcon, action: { type: 'launchpad' } },
   safari:       { id: 'safari',       label: 'Safari',       kind: 'Application', Icon: SafariIcon,    action: { type: 'link', href: 'https://github.com/Pacifique5/MAC-OS-Portfolio' } },
   terminal:     { id: 'terminal',     label: 'Terminal',     kind: 'Application', Icon: TerminalIcon,  action: { type: 'none' } },
-  photos:       { id: 'photos',       label: 'Photos',       kind: 'Application', Icon: PhotosIcon,    action: { type: 'none' } },
+  photos:       { id: 'photos',       label: 'Photos',       kind: 'Application', Icon: PhotosIcon,    action: { type: 'window', window: 'photos' } },
   calendar:     { id: 'calendar',     label: 'Calendar',     kind: 'Application', Icon: CalendarIcon,  action: { type: 'notifications' } },
 
   about:        { id: 'about',        label: 'About Me',     kind: 'Folder', Icon: ContactsIcon,   action: { type: 'window', window: 'about' },        folderGlyph: IoPerson },
@@ -45,8 +59,10 @@ export const APPS: Record<string, AppDef> = {
   testimonials: { id: 'testimonials', label: 'Testimonials', kind: 'Folder', Icon: MessagesIcon,   action: { type: 'window', window: 'testimonials' }, folderGlyph: IoChatbubbles },
   contact:      { id: 'contact',      label: 'Contact',      kind: 'Folder', Icon: MailIcon,       action: { type: 'window', window: 'contact' },      folderGlyph: IoMail },
 
-  github:       { id: 'github',       label: 'GitHub',       kind: 'Website', Icon: GitHubIcon,    action: { type: 'link', href: 'https://github.com/Pacifique5' } },
-  linkedin:     { id: 'linkedin',     label: 'LinkedIn',     kind: 'Website', Icon: LinkedInIcon,  action: { type: 'link', href: 'https://linkedin.com/in/mugisha-pacifique' } },
+  github:       { id: 'github',       label: 'GitHub',       kind: 'Website', Icon: GitHubIcon,    action: { type: 'link', href: SOCIAL_LINKS.github } },
+  linkedin:     { id: 'linkedin',     label: 'LinkedIn',     kind: 'Website', Icon: LinkedInIcon,  action: { type: 'link', href: SOCIAL_LINKS.linkedin } },
+  x:            { id: 'x',            label: 'X',            kind: 'Website', Icon: XIcon,         action: { type: 'link', href: SOCIAL_LINKS.x } },
+  slack:        { id: 'slack',        label: 'Slack',        kind: 'Website', Icon: SlackIcon,     action: { type: 'link', href: SOCIAL_LINKS.slack } },
   settings:     { id: 'settings',     label: 'System Settings', kind: 'Application', Icon: SettingsIcon, action: { type: 'controlcenter' } },
   trash:        { id: 'trash',        label: 'Trash',        kind: 'Folder', Icon: TrashIcon,      action: { type: 'none' } },
 };
@@ -60,11 +76,12 @@ export const DOCK_LAYOUT: (string | null)[] = [
   null,
   ...SECTION_IDS,
   null,
-  'github', 'linkedin', 'settings',
+  'github', 'linkedin', 'x', 'slack', 'settings',
 ];
 
 export const WINDOW_TITLES: Record<WindowId, string> = {
   finder: 'Finder',
+  photos: 'Photos',
   about: 'About Me',
   projects: 'Projects',
   skills: 'Skills',
