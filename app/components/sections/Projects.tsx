@@ -1,199 +1,167 @@
 'use client';
 import { useState } from 'react';
-import { FaGithub, FaExternalLinkAlt, FaStar, FaCode, FaMobile, FaGlobe } from 'react-icons/fa';
+import { IoGridOutline, IoGlobeOutline, IoPhonePortraitOutline, IoStar, IoLogoGithub, IoOpenOutline, IoChevronForward } from 'react-icons/io5';
+import { WindowLayout } from '../MacWindow';
+import { SidebarItem, SidebarSection, PushButton } from '../ui/mac';
+import { SQUIRCLE } from '../icons/AppIcons';
 
 const projects = [
   {
     title: 'Next Portfolio Website',
     description: 'A modern macOS-style portfolio website built with Next.js and Tailwind CSS. Features a fully interactive desktop interface with draggable windows, functional dock, Spotlight search, and real macOS menu bar.',
     longDesc: 'Built from scratch with a focus on pixel-perfect macOS UI replication. Includes working traffic light buttons, context menus, notification center, and smooth animations throughout.',
-    image: '/images/projects/11.png',
     tags: ['Next.js', 'React', 'Tailwind CSS', 'TypeScript', 'React Icons'],
-    category: 'Web',
-    featured: true,
-    github: 'https://github.com/Pacifique5/MAC-OS-Portfolio',
-    live: 'https://github.com/Pacifique5',
-    color: 'from-violet-500 to-indigo-500',
-    year: '2024',
-    status: 'Live',
+    category: 'Web', featured: true,
+    github: 'https://github.com/Pacifique5/MAC-OS-Portfolio', live: 'https://github.com/Pacifique5',
+    color: ['#8b5cf6', '#4f46e5'], year: '2024', status: 'Live',
   },
   {
     title: 'CacheNet',
     description: 'A network caching solution enabling offline content access for education during internet outages — bridging the digital divide in underserved communities.',
     longDesc: 'Uses service workers and local caching strategies to serve educational content even without internet. Supports video, documents, and interactive quizzes offline.',
-    image: '/images/projects/4.png',
     tags: ['Next.js', 'React Native', 'Node.js', 'Service Workers', 'PWA'],
-    category: 'Mobile',
-    featured: true,
-    github: 'https://github.com/Pacifique5',
-    live: 'https://github.com/Pacifique5',
-    color: 'from-cyan-500 to-blue-500',
-    year: '2024',
-    status: 'Live',
+    category: 'Mobile', featured: true,
+    github: 'https://github.com/Pacifique5', live: 'https://github.com/Pacifique5',
+    color: ['#06b6d4', '#2563eb'], year: '2024', status: 'Live',
   },
   {
     title: 'FARM PRO',
     description: 'A full-stack farm management system with inventory tracking, crop monitoring, weather integration, and a real-time analytics dashboard for modern agriculture.',
     longDesc: 'Helps farmers track crop cycles, manage inventory, monitor weather conditions, and generate reports. Built with Laravel backend and a responsive frontend.',
-    image: '/images/projects/2.png',
     tags: ['Laravel', 'PHP', 'MySQL', 'Chart.js', 'Bootstrap'],
-    category: 'Web',
-    featured: false,
-    github: 'https://github.com/Pacifique5',
-    live: 'https://github.com/Pacifique5',
-    color: 'from-green-500 to-emerald-500',
-    year: '2023',
-    status: 'Completed',
+    category: 'Web', featured: false,
+    github: 'https://github.com/Pacifique5', live: 'https://github.com/Pacifique5',
+    color: ['#22c55e', '#059669'], year: '2023', status: 'Completed',
   },
   {
     title: 'Library Management System',
     description: 'A comprehensive library management solution with book tracking, member management, borrowing history, fine calculation, and a full-featured admin panel.',
     longDesc: 'Supports multiple user roles (admin, librarian, member), automated fine calculation, email notifications for due dates, and detailed reporting.',
-    image: '/images/projects/3.png',
     tags: ['Laravel', 'PHP', 'MySQL', 'Blade', 'Bootstrap'],
-    category: 'Web',
-    featured: false,
-    github: 'https://github.com/Pacifique5',
-    live: 'https://github.com/Pacifique5',
-    color: 'from-amber-500 to-orange-500',
-    year: '2023',
-    status: 'Completed',
+    category: 'Web', featured: false,
+    github: 'https://github.com/Pacifique5', live: 'https://github.com/Pacifique5',
+    color: ['#f59e0b', '#ea580c'], year: '2023', status: 'Completed',
   },
   {
     title: 'Umurava-Website',
     description: 'Youth mentorship platform with full authentication, CRUD operations, mentor matching, and progress tracking — supporting empowerment and leadership development.',
     longDesc: 'Connects young people with mentors in their field. Features profile matching, session scheduling, progress tracking, and a community forum.',
-    image: '/images/projects/12.png',
     tags: ['Next.js', 'Tailwind CSS', 'TypeScript', 'Prisma', 'PostgreSQL'],
-    category: 'Web',
-    featured: false,
-    github: 'https://github.com/Pacifique5',
-    live: 'https://github.com/Pacifique5',
-    color: 'from-pink-500 to-rose-500',
-    year: '2023',
-    status: 'Live',
+    category: 'Web', featured: false,
+    github: 'https://github.com/Pacifique5', live: 'https://github.com/Pacifique5',
+    color: ['#ec4899', '#e11d48'], year: '2023', status: 'Live',
   },
   {
     title: 'Vehicle Management System',
     description: 'A complete vehicle management solution for tracking parking spaces, fees, vehicle information, and generating detailed reports with real-time updates.',
     longDesc: 'Manages parking lot operations including space allocation, fee calculation, vehicle entry/exit logging, and monthly revenue reports.',
-    image: '/images/projects/6.png',
     tags: ['HTML', 'CSS', 'PHP', 'MySQL', 'JavaScript'],
-    category: 'Web',
-    featured: false,
-    github: 'https://github.com/Pacifique5',
-    live: 'https://github.com/Pacifique5',
-    color: 'from-slate-500 to-gray-600',
-    year: '2022',
-    status: 'Completed',
+    category: 'Web', featured: false,
+    github: 'https://github.com/Pacifique5', live: 'https://github.com/Pacifique5',
+    color: ['#64748b', '#334155'], year: '2022', status: 'Completed',
   },
 ];
 
-const categories = ['All', 'Web', 'Mobile'];
+type Filter = 'All' | 'Featured' | 'Web' | 'Mobile';
+
+/** App-icon style tile with the project's initials. */
+function ProjectTile({ title, color, size = 44 }: { title: string; color: string[]; size?: number }) {
+  const initials = title.split(/[\s-]+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  return (
+    <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
+      <svg viewBox="0 0 100 100" width={size} height={size} className="absolute inset-0">
+        <defs>
+          <linearGradient id={`pt-${title.replace(/\W/g, '')}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor={color[0]} /><stop offset="1" stopColor={color[1]} />
+          </linearGradient>
+        </defs>
+        <path d={SQUIRCLE} fill={`url(#pt-${title.replace(/\W/g, '')})`} />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-white font-semibold" style={{ fontSize: size * 0.36 }}>{initials}</span>
+    </div>
+  );
+}
 
 export default function Projects() {
-  const [activeCategory, setActiveCategory] = useState('All');
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [filter, setFilter] = useState<Filter>('All');
+  const [selected, setSelected] = useState(projects[0].title);
 
-  const filtered = activeCategory === 'All' ? projects : projects.filter(p => p.category === activeCategory);
+  const list = projects.filter(p =>
+    filter === 'All' ? true : filter === 'Featured' ? p.featured : p.category === filter,
+  );
+  const project = projects.find(p => p.title === selected) ?? list[0];
+
+  const count = (f: Filter) => projects.filter(p => f === 'All' ? true : f === 'Featured' ? p.featured : p.category === f).length;
+
+  const sidebar = (
+    <>
+      <SidebarSection title="Library">
+        <SidebarItem icon={<IoGridOutline />} label="All Projects" badge={count('All')} active={filter === 'All'} onClick={() => setFilter('All')} />
+        <SidebarItem icon={<IoStar />} label="Featured" badge={count('Featured')} active={filter === 'Featured'} onClick={() => setFilter('Featured')} />
+      </SidebarSection>
+      <SidebarSection title="Platforms">
+        <SidebarItem icon={<IoGlobeOutline />} label="Web" badge={count('Web')} active={filter === 'Web'} onClick={() => setFilter('Web')} />
+        <SidebarItem icon={<IoPhonePortraitOutline />} label="Mobile" badge={count('Mobile')} active={filter === 'Mobile'} onClick={() => setFilter('Mobile')} />
+      </SidebarSection>
+    </>
+  );
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800 overflow-y-auto">
-
-      {/* Header */}
-      <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 px-8 py-8">
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-white blur-3xl" />
-        </div>
-        <h2 className="text-2xl font-extrabold text-white mb-1">Projects</h2>
-        <p className="text-white/80 text-sm mb-4">Things I've built that I'm proud of</p>
-        <div className="flex items-center justify-between">
-          <div className="flex gap-2">
-            {categories.map(cat => (
-              <button key={cat} onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${activeCategory === cat ? 'bg-white text-orange-600 shadow-md' : 'bg-white/20 text-white hover:bg-white/30'}`}>
-                {cat}
-              </button>
-            ))}
-          </div>
-          <span className="text-white/70 text-xs">{filtered.length} projects</span>
-        </div>
-      </div>
-
-      {/* Featured projects */}
-      <div className="px-6 pt-6 space-y-4">
-        {filtered.filter(p => p.featured).map(project => (
-          <div key={project.title} className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
-            <div className={`h-2 bg-gradient-to-r ${project.color}`} />
-            <div className="p-5">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="flex items-center gap-1 px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold rounded-full">
-                    <FaStar className="text-[10px]" /> Featured
-                  </span>
-                  <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium rounded-full">{project.status}</span>
-                  <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded-full">{project.year}</span>
-                </div>
-                <div className="flex gap-2">
-                  <a href={project.github} target="_blank" rel="noopener noreferrer" className="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-800 hover:text-white transition-all">
-                    <FaGithub className="text-xs" />
-                  </a>
-                  <a href={project.live} target="_blank" rel="noopener noreferrer" className="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-blue-500 hover:text-white transition-all">
-                    <FaExternalLinkAlt className="text-xs" />
-                  </a>
-                </div>
-              </div>
-              <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2">{project.title}</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-3">{project.description}</p>
-              {expanded === project.title && (
-                <p className="text-gray-400 dark:text-gray-500 text-xs leading-relaxed mb-3 border-l-2 border-violet-400 pl-3 italic">{project.longDesc}</p>
-              )}
-              <button onClick={() => setExpanded(expanded === project.title ? null : project.title)}
-                className="text-xs text-violet-500 hover:text-violet-700 font-medium mb-3 transition-colors">
-                {expanded === project.title ? '▲ Show less' : '▼ Read more'}
-              </button>
-              <div className="flex flex-wrap gap-1.5">
-                {project.tags.map(tag => (
-                  <span key={tag} className="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-full">{tag}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {/* Regular projects grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-6">
-          {filtered.filter(p => !p.featured).map(project => (
-            <div key={project.title} className="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
-              <div className={`h-1.5 bg-gradient-to-r ${project.color}`} />
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex gap-1.5">
-                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded-full">{project.category}</span>
-                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded-full">{project.year}</span>
+    <WindowLayout title="Projects" subtitle={`${list.length} projects`} sidebar={sidebar} sidebarWidth={190}>
+      <div className="flex h-full">
+        {/* List column */}
+        <div className="w-[250px] flex-shrink-0 border-r border-[var(--hairline)] overflow-y-auto mac-scroll p-1.5">
+          {list.map(p => {
+            const active = project?.title === p.title;
+            return (
+              <button key={p.title} type="button" onClick={() => setSelected(p.title)}
+                className={`w-full flex items-center gap-2.5 p-2 rounded-md text-left ${active ? 'bg-macblue text-white' : 'hover:bg-black/[0.04] dark:hover:bg-white/[0.05]'}`}>
+                <ProjectTile title={p.title} color={p.color} size={36} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13px] font-medium truncate flex items-center gap-1">
+                    {p.title}
+                    {p.featured && <IoStar className={`text-[10px] flex-shrink-0 ${active ? 'text-white' : 'text-[#ff9f0a]'}`} />}
                   </div>
-                  <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <a href={project.github} target="_blank" rel="noopener noreferrer" className="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-800 hover:text-white transition-all">
-                      <FaGithub style={{ fontSize: 10 }} />
-                    </a>
-                    <a href={project.live} target="_blank" rel="noopener noreferrer" className="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-blue-500 hover:text-white transition-all">
-                      <FaExternalLinkAlt style={{ fontSize: 10 }} />
-                    </a>
-                  </div>
+                  <div className={`text-[11px] truncate ${active ? 'text-white/75' : 'text-black/50 dark:text-white/50'}`}>{p.category} · {p.year}</div>
                 </div>
-                <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-1.5">{project.title}</h3>
-                <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed mb-3">{project.description}</p>
-                <div className="flex flex-wrap gap-1">
-                  {project.tags.slice(0, 3).map(tag => (
-                    <span key={tag} className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-full">{tag}</span>
-                  ))}
-                  {project.tags.length > 3 && <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-400 text-xs rounded-full">+{project.tags.length - 3}</span>}
+                <IoChevronForward className={`text-[11px] ${active ? 'text-white/70' : 'opacity-30'}`} />
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Detail */}
+        {project && (
+          <div className="flex-1 min-w-0 overflow-y-auto mac-scroll px-7 py-6">
+            <div className="flex items-start gap-4 mb-5">
+              <ProjectTile title={project.title} color={project.color} size={72} />
+              <div className="flex-1 min-w-0">
+                <h2 className="text-[22px] font-semibold leading-tight">{project.title}</h2>
+                <div className="flex items-center gap-1.5 mt-1.5 text-[11px]">
+                  <span className={`px-1.5 py-px rounded ${project.status === 'Live' ? 'bg-[#34c759]/15 text-[#248a3d] dark:text-[#30d158]' : 'bg-black/[0.06] dark:bg-white/10 text-black/60 dark:text-white/60'}`}>{project.status}</span>
+                  <span className="text-black/45 dark:text-white/45">{project.category} · {project.year}</span>
+                </div>
+                <div className="flex gap-2 mt-3">
+                  <PushButton primary href={project.live}><IoOpenOutline /> Open</PushButton>
+                  <PushButton href={project.github}><IoLogoGithub /> Source</PushButton>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+
+            <div className="h-px bg-[var(--hairline)] mb-4" />
+            <h3 className="text-[13px] font-semibold mb-1.5">Description</h3>
+            <p className="text-[13px] leading-relaxed text-black/75 dark:text-white/75 mb-3">{project.description}</p>
+            <p className="text-[13px] leading-relaxed text-black/60 dark:text-white/60 mb-5">{project.longDesc}</p>
+
+            <h3 className="text-[13px] font-semibold mb-2">Built With</h3>
+            <div className="flex flex-wrap gap-1.5">
+              {project.tags.map(tag => (
+                <span key={tag} className="px-2 py-0.5 rounded-[5px] text-[12px] bg-black/[0.05] dark:bg-white/[0.08] text-black/70 dark:text-white/75">{tag}</span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </WindowLayout>
   );
 }
