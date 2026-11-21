@@ -17,6 +17,7 @@ const SPOTLIGHT_KEYWORDS: Record<string, string> = {
   testimonials: 'reviews recommendations references',
   contact: 'email phone hire message reach',
   photos: 'certificates badges gallery images pictures transcript',
+  terminal: 'shell console cli hacking security nmap zsh command',
   slack: 'workspace chat community',
   x: 'twitter social',
 };

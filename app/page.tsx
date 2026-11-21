@@ -9,6 +9,7 @@ import { APPS, SECTION_IDS, WINDOW_TITLES, WindowId } from './components/apps';
 import { useSystem } from './components/useSystem';
 import Finder from './components/sections/Finder';
 import Photos from './components/sections/Photos';
+import Terminal from './components/sections/Terminal';
 import About from './components/sections/About';
 import Projects from './components/sections/Projects';
 import Skills from './components/sections/Skills';
@@ -16,7 +17,7 @@ import Experience from './components/sections/Experience';
 import Testimonials from './components/sections/Testimonials';
 import Contact from './components/sections/Contact';
 
-const ALL_WINDOWS: WindowId[] = ['finder', 'photos', ...SECTION_IDS];
+const ALL_WINDOWS: WindowId[] = ['finder', 'photos', 'terminal', ...SECTION_IDS];
 
 // `tone` tells the menu bar and desktop labels whether to use dark or light text,
 // the same way macOS adapts the menu bar to the wallpaper.
@@ -176,6 +177,7 @@ export default function Home() {
     switch (id) {
       case 'finder': return <Finder onOpen={launch} />;
       case 'photos': return <Photos />;
+      case 'terminal': return <Terminal onOpen={launch} onClose={() => closeWindow('terminal')} />;
       case 'about': return <About />;
       case 'projects': return <Projects />;
       case 'skills': return <Skills />;

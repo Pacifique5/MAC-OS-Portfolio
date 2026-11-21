@@ -7,7 +7,7 @@ import {
   ContactsIcon, ProjectsIcon, SkillsIcon, ExperienceIcon, MessagesIcon, MailIcon, BrandTile, SlackIcon,
 } from './icons/AppIcons';
 
-export type WindowId = 'finder' | 'photos' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
+export type WindowId = 'finder' | 'photos' | 'terminal' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
 
 /** Social links used by the Dock, Launchpad and Spotlight — edit them here. */
 export const SOCIAL_LINKS = {
@@ -43,7 +43,7 @@ const XIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#2a2
 export const APPS: Record<string, AppDef> = {
   finder:       { id: 'finder',       label: 'Finder',       kind: 'Application', Icon: FinderIcon,    action: { type: 'window', window: 'finder' } },
   launchpad:    { id: 'launchpad',    label: 'Launchpad',    kind: 'Application', Icon: LaunchpadIcon, action: { type: 'launchpad' } },
-  terminal:     { id: 'terminal',     label: 'Terminal',     kind: 'Application', Icon: TerminalIcon,  action: { type: 'none' } },
+  terminal:     { id: 'terminal',     label: 'Terminal',     kind: 'Application', Icon: TerminalIcon,  action: { type: 'window', window: 'terminal' } },
   photos:       { id: 'photos',       label: 'Photos',       kind: 'Application', Icon: PhotosIcon,    action: { type: 'window', window: 'photos' } },
   calendar:     { id: 'calendar',     label: 'Calendar',     kind: 'Application', Icon: CalendarIcon,  action: { type: 'notifications' } },
 
@@ -77,6 +77,7 @@ export const DOCK_LAYOUT: (string | null)[] = [
 export const WINDOW_TITLES: Record<WindowId, string> = {
   finder: 'Finder',
   photos: 'Photos',
+  terminal: 'Terminal',
   about: 'About Me',
   projects: 'Projects',
   skills: 'Skills',
