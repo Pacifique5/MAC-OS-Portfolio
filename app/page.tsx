@@ -178,7 +178,7 @@ export default function Home() {
       case 'finder': return <Finder onOpen={launch} />;
       case 'photos': return <Photos />;
       case 'terminal': return <Terminal onOpen={launch} onClose={() => closeWindow('terminal')} />;
-      case 'about': return <About />;
+      case 'about': return <About onOpen={launch} />;
       case 'projects': return <Projects />;
       case 'skills': return <Skills />;
       case 'experience': return <Experience />;
