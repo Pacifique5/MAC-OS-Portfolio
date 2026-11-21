@@ -13,26 +13,26 @@ const certificateCount = PHOTOS.filter(p => p.album === 'certificates').length;
 const badgeCount = PHOTOS.filter(p => p.album === 'badges').length;
 
 const stats = [
-  { label: 'Projects', value: '10+', Glyph: IoBriefcase, color: '#af52de', open: 'projects' },
-  { label: 'Certificates', value: `${certificateCount}`, Glyph: IoRibbon, color: '#ff9500', open: 'photos' },
-  { label: 'Internships', value: '6', Glyph: IoSchool, color: '#007aff', open: 'experience' },
-  { label: 'Years Coding', value: '3+', Glyph: IoFlash, color: '#34c759', open: 'skills' },
+  { label: 'Projects', value: '10+', Glyph: IoBriefcase, open: 'projects' },
+  { label: 'Certificates', value: `${certificateCount}`, Glyph: IoRibbon, open: 'photos' },
+  { label: 'Internships', value: '6', Glyph: IoSchool, open: 'experience' },
+  { label: 'Years Coding', value: '3+', Glyph: IoFlash, open: 'skills' },
 ];
 
 const techStack = [
-  { Icon: SiNextdotjs, name: 'Next.js', color: 'currentColor' },
-  { Icon: SiReact, name: 'React', color: '#61DAFB' },
-  { Icon: SiTypescript, name: 'TypeScript', color: '#3178C6' },
-  { Icon: SiTailwindcss, name: 'Tailwind', color: '#06B6D4' },
-  { Icon: SiNodedotjs, name: 'Node.js', color: '#339933' },
-  { Icon: SiPython, name: 'Python', color: '#3776AB' },
+  { Icon: SiNextdotjs, name: 'Next.js' },
+  { Icon: SiReact, name: 'React' },
+  { Icon: SiTypescript, name: 'TypeScript' },
+  { Icon: SiTailwindcss, name: 'Tailwind' },
+  { Icon: SiNodedotjs, name: 'Node.js' },
+  { Icon: SiPython, name: 'Python' },
 ];
 
 const values = [
-  { Glyph: IoCodeSlash, color: '#5856d6', title: 'Clean Code', desc: 'Writing maintainable, scalable, and well-documented code is my standard.' },
-  { Glyph: IoShieldCheckmark, color: '#34c759', title: 'Security First', desc: 'Applying what I learned in cybersecurity training to build safer software by default.' },
-  { Glyph: IoHardwareChip, color: '#ff2d55', title: 'AI-Driven', desc: 'Integrating AI and ML into real-world applications to solve complex problems.' },
-  { Glyph: IoRocket, color: '#ff9500', title: 'Performance', desc: 'Obsessed with fast, optimized user experiences across all devices.' },
+  { Glyph: IoCodeSlash, title: 'Clean Code', desc: 'Writing maintainable, scalable, and well-documented code is my standard.' },
+  { Glyph: IoShieldCheckmark, title: 'Security First', desc: 'Applying what I learned in cybersecurity training to build safer software by default.' },
+  { Glyph: IoHardwareChip, title: 'AI-Driven', desc: 'Integrating AI and ML into real-world applications to solve complex problems.' },
+  { Glyph: IoRocket, title: 'Performance', desc: 'Obsessed with fast, optimized user experiences across all devices.' },
 ];
 
 const fields = [
@@ -96,7 +96,7 @@ export default function About({ onOpen }: { onOpen: (id: string) => void }) {
           {stats.map(s => (
             <button key={s.label} type="button" onClick={() => onOpen(s.open)} title={`Open ${s.label}`}
               className="rounded-[10px] bg-black/3 dark:bg-white/6 hover:bg-black/6 dark:hover:bg-white/10 p-3 flex flex-col items-center gap-1 transition-colors">
-              <SymbolTile Glyph={s.Glyph} color={s.color} size={24} />
+              <SymbolTile Glyph={s.Glyph} size={24} />
               <div className="text-[20px] font-semibold leading-none mt-1">{s.value}</div>
               <div className="text-[11px] text-black/50 dark:text-white/50">{s.label}</div>
             </button>
@@ -127,7 +127,7 @@ export default function About({ onOpen }: { onOpen: (id: string) => void }) {
           <div className="grid grid-cols-3 gap-px bg-black/[0.07] dark:bg-white/[0.07]">
             {techStack.map(t => (
               <div key={t.name} className="flex items-center gap-2 px-3 py-2.5 text-[13px] bg-(--group-bg)">
-                <t.Icon style={{ color: t.color }} className="text-[16px]" /> {t.name}
+                <t.Icon className="text-[16px] text-black/65 dark:text-white/75" /> {t.name}
               </div>
             ))}
           </div>
@@ -135,14 +135,14 @@ export default function About({ onOpen }: { onOpen: (id: string) => void }) {
 
         <InsetGroup title="What I Value">
           {values.map(v => (
-            <GroupRow key={v.title} icon={<SymbolTile Glyph={v.Glyph} color={v.color} size={26} />} label={<span className="font-medium">{v.title}</span>} detail={v.desc} />
+            <GroupRow key={v.title} icon={<SymbolTile Glyph={v.Glyph} size={26} />} label={<span className="font-medium">{v.title}</span>} detail={v.desc} />
           ))}
         </InsetGroup>
 
         <InsetGroup title="Credentials">
           <GroupRow
             onClick={() => onOpen('photos')}
-            icon={<SymbolTile Glyph={IoImages} color="#ff9500" size={26} />}
+            icon={<SymbolTile Glyph={IoImages} size={26} />}
             label={<span className="font-medium">Certificates &amp; Badges</span>}
             detail={`${certificateCount} certificates and ${badgeCount} skill badges in Photos`}
             right={<IoChevronForward className="text-[12px]" />}

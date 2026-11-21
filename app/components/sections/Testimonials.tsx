@@ -7,27 +7,27 @@ import { ToolbarButton } from '../ui/mac';
 
 const testimonials = [
   {
-    name: 'John Doe', role: 'Senior Developer', company: 'Tech Company', relationship: 'Colleague', date: 'January 2024', rating: 5, avatar: 'JD', tint: ['#b18cf5', '#7c4ddb'] as [string, string],
+    name: 'John Doe', role: 'Senior Developer', company: 'Tech Company', relationship: 'Colleague', date: 'January 2024', rating: 5, avatar: 'JD',
     text: 'Working with Pacifique was an incredible experience. His dedication to clean code and innovative solutions is unmatched. He consistently delivered high-quality work and was always willing to help team members.',
     tags: ['Clean Code', 'Teamwork', 'Innovation'],
   },
   {
-    name: 'Jane Smith', role: 'Project Manager', company: 'StartupXYZ', relationship: 'Supervisor', date: 'December 2023', rating: 5, avatar: 'JS', tint: ['#f78cb4', '#d9437a'] as [string, string],
+    name: 'Jane Smith', role: 'Project Manager', company: 'StartupXYZ', relationship: 'Supervisor', date: 'December 2023', rating: 5, avatar: 'JS',
     text: 'Pacifique demonstrated exceptional problem-solving skills and leadership throughout our project. His ability to learn new technologies quickly and apply them effectively made him an invaluable team member.',
     tags: ['Leadership', 'Fast Learner', 'Problem Solving'],
   },
   {
-    name: 'Alex Johnson', role: 'Full-Stack Developer', company: 'DevAgency', relationship: 'Colleague', date: 'November 2023', rating: 5, avatar: 'AJ', tint: ['#6cc4ff', '#2f84e0'] as [string, string],
+    name: 'Alex Johnson', role: 'Full-Stack Developer', company: 'DevAgency', relationship: 'Colleague', date: 'November 2023', rating: 5, avatar: 'AJ',
     text: 'I had the pleasure of collaborating with Pacifique on multiple projects. His technical expertise in React and Next.js, combined with his excellent communication skills, made every project a success.',
     tags: ['React', 'Next.js', 'Communication'],
   },
   {
-    name: 'Sarah Williams', role: 'UI/UX Designer', company: 'DesignStudio', relationship: 'Team Member', date: 'October 2023', rating: 5, avatar: 'SW', tint: ['#5fd8b0', '#21a67a'] as [string, string],
+    name: 'Sarah Williams', role: 'UI/UX Designer', company: 'DesignStudio', relationship: 'Team Member', date: 'October 2023', rating: 5, avatar: 'SW',
     text: "Pacifique's attention to detail and commitment to creating user-friendly interfaces is remarkable. He bridges the gap between design and development seamlessly, always respecting the design vision.",
     tags: ['UI/UX', 'Attention to Detail', 'Design-Dev Bridge'],
   },
   {
-    name: 'Michael Brown', role: 'Tech Lead', company: 'InnovateTech', relationship: 'Mentor', date: 'September 2023', rating: 5, avatar: 'MB', tint: ['#ffc06a', '#f08a1c'] as [string, string],
+    name: 'Michael Brown', role: 'Tech Lead', company: 'InnovateTech', relationship: 'Mentor', date: 'September 2023', rating: 5, avatar: 'MB',
     text: "As Pacifique's mentor, I've watched him grow into an exceptional developer. His passion for learning and his ability to tackle complex challenges head-on is truly inspiring. He's one of the best I've mentored.",
     tags: ['Growth Mindset', 'Complex Problems', 'Passion'],
   },
@@ -54,7 +54,7 @@ export default function Testimonials({ onOpen }: { onOpen: (id: string) => void 
           return (
             <button key={x.name} type="button" onClick={() => setActive(x.i)}
               className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-lg text-left ${sel ? 'bg-macblue text-white' : 'hover:bg-black/4 dark:hover:bg-white/5'}`}>
-              <Monogram initials={x.avatar} size={36} tint={x.tint} />
+              <Monogram initials={x.avatar} size={36} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="text-[13px] font-semibold truncate">{x.name}</span>
@@ -80,7 +80,7 @@ export default function Testimonials({ onOpen }: { onOpen: (id: string) => void 
       <div className="flex flex-col h-full">
         <div className="flex-1 overflow-y-auto mac-scroll px-5 py-5">
           <div className="flex flex-col items-center mb-5">
-            <Monogram initials={t.avatar} size={56} tint={t.tint} />
+            <Monogram initials={t.avatar} size={56} />
             <div className="text-[13px] font-semibold mt-1.5">{t.name}</div>
             <div className="text-[11px] text-black/45 dark:text-white/45">{t.relationship} · {t.company}</div>
           </div>
@@ -88,13 +88,13 @@ export default function Testimonials({ onOpen }: { onOpen: (id: string) => void 
 
           {/* Incoming bubble */}
           <div className="flex items-end gap-2 mb-1.5">
-            <Monogram initials={t.avatar} size={26} tint={t.tint} />
+            <Monogram initials={t.avatar} size={26} />
             <div className="relative max-w-[78%] px-3 py-2 rounded-[18px] rounded-bl-md bg-[#e9e9eb] dark:bg-[#3a3a3c] text-[13px] leading-relaxed">
               {t.text}
             </div>
           </div>
           <div className="flex items-end gap-2 mb-4 pl-8.5">
-            <div className="px-3 py-1.5 rounded-[18px] rounded-bl-md bg-[#e9e9eb] dark:bg-[#3a3a3c] flex items-center gap-0.5 text-[#ff9f0a]">
+            <div className="px-3 py-1.5 rounded-[18px] rounded-bl-md bg-[#e9e9eb] dark:bg-[#3a3a3c] flex items-center gap-0.5 text-macblue">
               {Array.from({ length: t.rating }).map((_, j) => <IoStar key={j} className="text-[13px]" />)}
             </div>
           </div>

@@ -10,12 +10,12 @@ import { ChevronGlyph } from '../icons/SystemIcons';
 const EMAIL = 'Pacifiquem58@gmail.com';
 
 const contactLinks = [
-  { Glyph: IoMail, color: '#007aff', label: 'Email', value: EMAIL, href: `mailto:${EMAIL}` },
-  { Glyph: IoCall, color: '#34c759', label: 'Phone', value: '+250 795 653 123', href: 'tel:+250795653123' },
-  { Glyph: IoLogoGithub, color: '#1d1d1f', label: 'GitHub', value: 'github.com/Pacifique5', href: SOCIAL_LINKS.github },
-  { Glyph: IoLogoLinkedin, color: '#0a66c2', label: 'LinkedIn', value: 'pacifique-mugisha', href: SOCIAL_LINKS.linkedin },
-  { Glyph: FaXTwitter, color: '#1d1d1f', label: 'X', value: '@_fiquem', href: SOCIAL_LINKS.x },
-  { Glyph: FaSlack, color: '#4a154b', label: 'Slack', value: 'codewithpacifique', href: SOCIAL_LINKS.slack },
+  { Glyph: IoMail, label: 'Email', value: EMAIL, href: `mailto:${EMAIL}` },
+  { Glyph: IoCall, label: 'Phone', value: '+250 795 653 123', href: 'tel:+250795653123' },
+  { Glyph: IoLogoGithub, label: 'GitHub', value: 'github.com/Pacifique5', href: SOCIAL_LINKS.github },
+  { Glyph: IoLogoLinkedin, label: 'LinkedIn', value: 'pacifique-mugisha', href: SOCIAL_LINKS.linkedin },
+  { Glyph: FaXTwitter, label: 'X', value: '@_fiquem', href: SOCIAL_LINKS.x },
+  { Glyph: FaSlack, label: 'Slack', value: 'codewithpacifique', href: SOCIAL_LINKS.slack },
 ];
 
 const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
@@ -126,17 +126,17 @@ export default function Contact() {
 
       <div className="bg-(--content-bg) px-6 py-6">
         <div className="max-w-140 mx-auto">
-          <div className="flex items-center gap-2.5 mb-5 px-3 py-2.5 rounded-[10px] bg-[#34c759]/10 shadow-[0_0_0_0.5px_rgba(52,199,89,0.35)]">
+          <div className="flex items-center gap-2.5 mb-5 px-3 py-2.5 rounded-[10px] bg-(--group-bg) shadow-[0_0_0_0.5px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.08)]">
             <span className="w-2.5 h-2.5 rounded-full bg-[#34c759] animate-pulse" />
             <div>
-              <div className="text-[13px] font-semibold text-[#248a3d] dark:text-[#30d158]">Available for new projects</div>
+              <div className="text-[13px] font-semibold">Available for new projects</div>
               <div className="text-[11px] text-black/50 dark:text-white/50">Rwanda, Africa · Open to remote work worldwide</div>
             </div>
           </div>
 
           <InsetGroup title="Other Ways to Reach Me">
             {contactLinks.map(c => (
-              <GroupRow key={c.label} href={c.href} icon={<SymbolTile Glyph={c.Glyph} color={c.color} size={24} />} label={c.label}
+              <GroupRow key={c.label} href={c.href} icon={<SymbolTile Glyph={c.Glyph} size={24} />} label={c.label}
                 right={<><span className="truncate max-w-50">{c.value}</span><ChevronGlyph size={8} className="opacity-50" /></>} />
             ))}
           </InsetGroup>

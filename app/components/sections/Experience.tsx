@@ -10,34 +10,34 @@ const certificateCount = PHOTOS.filter(p => p.album === 'certificates').length;
 const badgeCount = PHOTOS.filter(p => p.album === 'badges').length;
 import { ChevronGlyph } from '../icons/SystemIcons';
 
-const experiences: { company: string; role: string; period: string; Glyph: IconType; color: string; description: string; highlights: string[] }[] = [
+const experiences: { company: string; role: string; period: string; Glyph: IconType; description: string; highlights: string[] }[] = [
   {
-    company: 'ALX Africa', role: 'Software Engineering & AI Internship', period: '2024', Glyph: IoSchool, color: '#af52de',
+    company: 'ALX Africa', role: 'Software Engineering & AI Internship', period: '2024', Glyph: IoSchool,
     description: 'Advanced software engineering practices and AI/ML implementation. Worked on real-world projects using modern tech stacks.',
     highlights: ['Built AI-powered web apps with OpenAI APIs', 'Completed 12-month intensive program', 'Collaborated with 50+ developers globally', 'Earned Software Engineering certification'],
   },
   {
-    company: 'Harvard Remote Internship', role: 'Global Remote Work & Professional Skills', period: '2024', Glyph: IoEarth, color: '#007aff',
+    company: 'Harvard Remote Internship', role: 'Global Remote Work & Professional Skills', period: '2024', Glyph: IoEarth,
     description: 'Remote collaboration, professional development, and global teamwork with peers from 50+ countries.',
     highlights: ['Worked with teams across 5 continents', 'Completed CS50 and professional development tracks', 'Earned Harvard certificate in remote work', 'Led cross-cultural project teams'],
   },
   {
-    company: 'Code Alpha', role: 'Python & Web Development Internship', period: '2023–2024', Glyph: IoCodeSlash, color: '#34c759',
+    company: 'Code Alpha', role: 'Python & Web Development Internship', period: '2023–2024', Glyph: IoCodeSlash,
     description: 'Full-stack web development with Python frameworks including Django and Flask. Built and deployed production apps.',
     highlights: ['Built 3 production-ready web applications', 'Mastered Django REST Framework', 'Implemented CI/CD pipelines', 'Mentored 2 junior developers'],
   },
   {
-    company: 'ThinkCyber', role: 'Cybersecurity & Systems Security', period: '2023', Glyph: IoShieldCheckmark, color: '#ff3b30',
+    company: 'ThinkCyber', role: 'Cybersecurity & Systems Security', period: '2023', Glyph: IoShieldCheckmark,
     description: 'Security protocols, penetration testing, and system hardening. Earned certifications in ethical hacking.',
     highlights: ['Completed ethical hacking certification', 'Performed 10+ security audits', 'Implemented OWASP security standards', 'Studied network security protocols'],
   },
   {
-    company: 'DTP Academy', role: 'DevOps & Software Engineering', period: '2023', Glyph: IoGitNetwork, color: '#ff9500',
+    company: 'DTP Academy', role: 'DevOps & Software Engineering', period: '2023', Glyph: IoGitNetwork,
     description: 'CI/CD pipelines, containerization with Docker, and cloud infrastructure on AWS and GCP.',
     highlights: ['Set up Docker containerization workflows', 'Configured GitHub Actions CI/CD', 'Deployed apps on AWS EC2 and S3', 'Learned Kubernetes basics'],
   },
   {
-    company: 'Cyberium', role: 'Linux, Python & Networking', period: '2022–2023', Glyph: IoTerminal, color: '#30b0c7',
+    company: 'Cyberium', role: 'Linux, Python & Networking', period: '2022–2023', Glyph: IoTerminal,
     description: 'System administration, scripting, and network architecture. Deep dive into Linux internals and networking protocols.',
     highlights: ['Mastered Linux system administration', 'Wrote 20+ automation shell scripts', 'Studied TCP/IP and network protocols', 'Configured servers and firewalls'],
   },
@@ -68,7 +68,7 @@ export default function Experience({ onOpen }: { onOpen: (id: string) => void })
                 <button type="button" onClick={() => setExpanded(open ? null : i)}
                   className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-black/2 dark:hover:bg-white/3">
                   <ChevronGlyph dir={open ? 'down' : 'right'} size={9} className="opacity-45 transition-transform shrink-0" />
-                  <SymbolTile Glyph={exp.Glyph} color={exp.color} size={30} />
+                  <SymbolTile Glyph={exp.Glyph} size={30} />
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-semibold">{exp.company}</div>
                     <div className="text-[12px] text-black/55 dark:text-white/55 truncate">{exp.role}</div>
@@ -81,7 +81,7 @@ export default function Experience({ onOpen }: { onOpen: (id: string) => void })
                     <ul className="space-y-1.5">
                       {exp.highlights.map(h => (
                         <li key={h} className="flex items-start gap-2 text-[12px] text-black/70 dark:text-white/70">
-                          <IoCheckmarkCircle className="mt-px shrink-0 text-[14px]" style={{ color: exp.color }} />
+                          <IoCheckmarkCircle className="mt-px shrink-0 text-[14px] text-macblue" />
                           {h}
                         </li>
                       ))}
@@ -95,7 +95,7 @@ export default function Experience({ onOpen }: { onOpen: (id: string) => void })
 
         <InsetGroup title="Certificates" footer="Verified across multiple disciplines and platforms.">
           <div className="flex items-center gap-3 px-3 py-3">
-            <SymbolTile Glyph={IoRibbon} color="#ff9500" size={36} />
+            <SymbolTile Glyph={IoRibbon} size={36} />
             <div className="flex-1 min-w-0">
               <div className="text-[15px] font-semibold">{certificateCount} Certificates · {badgeCount} Badges</div>
               <div className="text-[12px] text-black/50 dark:text-white/50">{certAreas.length} areas of study</div>

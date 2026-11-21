@@ -8,9 +8,9 @@ import {
 import { WindowLayout } from '../MacWindow';
 import { InsetGroup, GroupRow, LevelBar, SymbolTile } from '../ui/mac';
 
-const skillCategories: { title: string; Glyph: IconType; color: string; skills: { name: string; level: number; desc: string }[] }[] = [
+const skillCategories: { title: string; Glyph: IconType; skills: { name: string; level: number; desc: string }[] }[] = [
   {
-    title: 'Frontend', Glyph: IoColorPalette, color: '#af52de',
+    title: 'Frontend', Glyph: IoColorPalette,
     skills: [
       { name: 'React', level: 95, desc: 'Hooks, Context, Redux, React Query' },
       { name: 'Next.js', level: 90, desc: 'App Router, SSR, SSG, API Routes' },
@@ -20,7 +20,7 @@ const skillCategories: { title: string; Glyph: IconType; color: string; skills: 
     ],
   },
   {
-    title: 'Backend', Glyph: IoServer, color: '#007aff',
+    title: 'Backend', Glyph: IoServer,
     skills: [
       { name: 'Node.js', level: 90, desc: 'Express, REST APIs, WebSockets' },
       { name: 'Python', level: 88, desc: 'Django, Flask, FastAPI, Scripts' },
@@ -30,7 +30,7 @@ const skillCategories: { title: string; Glyph: IconType; color: string; skills: 
     ],
   },
   {
-    title: 'Databases', Glyph: IoLayers, color: '#34c759',
+    title: 'Databases', Glyph: IoLayers,
     skills: [
       { name: 'PostgreSQL', level: 85, desc: 'Complex queries, Indexing, Views' },
       { name: 'MongoDB', level: 88, desc: 'Aggregation, Atlas, Mongoose' },
@@ -39,7 +39,7 @@ const skillCategories: { title: string; Glyph: IconType; color: string; skills: 
     ],
   },
   {
-    title: 'Tools & DevOps', Glyph: IoConstruct, color: '#8e8e93',
+    title: 'Tools & DevOps', Glyph: IoConstruct,
     skills: [
       { name: 'Git & GitHub', level: 92, desc: 'Branching, PRs, CI/CD Actions' },
       { name: 'Docker', level: 78, desc: 'Containers, Compose, Networking' },
@@ -49,7 +49,7 @@ const skillCategories: { title: string; Glyph: IconType; color: string; skills: 
     ],
   },
   {
-    title: 'AI & Data', Glyph: IoHardwareChip, color: '#ff2d55',
+    title: 'AI & Data', Glyph: IoHardwareChip,
     skills: [
       { name: 'TensorFlow', level: 75, desc: 'Neural networks, Model training' },
       { name: 'OpenAI APIs', level: 85, desc: 'GPT-4, Embeddings, Fine-tuning' },
@@ -58,7 +58,7 @@ const skillCategories: { title: string; Glyph: IconType; color: string; skills: 
     ],
   },
   {
-    title: 'Design & UX', Glyph: IoBrush, color: '#ff9500',
+    title: 'Design & UX', Glyph: IoBrush,
     skills: [
       { name: 'Figma', level: 85, desc: 'Wireframes, Prototypes, Components' },
       { name: 'UI/UX Design', level: 82, desc: 'User research, Accessibility' },
@@ -67,15 +67,15 @@ const skillCategories: { title: string; Glyph: IconType; color: string; skills: 
   },
 ];
 
-const softSkills: { name: string; Glyph: IconType; color: string }[] = [
-  { name: 'Team Leadership', Glyph: IoPeople, color: '#007aff' },
-  { name: 'Problem Solving', Glyph: IoExtensionPuzzle, color: '#5856d6' },
-  { name: 'Communication', Glyph: IoChatbubbles, color: '#34c759' },
-  { name: 'Adaptability', Glyph: IoSync, color: '#32ade6' },
-  { name: 'Time Management', Glyph: IoTime, color: '#ff9500' },
-  { name: 'Critical Thinking', Glyph: IoBulb, color: '#ffcc00' },
-  { name: 'Collaboration', Glyph: IoHandLeft, color: '#ff2d55' },
-  { name: 'Continuous Learning', Glyph: IoLibrary, color: '#a2845e' },
+const softSkills: { name: string; Glyph: IconType }[] = [
+  { name: 'Team Leadership', Glyph: IoPeople },
+  { name: 'Problem Solving', Glyph: IoExtensionPuzzle },
+  { name: 'Communication', Glyph: IoChatbubbles },
+  { name: 'Adaptability', Glyph: IoSync },
+  { name: 'Time Management', Glyph: IoTime },
+  { name: 'Critical Thinking', Glyph: IoBulb },
+  { name: 'Collaboration', Glyph: IoHandLeft },
+  { name: 'Continuous Learning', Glyph: IoLibrary },
 ];
 
 export default function Skills() {
@@ -107,7 +107,7 @@ export default function Skills() {
           return (
             <button key={c.title} type="button" onClick={() => setActive(i)}
               className={`w-full flex items-center gap-2 h-7 px-2 rounded-md text-[13px] text-left ${sel ? 'bg-macblue text-white' : 'hover:bg-black/4 dark:hover:bg-white/5'}`}>
-              <SymbolTile Glyph={c.Glyph} color={c.color} size={20} />
+              <SymbolTile Glyph={c.Glyph} size={20} />
               <span className="truncate">{c.title}</span>
             </button>
           );
@@ -115,7 +115,7 @@ export default function Skills() {
         <div className="h-2" />
         <button type="button" onClick={() => setActive('soft')}
           className={`w-full flex items-center gap-2 h-7 px-2 rounded-md text-[13px] text-left ${active === 'soft' ? 'bg-macblue text-white' : 'hover:bg-black/4 dark:hover:bg-white/5'}`}>
-          <SymbolTile Glyph={IoPeople} color="#5ac8fa" size={20} />
+          <SymbolTile Glyph={IoPeople} size={20} />
           <span>Soft Skills</span>
         </button>
       </div>
@@ -130,7 +130,7 @@ export default function Skills() {
         {cat ? (
           <>
             <div className="flex flex-col items-center text-center mb-6">
-              <SymbolTile Glyph={cat.Glyph} color={cat.color} size={56} />
+              <SymbolTile Glyph={cat.Glyph} size={56} />
               <h2 className="text-[20px] font-semibold mt-3">{cat.title}</h2>
               <p className="text-[12px] text-black/50 dark:text-white/50 mt-0.5">{cat.skills.length} skills · average proficiency {avg(active as number)}%</p>
             </div>
@@ -142,7 +142,7 @@ export default function Skills() {
                   detail={s.desc}
                   right={
                     <span className="flex items-center gap-2.5 w-37.5">
-                      <LevelBar value={s.level} color={cat.color} />
+                      <LevelBar value={s.level} />
                       <span className="w-8 text-right tabular-nums">{s.level}%</span>
                     </span>
                   }
@@ -152,7 +152,7 @@ export default function Skills() {
             <InsetGroup title="All Categories">
               {skillCategories.map((c, i) => (
                 <GroupRow key={c.title} onClick={() => setActive(i)}
-                  icon={<SymbolTile Glyph={c.Glyph} color={c.color} size={24} />}
+                  icon={<SymbolTile Glyph={c.Glyph} size={24} />}
                   label={c.title}
                   right={<span className="tabular-nums">{avg(i)}%</span>} />
               ))}
@@ -161,7 +161,7 @@ export default function Skills() {
         ) : (
           <InsetGroup title="Soft Skills & Interests">
             {softSkills.map(s => (
-              <GroupRow key={s.name} icon={<SymbolTile Glyph={s.Glyph} color={s.color} size={24} />} label={s.name} />
+              <GroupRow key={s.name} icon={<SymbolTile Glyph={s.Glyph} size={24} />} label={s.name} />
             ))}
           </InsetGroup>
         )}
