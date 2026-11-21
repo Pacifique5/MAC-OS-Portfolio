@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { IoPaperPlane, IoMail, IoCall, IoLogoGithub, IoLogoLinkedin, IoDownloadOutline, IoCheckmarkCircle, IoAttach, IoText } from 'react-icons/io5';
 import { WindowLayout } from '../MacWindow';
+import { CV_URL } from '../apps';
 import { InsetGroup, GroupRow, SymbolTile, ToolbarButton, PushButton } from '../ui/mac';
 import { ChevronGlyph, Spinner } from '../icons/SystemIcons';
 
@@ -123,7 +124,7 @@ export default function Contact() {
           </InsetGroup>
 
           <div className="flex justify-center">
-            <PushButton href="/MUGISHA PACIFIQUE.pdf" download><IoDownloadOutline /> Download CV / Resume</PushButton>
+            <PushButton href={CV_URL} download><IoDownloadOutline /> Download CV / Resume</PushButton>
           </div>
         </div>
       </div>

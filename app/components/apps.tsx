@@ -9,6 +9,9 @@ import {
 
 export type WindowId = 'finder' | 'photos' | 'terminal' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
 
+/** CV served from /public — replace the file and update this path when the CV changes. */
+export const CV_URL = '/Mugisha%20Pacifique%20CV.pdf';
+
 /** Social links used by the Dock, Launchpad and Spotlight — edit them here. */
 export const SOCIAL_LINKS = {
   github: 'https://github.com/Pacifique5',

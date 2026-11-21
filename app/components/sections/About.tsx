@@ -2,6 +2,7 @@
 import { IoMail, IoCall, IoLogoGithub, IoLogoLinkedin, IoLocationSharp, IoDownloadOutline, IoCodeSlash, IoHardwareChip, IoRocket, IoBriefcase, IoRibbon, IoSchool, IoFlash } from 'react-icons/io5';
 import { SiNextdotjs, SiReact, SiTypescript, SiTailwindcss, SiNodedotjs, SiPython } from 'react-icons/si';
 import { WindowLayout } from '../MacWindow';
+import { CV_URL } from '../apps';
 import { InsetGroup, GroupRow, PushButton, SymbolTile } from '../ui/mac';
 
 const roles = ['Full-Stack Developer', 'AI Enthusiast', 'Open-Source Contributor', 'Problem Solver'];
@@ -48,7 +49,7 @@ export default function About() {
     <WindowLayout
       title="About Me"
       subtitle="Contact Card"
-      toolbar={<PushButton href="/MUGISHA PACIFIQUE.pdf" download><IoDownloadOutline /> Download CV</PushButton>}
+      toolbar={<PushButton href={CV_URL} download><IoDownloadOutline /> Download CV</PushButton>}
     >
       <div className="max-w-155 mx-auto px-8 py-8">
         {/* Card header */}
@@ -125,7 +126,7 @@ export default function About() {
         </InsetGroup>
 
         <div className="flex gap-2 justify-end">
-          <PushButton href="/MUGISHA PACIFIQUE.pdf" download><IoDownloadOutline /> Download CV</PushButton>
+          <PushButton href={CV_URL} download><IoDownloadOutline /> Download CV</PushButton>
           <PushButton primary href="mailto:Pacifiquem58@gmail.com"><IoMail /> Let’s Connect</PushButton>
         </div>
       </div>

@@ -7,7 +7,7 @@ import {
   LockGlyph, MoonGlyph, Spinner, LaptopGlyph, HeadphonesGlyph, DisplayGlyph, CheckGlyph,
 } from './icons/SystemIcons';
 import ControlCenter from './ControlCenter';
-import { APPS, SECTION_IDS, WINDOW_TITLES, WindowId } from './apps';
+import { APPS, CV_URL, SECTION_IDS, WINDOW_TITLES, WindowId } from './apps';
 import { SystemState, WIFI_NETWORKS, OUTPUT_DEVICES, volumeLevel } from './useSystem';
 
 export type OpenMenu = { id: string; x: number; side: 'left' | 'right' };
@@ -203,7 +203,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
             {actions.selectedLabel && <MenuItem onClick={run(actions.openSelected)}>Open “{actions.selectedLabel}”</MenuItem>}
             {actions.activeWindow && <MenuItem onClick={run(actions.closeActive)}>Close Window</MenuItem>}
             <MenuSeparator />
-            <MenuItem onClick={run(() => window.open('/MUGISHA PACIFIQUE.pdf', '_blank'))}>Download CV</MenuItem>
+            <MenuItem onClick={run(() => window.open(CV_URL, '_blank'))}>Download CV</MenuItem>
             <MenuItem onClick={run(() => { window.location.href = 'mailto:Pacifiquem58@gmail.com'; })}>New Email to Pacifique</MenuItem>
             <MenuSeparator />
             <MenuItem onClick={run(actions.openSpotlight)}>Find…</MenuItem>
