@@ -20,10 +20,10 @@ const ALL_WINDOWS: WindowId[] = ['finder', ...SECTION_IDS];
 // `tone` tells the menu bar and desktop labels whether to use dark or light text,
 // the same way macOS adapts the menu bar to the wallpaper.
 type Tone = 'light' | 'dark';
-const WALLPAPERS: { background: string; tone: Tone }[] = [
-  { background: 'url(/kk.webp) center / cover no-repeat, #e8ebe9', tone: 'light' },
-  { background: 'radial-gradient(120% 90% at 85% 110%, #ff8a5c 0%, rgba(255,138,92,0) 55%), radial-gradient(90% 80% at 8% 100%, #c2389b 0%, rgba(194,56,155,0) 60%), radial-gradient(100% 90% at 50% -10%, #2b2f8f 0%, rgba(43,47,143,0) 70%), linear-gradient(160deg, #141a4a 0%, #4a2b8c 45%, #b8437e 75%, #f08a5d 100%)', tone: 'dark' },
-  { background: 'radial-gradient(100% 80% at 80% 100%, #3ad1c6 0%, rgba(58,209,198,0) 60%), radial-gradient(90% 70% at 0% 0%, #1b3a8f 0%, rgba(27,58,143,0) 70%), linear-gradient(165deg, #0b1d4a 0%, #13478f 45%, #1f8fb0 75%, #5fd3c4 100%)', tone: 'dark' },
+const WALLPAPERS: { name: string; background: string; tone: Tone }[] = [
+  { name: 'Quote Desk', background: 'url(/kk.webp) center / cover no-repeat, #e8ebe9', tone: 'light' },
+  { name: 'Dusk', background: 'radial-gradient(120% 90% at 85% 110%, #ff8a5c 0%, rgba(255,138,92,0) 55%), radial-gradient(90% 80% at 8% 100%, #c2389b 0%, rgba(194,56,155,0) 60%), radial-gradient(100% 90% at 50% -10%, #2b2f8f 0%, rgba(43,47,143,0) 70%), linear-gradient(160deg, #141a4a 0%, #4a2b8c 45%, #b8437e 75%, #f08a5d 100%)', tone: 'dark' },
+  { name: 'Ocean', background: 'radial-gradient(100% 80% at 80% 100%, #3ad1c6 0%, rgba(58,209,198,0) 60%), radial-gradient(90% 70% at 0% 0%, #1b3a8f 0%, rgba(27,58,143,0) 70%), linear-gradient(165deg, #0b1d4a 0%, #13478f 45%, #1f8fb0 75%, #5fd3c4 100%)', tone: 'dark' },
 ];
 
 type Ctx = { x: number; y: number; target: string | null; kind: 'desktop' | 'icon' | 'dock' };
@@ -45,6 +45,9 @@ export default function Home() {
   const [sleeping, setSleeping] = useState(false);
   const [wallpaper, setWallpaper] = useState(0);
   const [banner, setBanner] = useState(false);
+  const [zoomed, setZoomed] = useState<WindowId[]>([]);
+  const [hud, setHud] = useState<string | null>(null);
+  const [fullscreen, setFullscreen] = useState(false);
 
   const tone = WALLPAPERS[wallpaper].tone;
   const visible = order.filter(id => !minimized.includes(id));
@@ -62,6 +65,20 @@ export default function Home() {
     setMinimized(m => m.filter(w => w !== id));
   };
   const minimizeWindow = (id: WindowId) => setMinimized(m => (m.includes(id) ? m : [...m, id]));
+  const toggleZoom = (id: WindowId) => setZoomed(z => (z.includes(id) ? z.filter(w => w !== id) : [...z, id]));
+
+  /** macOS-style centered confirmation (like the volume/brightness HUD). */
+  const showHud = (message: string) => {
+    setHud(message);
+    setTimeout(() => setHud(h => (h === message ? null : h)), 1600);
+  };
+  const copy = (text: string, confirmation: string) => {
+    navigator.clipboard?.writeText(text).then(() => showHud(confirmation), () => showHud('Couldn’t access the clipboard'));
+  };
+  const linkFor = (id: string) => {
+    const a = APPS[id]?.action;
+    return a?.type === 'link' ? a.href : `${window.location.origin}/#${id}`;
+  };
 
   const bounce = (id: string) => {
     setBouncing(id);
@@ -112,6 +129,13 @@ export default function Home() {
     openLaunchpad: () => setLaunchpadOpen(true),
     sleep: () => setSleeping(true),
     openSelected: () => selectedIcon && launch(selectedIcon),
+    zoomActive: () => activeWindow && toggleZoom(activeWindow),
+    copy,
+    setWallpaper,
+    wallpapers: WALLPAPERS.map(w => w.name),
+    wallpaper,
+    fullscreen,
+    selectedLabel: selectedIcon ? APPS[selectedIcon]?.label ?? null : null,
     windows: order,
     activeWindow,
   };
@@ -131,8 +155,13 @@ export default function Home() {
         setNotificationsOpen(false);
       }
     };
+    const onFullscreen = () => setFullscreen(Boolean(document.fullscreenElement));
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    document.addEventListener('fullscreenchange', onFullscreen);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.removeEventListener('fullscreenchange', onFullscreen);
+    };
   }, []);
 
   /* ---------------- welcome banner ---------------- */
@@ -181,7 +210,7 @@ export default function Home() {
 
       {/* Desktop icons — macOS stacks them from the top-right */}
       <div
-        className="absolute top-10 right-3 bottom-24 z-10 grid grid-flow-col auto-cols-[96px] grid-rows-[repeat(auto-fill,104px)] gap-x-1"
+        className="absolute top-9 right-3 bottom-[88px] z-10 grid grid-flow-col auto-cols-[96px] grid-rows-[repeat(auto-fill,96px)] gap-x-1"
         style={{ direction: 'rtl' }}
       >
         {SECTION_IDS.map(id => {
@@ -223,6 +252,8 @@ export default function Home() {
             onFocus={() => focusWindow(id)}
             onClose={() => closeWindow(id)}
             onMinimize={() => minimizeWindow(id)}
+            zoomed={zoomed.includes(id)}
+            onToggleZoom={() => toggleZoom(id)}
           >
             {renderSection(id)}
           </MacWindow>
@@ -250,7 +281,22 @@ export default function Home() {
           onClose={() => setContextMenu(null)}
           onChangeWallpaper={() => setWallpaper(w => (w + 1) % WALLPAPERS.length)}
           onShowInFinder={() => openWindow('finder')}
+          onCopyLink={() => contextMenu.target && copy(linkFor(contextMenu.target), 'Link copied')}
+          onLaunchpad={() => setLaunchpadOpen(true)}
+          onSpotlight={() => setSpotlightOpen(true)}
+          onCloseAll={() => { setOrder([]); setMinimized([]); }}
+          hasWindows={order.length > 0}
         />
+      )}
+
+      {/* Confirmation HUD */}
+      {hud && (
+        <div className="absolute inset-0 z-[80] flex items-center justify-center pointer-events-none">
+          <div className="mac-panel !rounded-[18px] px-6 py-4 flex flex-col items-center gap-2 animate-scale-in">
+            <svg viewBox="0 0 14 14" width="34" height="34" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7.5 L5.6 10.5 L11.5 3.5" /></svg>
+            <span className="text-[13px] font-medium">{hud}</span>
+          </div>
+        </div>
       )}
 
       {notificationsOpen && <NotificationCenter focusOn={sys.focusOn} onOpen={(id) => { setNotificationsOpen(false); launch(id); }} />}
