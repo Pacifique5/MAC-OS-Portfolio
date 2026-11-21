@@ -2,50 +2,183 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1d1d1f;
+
+  /* macOS system palette (light) */
+  --mac-blue: #007aff;
+  --menu-bg: rgba(236, 236, 238, 0.82);
+  --menu-fg: #1d1d1f;
+  --menu-dim: rgba(0, 0, 0, 0.42);
+  --menu-sep: rgba(0, 0, 0, 0.1);
+  --tile-bg: rgba(255, 255, 255, 0.6);
+  --tile-fg: #1d1d1f;
+  --hairline: rgba(0, 0, 0, 0.1);
+  --sidebar-bg: rgba(234, 234, 238, 0.82);
+  --window-bg: #ffffff;
+  --toolbar-bg: rgba(255, 255, 255, 0.92);
+  --group-bg: #ffffff;
+  --content-bg: #f5f5f7;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-macblue: var(--mac-blue);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, var(--font-geist-mono), monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1e1e1e;
+    --foreground: #f5f5f7;
+
+    --mac-blue: #0a84ff;
+    --menu-bg: rgba(42, 42, 46, 0.82);
+    --menu-fg: #ffffff;
+    --menu-dim: rgba(255, 255, 255, 0.45);
+    --menu-sep: rgba(255, 255, 255, 0.12);
+    --tile-bg: rgba(255, 255, 255, 0.1);
+    --tile-fg: #ffffff;
+    --hairline: rgba(255, 255, 255, 0.1);
+    --sidebar-bg: rgba(44, 44, 48, 0.82);
+    --window-bg: #1e1e1e;
+    --toolbar-bg: rgba(38, 38, 40, 0.92);
+    --group-bg: #2a2a2c;
+    --content-bg: #1e1e1e;
   }
 }
 
 body {
-  background: var(--background);
+  background: #000;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-size: 13px;
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 }
+
+/* ---------- macOS vibrancy surfaces ---------- */
+
+.mac-menu {
+  background: var(--menu-bg);
+  color: var(--menu-fg);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+  border-radius: 8px;
+  padding: 5px;
+  font-size: 13px;
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.18),
+    0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+.mac-panel {
+  background: var(--menu-bg);
+  color: var(--menu-fg);
+  -webkit-backdrop-filter: blur(50px) saturate(180%);
+  backdrop-filter: blur(50px) saturate(180%);
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.2),
+    0 18px 50px rgba(0, 0, 0, 0.3);
+}
+
+.mac-tile {
+  background: var(--tile-bg);
+  color: var(--tile-fg);
+  border-radius: 12px;
+  box-shadow: 0 0 0 0.5px var(--hairline);
+}
+
+.mac-menu-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 22px;
+  padding: 0 9px;
+  border-radius: 4px;
+  text-align: left;
+  white-space: nowrap;
+  cursor: default;
+}
+.mac-menu-item:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--mac-blue);
+  color: #fff;
+}
+.mac-menu-item:hover:not(:disabled) .mac-shortcut { color: rgba(255, 255, 255, 0.85); }
+.mac-menu-item:disabled,
+.mac-menu-item[aria-disabled="true"] { color: var(--menu-dim); }
+
+.mac-shortcut {
+  color: var(--menu-dim);
+  letter-spacing: 0.04em;
+}
+
+.mac-menu-sep {
+  height: 1px;
+  margin: 5px 9px;
+  background: var(--menu-sep);
+}
+
+.mac-menu-heading {
+  padding: 4px 9px 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--menu-dim);
+}
+
+.mac-sidebar {
+  background: var(--sidebar-bg);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+}
+
+/* ---------- animations ---------- */
 
 @keyframes scale-in {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
 }
+.animate-scale-in { animation: scale-in 0.18s cubic-bezier(0.2, 0.9, 0.3, 1.2); }
 
-.animate-scale-in {
-  animation: scale-in 0.2s ease-out;
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
+.animate-fade-in { animation: fade-in 0.15s ease-out; }
 
-/* Range input — remove default thumb styling for custom look */
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in-right { animation: slide-in-right 0.25s cubic-bezier(0.2, 0.9, 0.3, 1); }
+
+@keyframes dock-bounce {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-22px); }
+  50% { transform: translateY(0); }
+  70% { transform: translateY(-10px); }
+}
+.animate-dock-bounce { animation: dock-bounce 0.9s ease-in-out; }
+
+@keyframes launchpad-in {
+  from { opacity: 0; transform: scale(1.08); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-launchpad-in { animation: launchpad-in 0.22s ease-out; }
+
+/* ---------- range inputs ---------- */
+
 input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   outline: none;
+  background: transparent;
 }
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -55,7 +188,7 @@ input[type='range']::-webkit-slider-thumb {
   border-radius: 50%;
   background: white;
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 input[type='range']::-moz-range-thumb {
   width: 14px;
@@ -64,5 +197,15 @@ input[type='range']::-moz-range-thumb {
   background: white;
   cursor: pointer;
   border: none;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
+
+/* thin macOS-style overlay scrollbars */
+.mac-scroll::-webkit-scrollbar { width: 11px; height: 11px; }
+.mac-scroll::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.45);
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+.mac-scroll::-webkit-scrollbar-track { background: transparent; }
