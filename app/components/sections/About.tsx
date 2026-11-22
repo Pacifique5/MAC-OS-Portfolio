@@ -60,7 +60,7 @@ export default function About({ onOpen }: { onOpen: (id: string) => void }) {
       subtitle="Contact Card"
       toolbar={<PushButton href={CV_URL} download><IoDownloadOutline /> Download CV</PushButton>}
     >
-      <div className="max-w-155 mx-auto px-8 py-8">
+      <div className="max-w-155 mx-auto px-4 py-6 @md:px-8 @md:py-8">
         {/* Card header */}
         <div className="flex items-center gap-5 mb-6">
           <div className="relative shrink-0">
@@ -93,7 +93,7 @@ export default function About({ onOpen }: { onOpen: (id: string) => void }) {
         </div>
 
         {/* Stats — each opens the related app */}
-        <div className="grid grid-cols-4 gap-2.5 mb-7">
+        <div className="grid grid-cols-2 @md:grid-cols-4 gap-2.5 mb-7">
           {stats.map(s => (
             <button key={s.label} type="button" onClick={() => onOpen(s.open)} title={`Open ${s.label}`}
               className="rounded-[10px] bg-black/3 dark:bg-white/6 hover:bg-black/6 dark:hover:bg-white/10 p-3 flex flex-col items-center gap-1 transition-colors">
@@ -107,14 +107,14 @@ export default function About({ onOpen }: { onOpen: (id: string) => void }) {
         {/* Fields */}
         <div className="space-y-2.5 mb-7">
           {fields.map(f => (
-            <div key={f.label} className="grid grid-cols-[90px_1fr] gap-3 text-[13px]">
+            <div key={f.label} className="grid grid-cols-[64px_1fr] @md:grid-cols-[90px_1fr] gap-3 text-[13px]">
               <span className="text-right text-black/45 dark:text-white/45">{f.label}</span>
               {f.href
                 ? <a href={f.href} target="_blank" rel="noopener noreferrer" className="text-macblue hover:underline truncate">{f.value}</a>
                 : <span>{f.value}</span>}
             </div>
           ))}
-          <div className="grid grid-cols-[90px_1fr] gap-3 text-[13px] pt-2">
+          <div className="grid grid-cols-[64px_1fr] @md:grid-cols-[90px_1fr] gap-3 text-[13px] pt-2">
             <span className="text-right text-black/45 dark:text-white/45">note</span>
             <div className="space-y-2 leading-relaxed text-black/80 dark:text-white/80">
               <p>I’m a passionate Full-Stack Developer from Rwanda with over 3 years of experience building modern web applications. I specialize in creating seamless user experiences using Next.js, React, and TypeScript.</p>
@@ -125,7 +125,7 @@ export default function About({ onOpen }: { onOpen: (id: string) => void }) {
         </div>
 
         <InsetGroup title="Tech Stack">
-          <div className="grid grid-cols-3 gap-px bg-black/[0.07] dark:bg-white/[0.07]">
+          <div className="grid grid-cols-2 @md:grid-cols-3 gap-px bg-black/[0.07] dark:bg-white/[0.07]">
             {techStack.map(t => (
               <div key={t.name} className="flex items-center gap-2 px-3 py-2.5 text-[13px] bg-(--group-bg)">
                 <t.Icon className="text-[16px] text-black/65 dark:text-white/75" /> {t.name}

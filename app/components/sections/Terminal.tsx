@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { IoTrashOutline, IoPlay, IoPause } from 'react-icons/io5';
-import { WindowLayout } from '../MacWindow';
+import { WindowLayout, useWindowSize } from '../MacWindow';
 import { ToolbarButton } from '../ui/mac';
 import {
   CANCELLED, COMMAND_NAMES, FILE_NAMES, OPEN_TARGETS, THEMES, LineKind, TerminalContext, ThemeName,
@@ -92,6 +92,7 @@ function MatrixRain({ color, onExit }: { color: string; onExit: () => void }) {
 /* ------------------------------------------------------------------ */
 
 export default function Terminal({ onOpen, onClose }: { onOpen: (id: string) => void; onClose: () => void }) {
+  const { compact } = useWindowSize();
   const [lines, setLines] = useState<Line[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(true);
@@ -346,7 +347,7 @@ export default function Terminal({ onOpen, onClose }: { onOpen: (id: string) => 
         className={`h-6 px-2 mr-1 rounded-full flex items-center gap-1.5 text-[11px] font-semibold transition-colors ${autoplaying ? 'bg-macblue text-white' : 'bg-black/6 dark:bg-white/10 text-black/60 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/15'}`}>
         {autoplaying ? <><span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> LIVE <IoPause className="text-[11px]" /></> : <><IoPlay className="text-[11px]" /> Go Live</>}
       </button>
-      {(Object.keys(THEMES) as ThemeName[]).map(t => (
+      {!compact && (Object.keys(THEMES) as ThemeName[]).map(t => (
         <button key={t} type="button" title={`${t} theme`} onClick={() => setTheme(t)}
           className={`w-3.5 h-3.5 rounded-full mx-0.5 transition-transform ${theme === t ? 'scale-125 ring-2 ring-offset-1 ring-black/20 dark:ring-white/40 ring-offset-transparent' : 'hover:scale-110'}`}
           style={{ background: THEMES[t], boxShadow: `0 0 6px ${THEMES[t]}` }} />
@@ -363,12 +364,12 @@ export default function Terminal({ onOpen, onClose }: { onOpen: (id: string) => 
         style={{ backgroundImage: `radial-gradient(120% 90% at 50% 0%, ${color}14, transparent 60%)` }}
         onClick={() => inputRef.current?.focus()}
       >
-        <div ref={scrollRef} className="absolute inset-0 overflow-y-auto mac-scroll px-4 py-3 font-mono text-[12.5px] leading-[1.45]">
+        <div ref={scrollRef} className="absolute inset-0 overflow-y-auto mac-scroll px-3 @md:px-4 py-3 font-mono text-[12px] @md:text-[12.5px] leading-[1.45]">
           {lines.map(l =>
             l.kind === 'in' ? (
               renderPrompt(l.id, l.cwd ?? '~', l.text)
             ) : l.kind === 'banner' ? (
-              <pre key={l.id} className="m-0 text-[11px] leading-[1.05] font-bold" style={glow(color, 0.6)}>{l.text}</pre>
+              <pre key={l.id} className="m-0 text-[7.5px] @xl:text-[11px] leading-[1.05] font-bold" style={glow(color, 0.6)}>{l.text}</pre>
             ) : (
               <div key={l.id} className="whitespace-pre-wrap wrap-break-word min-h-[1.45em]" style={glow(l.kind === 'out' ? color : KIND_COLORS[l.kind], l.kind === 'dim' ? 0 : 0.3)}>
                 {l.text}

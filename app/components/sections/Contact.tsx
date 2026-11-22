@@ -101,7 +101,7 @@ export default function Contact() {
               ) },
               { label: 'Subject:', node: <input required placeholder="What’s this about?" className={`${field} font-medium`} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} /> },
             ].map(r => (
-              <div key={r.label} className="flex items-center gap-2 mx-5 h-8.5 border-b border-(--hairline)">
+              <div key={r.label} className="flex items-center gap-2 mx-3 @md:mx-5 h-8.5 border-b border-(--hairline)">
                 <span className="w-17 text-right text-[13px] text-black/45 dark:text-white/45 shrink-0">{r.label}</span>
                 {r.node}
               </div>
@@ -110,11 +110,11 @@ export default function Contact() {
               required
               rows={7}
               placeholder="Tell me about your project or opportunity…"
-              className="w-full px-5 py-3 bg-transparent outline-none resize-none text-[13px] leading-relaxed placeholder:text-black/30 dark:placeholder:text-white/30"
+              className="w-full px-3 @md:px-5 py-3 bg-transparent outline-none resize-none text-[13px] leading-relaxed placeholder:text-black/30 dark:placeholder:text-white/30"
               value={form.message}
               onChange={e => setForm({ ...form, message: e.target.value })}
             />
-            <div className="flex items-center justify-between gap-3 px-5 pb-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 px-3 @md:px-5 pb-3">
               <span className="text-[11px] text-black/40 dark:text-white/40">Opens your email app with this message addressed to me.</span>
               <PushButton primary type="submit" disabled={!canSend}>
                 <IoPaperPlane /> Send
@@ -124,7 +124,7 @@ export default function Contact() {
         )}
       </form>
 
-      <div className="bg-(--content-bg) px-6 py-6">
+      <div className="bg-(--content-bg) px-4 py-5 @md:px-6 @md:py-6">
         <div className="max-w-140 mx-auto">
           <div className="flex items-center gap-2.5 mb-5 px-3 py-2.5 rounded-[10px] bg-(--group-bg) shadow-[0_0_0_0.5px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.08)]">
             <span className="w-2.5 h-2.5 rounded-full bg-[#34c759] animate-pulse" />

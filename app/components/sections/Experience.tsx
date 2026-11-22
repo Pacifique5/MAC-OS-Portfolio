@@ -50,7 +50,7 @@ export default function Experience({ onOpen }: { onOpen: (id: string) => void })
 
   return (
     <WindowLayout title="Experience" subtitle={`6 internships · ${certificateCount} certificates · 3+ years`} surface="grouped">
-      <div className="max-w-160 mx-auto px-6 py-6">
+      <div className="max-w-160 mx-auto px-4 py-5 @md:px-6 @md:py-6">
         <div className="grid grid-cols-3 gap-2.5 mb-6">
           {[['6', 'Internships'], [`${certificateCount}`, 'Certificates'], ['3+', 'Years']].map(([v, l]) => (
             <div key={l} className="rounded-[10px] bg-(--group-bg) shadow-[0_0_0_0.5px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_0.5px_rgba(255,255,255,0.08)] py-3 text-center">
@@ -76,7 +76,7 @@ export default function Experience({ onOpen }: { onOpen: (id: string) => void })
                   <span className="text-[12px] text-black/45 dark:text-white/45 tabular-nums shrink-0">{exp.period}</span>
                 </button>
                 {open && (
-                  <div className="pl-17 pr-4 pb-3.5 animate-fade-in">
+                  <div className="pl-4 @md:pl-17 pr-4 pb-3.5 animate-fade-in">
                     <p className="text-[13px] leading-relaxed text-black/70 dark:text-white/70 mb-2.5">{exp.description}</p>
                     <ul className="space-y-1.5">
                       {exp.highlights.map(h => (
@@ -94,7 +94,7 @@ export default function Experience({ onOpen }: { onOpen: (id: string) => void })
         </InsetGroup>
 
         <InsetGroup title="Certificates" footer="Verified across multiple disciplines and platforms.">
-          <div className="flex items-center gap-3 px-3 py-3">
+          <div className="flex flex-wrap items-center gap-3 px-3 py-3">
             <SymbolTile Glyph={IoRibbon} size={36} />
             <div className="flex-1 min-w-0">
               <div className="text-[15px] font-semibold">{certificateCount} Certificates · {badgeCount} Badges</div>

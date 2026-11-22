@@ -5,7 +5,8 @@ import {
   IoImages, IoHeart, IoHeartOutline, IoRibbon, IoMedal, IoDocumentText, IoChevronBack, IoChevronForward,
   IoOpenOutline, IoInformationCircleOutline, IoAdd, IoRemove, IoSquareOutline, IoExpandOutline,
 } from 'react-icons/io5';
-import { WindowLayout } from '../MacWindow';
+import { WindowLayout, useWindowSize } from '../MacWindow';
+import { useViewport } from '../useViewport';
 import { SidebarItem, SidebarSection, ToolbarButton } from '../ui/mac';
 import { PHOTOS, Photo, PhotoAlbum } from '../photos-data';
 
@@ -45,7 +46,9 @@ function longDate(date: string) {
 
 export default function Photos() {
   const [view, setView] = useState<View>('library');
-  const [columns, setColumns] = useState(6);
+  const { compact } = useWindowSize();
+  const { touch } = useViewport(true);
+  const [columns, setColumns] = useState(compact ? 3 : 6);
   const [squareCrop, setSquareCrop] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
   const [viewing, setViewing] = useState<number | null>(null);
@@ -120,7 +123,7 @@ export default function Photos() {
       <ToolbarButton title={squareCrop ? 'Show whole photos' : 'Show square photos'} onClick={() => setSquareCrop(s => !s)}>
         {squareCrop ? <IoExpandOutline className="text-[15px]" /> : <IoSquareOutline className="text-[15px]" />}
       </ToolbarButton>
-      <div className="flex items-center gap-1.5 ml-1">
+      <div className={`flex items-center gap-1.5 ml-1 ${compact ? '[&_input]:hidden' : ''}`}>
         <button type="button" title="Smaller" onClick={() => setColumns(c => Math.min(10, c + 1))} className="text-black/55 dark:text-white/60 hover:text-black dark:hover:text-white"><IoRemove /></button>
         <input
           type="range" min={2} max={10} step={1}
@@ -190,7 +193,7 @@ export default function Photos() {
             </div>
           </div>
           {showInfo && (
-            <aside className="w-57.5 shrink-0 border-l border-(--hairline) p-4 text-[12px] space-y-3 overflow-y-auto mac-scroll">
+            <aside className={`w-57.5 shrink-0 border-l border-(--hairline) p-4 text-[12px] space-y-3 overflow-y-auto mac-scroll ${compact ? 'absolute inset-y-0 right-0 z-10 bg-(--window-bg) shadow-2xl' : ''}`}>
               <div>
                 <div className="text-[13px] font-semibold leading-snug">{current.title}</div>
                 <div className="text-black/50 dark:text-white/50 mt-0.5">{ALBUM_LABEL[current.album]}</div>
@@ -235,7 +238,7 @@ export default function Photos() {
                       key={p.id}
                       type="button"
                       title={p.title}
-                      onClick={(e) => { e.stopPropagation(); setSelected(p.id); }}
+                      onClick={(e) => { e.stopPropagation(); setSelected(p.id); if (touch) setViewing(index); }}
                       onDoubleClick={() => setViewing(index)}
                       className="relative aspect-square overflow-hidden bg-black/4 dark:bg-white/5 outline-none group"
                     >

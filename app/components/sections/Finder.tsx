@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { IoDesktopOutline, IoDocumentTextOutline, IoArrowDownCircleOutline, IoAppsOutline, IoTimeOutline, IoCloudOutline, IoLaptopOutline, IoGridOutline, IoListOutline, IoSearch, IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import { WindowLayout } from '../MacWindow';
+import { useViewport } from '../useViewport';
 import { SidebarItem, SidebarSection, ToolbarButton } from '../ui/mac';
 import { FolderIcon } from '../icons/AppIcons';
 import { APPS, SECTION_IDS } from '../apps';
@@ -14,6 +15,7 @@ const TAGS = [
 export default function Finder({ onOpen }: { onOpen: (id: string) => void }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [view, setView] = useState<'icons' | 'list'>('icons');
+  const { touch } = useViewport(true);
 
   const sidebar = (
     <>
@@ -61,7 +63,7 @@ export default function Finder({ onOpen }: { onOpen: (id: string) => void }) {
                 const sel = selected === id;
                 return (
                   <button key={id} type="button" className="flex flex-col items-center gap-1 outline-none"
-                    onClick={(e) => { e.stopPropagation(); setSelected(id); }}
+                    onClick={(e) => { e.stopPropagation(); setSelected(id); if (touch) onOpen(id); }}
                     onDoubleClick={() => onOpen(id)}>
                     <span className={`p-1 rounded-md ${sel ? 'bg-black/8 dark:bg-white/12' : ''}`}>
                       <FolderIcon size={68} Glyph={app.folderGlyph} />
@@ -78,7 +80,7 @@ export default function Finder({ onOpen }: { onOpen: (id: string) => void }) {
               </div>
               {SECTION_IDS.map((id, i) => (
                 <button key={id} type="button"
-                  onClick={(e) => { e.stopPropagation(); setSelected(id); }}
+                  onClick={(e) => { e.stopPropagation(); setSelected(id); if (touch) onOpen(id); }}
                   onDoubleClick={() => onOpen(id)}
                   className={`w-full grid grid-cols-[1fr_120px_90px] items-center px-2 h-7 rounded-md text-left ${selected === id ? 'bg-macblue text-white' : i % 2 ? 'bg-black/3 dark:bg-white/3' : ''}`}>
                   <span className="flex items-center gap-2"><FolderIcon size={18} />{APPS[id].label}</span>

@@ -126,7 +126,7 @@ export default function Skills() {
 
   return (
     <WindowLayout title={cat ? cat.title : 'Soft Skills'} sidebar={sidebar} sidebarWidth={220} surface="grouped">
-      <div className="max-w-140 mx-auto px-6 py-6">
+      <div className="max-w-140 mx-auto px-4 py-5 @md:px-6 @md:py-6">
         {cat ? (
           <>
             <div className="flex flex-col items-center text-center mb-6">
@@ -141,7 +141,7 @@ export default function Skills() {
                   label={<span className={q && s.name.toLowerCase().includes(q) ? 'font-semibold' : ''}>{s.name}</span>}
                   detail={s.desc}
                   right={
-                    <span className="flex items-center gap-2.5 w-37.5">
+                    <span className="flex items-center gap-2.5 w-24 @md:w-37.5">
                       <LevelBar value={s.level} />
                       <span className="w-8 text-right tabular-nums">{s.level}%</span>
                     </span>
