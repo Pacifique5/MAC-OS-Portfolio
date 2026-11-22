@@ -58,10 +58,15 @@ function formatClock(d: Date) {
 
 export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, actions, notificationsOpen, onToggleNotifications }: MenuBarProps) {
   const [clock, setClock] = useState('');
+  const [shortClock, setShortClock] = useState('');
   const [helpQuery, setHelpQuery] = useState('');
 
   useEffect(() => {
-    const tick = () => setClock(formatClock(new Date()));
+    const tick = () => {
+      const now = new Date();
+      setClock(formatClock(now));
+      setShortClock(now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }));
+    };
     tick();
     const t = setInterval(tick, 1000);
     return () => clearInterval(t);
@@ -108,7 +113,7 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
       >
         <div className="flex items-center">
           {LEFT_MENUS.map(id => (
-            <button key={id} type="button" className={titleCls(id)} onClick={toggle(id, 'left')} onMouseEnter={hoverSwitch(id)}>
+            <button key={id} type="button" className={`${titleCls(id)} ${id === 'apple' || id === 'app' ? '' : 'max-sm:hidden'}`} onClick={toggle(id, 'left')} onMouseEnter={hoverSwitch(id)}>
               {labels[id]}
             </button>
           ))}
@@ -116,14 +121,14 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
 
         <div className="flex items-center gap-0.5">
           {sys.focusOn && <span className="h-5.5 px-1.75 flex items-center" title="Do Not Disturb"><MoonGlyph size={13} /></span>}
-          <button type="button" className={statusCls('bluetooth')} onClick={toggle('bluetooth', 'right')} aria-label="Bluetooth">
+          <button type="button" className={`${statusCls('bluetooth')} max-sm:hidden`} onClick={toggle('bluetooth', 'right')} aria-label="Bluetooth">
             <BluetoothGlyph size={14} className={sys.btOn && sys.btSupported ? '' : 'opacity-50'} />
           </button>
-          <button type="button" className={statusCls('sound')} onClick={toggle('sound', 'right')} aria-label="Sound">
+          <button type="button" className={`${statusCls('sound')} max-sm:hidden`} onClick={toggle('sound', 'right')} aria-label="Sound">
             <SpeakerGlyph size={13} level={volumeLevel(sys.volume)} />
           </button>
           <button type="button" className={statusCls('battery')} onClick={toggle('battery', 'right')} aria-label="Battery">
-            <span className="text-[12px]">{sys.battery.level}%</span>
+            <span className="text-[12px] max-sm:hidden">{sys.battery.level}%</span>
             <BatteryGlyph size={12} level={sys.battery.level} charging={sys.battery.charging} />
           </button>
           <button type="button" className={statusCls('wifi')} onClick={toggle('wifi', 'right')} aria-label="Wi-Fi">
@@ -137,7 +142,8 @@ export default function MenuBar({ tone, appName, openMenu, setOpenMenu, sys, act
           </button>
           <button type="button" className={`h-5.5 px-1.75 rounded-sm transition-colors ${notificationsOpen ? pressed : hover}`}
             onClick={(e) => { e.stopPropagation(); setOpenMenu(null); onToggleNotifications(); }}>
-            <span suppressHydrationWarning>{clock}</span>
+            <span className="max-lg:hidden" suppressHydrationWarning>{clock}</span>
+            <span className="lg:hidden" suppressHydrationWarning>{shortClock}</span>
           </button>
         </div>
       </div>
