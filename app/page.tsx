@@ -7,6 +7,7 @@ import { Spotlight, NotificationCenter, NotificationBanner, Launchpad, ContextMe
 import { FolderIcon } from './components/icons/AppIcons';
 import { APPS, SECTION_IDS, WINDOW_TITLES, WindowId } from './components/apps';
 import { useSystem } from './components/useSystem';
+import { useViewport } from './components/useViewport';
 import Finder from './components/sections/Finder';
 import Photos from './components/sections/Photos';
 import Terminal from './components/sections/Terminal';
@@ -32,6 +33,7 @@ type Ctx = { x: number; y: number; target: string | null; kind: 'desktop' | 'ico
 
 export default function Home() {
   const sys = useSystem();
+  const vp = useViewport();
 
   // Window manager: `order` is the z-order (last = front-most)
   const [order, setOrder] = useState<WindowId[]>([]);
@@ -194,7 +196,7 @@ export default function Home() {
 
   return (
     <div
-      className="relative w-full h-screen overflow-hidden select-none"
+      className="relative w-full h-dvh overflow-hidden select-none"
       onClick={() => { setSelectedIcon(null); closeOverlays(); }}
       onContextMenu={(e) => { e.preventDefault(); setContextMenu({ x: e.clientX, y: e.clientY, target: null, kind: 'desktop' }); }}
     >
@@ -214,8 +216,8 @@ export default function Home() {
 
       {/* Desktop icons — macOS stacks them from the top-right */}
       <div
-        className="absolute top-9 right-3 bottom-22 z-10 grid grid-flow-col auto-cols-[96px] grid-rows-[repeat(auto-fill,96px)] gap-x-1"
-        style={{ direction: 'rtl' }}
+        className="absolute top-9 right-3 bottom-22 z-10 grid grid-flow-col auto-cols-[96px] grid-rows-[repeat(auto-fill,96px)] gap-x-1 [direction:rtl]
+          max-sm:left-2 max-sm:right-2 max-sm:bottom-auto max-sm:top-10 max-sm:grid-flow-row max-sm:grid-cols-4 max-sm:auto-cols-auto max-sm:grid-rows-none max-sm:gap-y-3 max-sm:[direction:ltr]"
       >
         {SECTION_IDS.map(id => {
           const app = APPS[id];
@@ -224,14 +226,13 @@ export default function Home() {
             <button
               key={id}
               type="button"
-              style={{ direction: 'ltr' }}
-              className="flex flex-col items-center gap-1 pt-1 outline-none"
-              onClick={(e) => { e.stopPropagation(); closeOverlays(); setSelectedIcon(id); }}
+              className="flex flex-col items-center gap-1 pt-1 outline-none [direction:ltr]"
+              onClick={(e) => { e.stopPropagation(); closeOverlays(); setSelectedIcon(id); if (vp.touch) launch(id); }}
               onDoubleClick={() => launch(id)}
               onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedIcon(id); setContextMenu({ x: e.clientX, y: e.clientY, target: id, kind: 'icon' }); }}
             >
               <span className={`p-0.75 rounded-md ${sel ? (tone === 'light' ? 'bg-black/10 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]' : 'bg-black/25 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.18)]') : ''}`}>
-                <FolderIcon size={64} Glyph={app.folderGlyph} />
+                <FolderIcon size={vp.phone ? 58 : 64} Glyph={app.folderGlyph} />
               </span>
               <span
                 className={`text-[12px] font-medium leading-tight px-1.25 py-px rounded-sm ${sel ? 'bg-[#0a5fd6] text-white' : tone === 'light' ? 'text-[#1d1d1f]' : 'text-white'}`}
