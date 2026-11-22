@@ -262,7 +262,7 @@ const COMMANDS: Command[] = [
       }
       for (const i of TRASH_ITEMS) {
         c.print(`removed '${i.name}'`, 'dim');
-        await c.sleep(60);
+        await c.sleep(25);
       }
       c.print(`${TRASH_ITEMS.length} habits removed. Lessons kept: ${TRASH_ITEMS.length}.`, 'ok');
     },

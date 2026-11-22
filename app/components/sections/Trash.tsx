@@ -4,6 +4,7 @@ import type { IconType } from 'react-icons';
 import {
   IoTrashOutline, IoCodeSlash, IoShieldCheckmark, IoHardwareChip, IoDocumentTextOutline, IoArchiveOutline,
   IoKeyOutline, IoTerminalOutline, IoServerOutline, IoListOutline, IoArrowUndoOutline, IoClose, IoArrowForward,
+  IoImageOutline, IoMailOutline, IoGridOutline, IoScanOutline, IoCubeOutline,
 } from 'react-icons/io5';
 import { WindowLayout } from '../MacWindow';
 import { useViewport } from '../useViewport';
@@ -23,10 +24,15 @@ function FileGlyph({ item, size = 16 }: { item: TrashItem; size?: number }) {
   if (item.kind === 'Folder') return <FolderIcon size={size + 2} />;
   const Icon =
     item.kind === 'ZIP Archive' ? IoArchiveOutline
-    : item.kind === 'Environment File' ? IoKeyOutline
+    : item.kind === 'Environment File' || item.kind === 'Key File' ? IoKeyOutline
     : item.kind === 'SQL Script' ? IoServerOutline
     : item.kind === 'To-Do List' ? IoListOutline
-    : /Script|Sketch|JavaScript|TypeScript|Notebook/.test(item.kind) ? IoTerminalOutline
+    : item.kind === 'Image' ? IoImageOutline
+    : item.kind === 'Email Message' ? IoMailOutline
+    : item.kind === 'Spreadsheet' ? IoGridOutline
+    : item.kind === 'Scan Report' ? IoScanOutline
+    : item.kind === 'ML Model' ? IoCubeOutline
+    : /Script|Sketch|JavaScript|TypeScript|Notebook|HTML|CSS|JSON|Config|Diff/.test(item.kind) ? IoTerminalOutline
     : IoDocumentTextOutline;
   return <Icon className="shrink-0 text-macblue" style={{ fontSize: size }} />;
 }
@@ -121,8 +127,17 @@ export default function Trash({ full, onEmpty, onRefill }: { full: boolean; onEm
               </div>
               {list.map((i, n) => {
                 const sel = selected === i.name;
+                // In "All Items", label where each category starts
+                const heading = filter === 'All' && (n === 0 || list[n - 1].category !== i.category);
+                const HeadingIcon = CATEGORY_ICONS[i.category];
                 return (
-                  <button key={i.name} type="button"
+                  <div key={i.name}>
+                  {heading && (
+                    <div className="flex items-center gap-1.5 px-2 pt-3 pb-1 text-[11px] font-semibold text-black/50 dark:text-white/50">
+                      <HeadingIcon className="text-macblue" /> {i.category}
+                    </div>
+                  )}
+                  <button type="button"
                     onClick={(e) => { e.stopPropagation(); setSelected(sel && touch ? null : i.name); }}
                     onDoubleClick={() => setAlert({ kind: 'putback', item: i })}
                     className={`w-full grid grid-cols-[1fr_auto] @xl:grid-cols-[1fr_120px_84px] items-center gap-2 px-2 h-7 rounded-md text-left text-[13px] ${sel ? 'bg-macblue text-white' : n % 2 ? 'bg-black/3 dark:bg-white/3' : ''}`}>
@@ -133,6 +148,7 @@ export default function Trash({ full, onEmpty, onRefill }: { full: boolean; onEm
                     <span className={`hidden @xl:block truncate ${sel ? 'text-white/80' : 'opacity-60'}`}>{i.kind}</span>
                     <span className={`text-right tabular-nums ${sel ? 'text-white/80' : 'opacity-60'}`}>{i.deleted}</span>
                   </button>
+                  </div>
                 );
               })}
             </div>
