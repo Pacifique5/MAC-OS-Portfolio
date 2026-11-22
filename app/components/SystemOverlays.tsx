@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useViewport } from './useViewport';
 import { APPS, AppDef } from './apps';
 import { SearchGlyph } from './icons/SystemIcons';
 import { MessagesIcon, MailIcon } from './icons/AppIcons';
@@ -51,7 +52,7 @@ export function Spotlight({ onClose, onOpen }: { onClose: () => void; onOpen: (i
   return (
     <div className="absolute inset-0 z-70" onClick={onClose}>
       <div
-        className="mac-panel rounded-[14px]! absolute top-[20%] left-1/2 -translate-x-1/2 w-170 max-w-[calc(100vw-32px)] overflow-hidden animate-scale-in"
+        className="mac-panel rounded-[14px]! absolute top-[20%] max-sm:top-12 left-1/2 -translate-x-1/2 w-170 max-w-[calc(100vw-24px)] overflow-hidden animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 h-13.5 px-4">
@@ -69,7 +70,7 @@ export function Spotlight({ onClose, onOpen }: { onClose: () => void; onOpen: (i
 
         {q && (
           <div className="flex border-t border-(--menu-sep) h-75">
-            <div className="w-[46%] overflow-y-auto mac-scroll p-1.5 border-r border-(--menu-sep)">
+            <div className="w-[46%] max-sm:w-full overflow-y-auto mac-scroll p-1.5 border-r border-(--menu-sep) max-sm:border-r-0">
               {results.length === 0 && <div className="p-4 text-center text-[13px] opacity-50">No Results</div>}
               {groups.map(g => (
                 <div key={g.title}>
@@ -93,7 +94,7 @@ export function Spotlight({ onClose, onOpen }: { onClose: () => void; onOpen: (i
                 </div>
               ))}
             </div>
-            <div className="flex-1 flex flex-col items-center justify-center gap-2 p-6 text-center">
+            <div className="flex-1 flex flex-col items-center justify-center gap-2 p-6 text-center max-sm:hidden">
               {selected && (
                 <>
                   <selected.Icon size={96} />
@@ -145,7 +146,7 @@ function CalendarWidget() {
 
 export function NotificationCenter({ onOpen, focusOn }: { onOpen: (id: string) => void; focusOn: boolean }) {
   return (
-    <div className="absolute top-9 right-2 z-60 w-86 space-y-2.5 animate-slide-in-right" onClick={(e) => e.stopPropagation()}>
+    <div className="absolute top-9 right-2 z-60 w-86 max-sm:left-2 max-sm:w-auto space-y-2.5 animate-slide-in-right" onClick={(e) => e.stopPropagation()}>
       {focusOn ? (
         <div className="mac-panel rounded-[18px]! px-4 py-3 text-[13px] opacity-80">Do Not Disturb is on — notifications are silenced.</div>
       ) : (
@@ -195,12 +196,12 @@ export function NotificationCenter({ onOpen, focusOn }: { onOpen: (id: string) =
 /** Banner that slides in from the top-right, like a macOS notification. */
 export function NotificationBanner({ onOpen, onDismiss }: { onOpen: () => void; onDismiss: () => void }) {
   return (
-    <div className="absolute top-9 right-2 z-58 w-86 animate-slide-in-right group" onClick={(e) => e.stopPropagation()}>
+    <div className="absolute top-9 right-2 z-58 w-86 max-sm:left-2 max-sm:w-auto animate-slide-in-right group" onClick={(e) => e.stopPropagation()}>
       <button type="button" onClick={onOpen} className="mac-panel rounded-[18px]! p-3 flex gap-2.5 w-full text-left">
         <APPS.finder.Icon size={34} />
         <div className="flex-1 min-w-0">
           <div className="flex justify-between text-[13px]"><span className="font-semibold">Welcome to my portfolio</span><span className="opacity-45 text-[11px]">now</span></div>
-          <div className="text-[13px] opacity-80 leading-snug">Double-click a folder on the desktop, or use the search icon in the menu bar.</div>
+          <div className="text-[13px] opacity-80 leading-snug">Open a folder on the desktop, or use the search icon in the menu bar.</div>
         </div>
       </button>
       <button
@@ -220,6 +221,7 @@ export function NotificationBanner({ onOpen, onDismiss }: { onOpen: () => void; 
 /* ------------------------------------------------------------------ */
 
 export function Launchpad({ onClose, onOpen }: { onClose: () => void; onOpen: (id: string) => void }) {
+  const { phone } = useViewport();
   const [query, setQuery] = useState('');
   const apps = Object.values(APPS).filter(a => a.id !== 'trash' && a.id !== 'launchpad' && a.label.toLowerCase().includes(query.toLowerCase()));
 
@@ -233,12 +235,12 @@ export function Launchpad({ onClose, onOpen }: { onClose: () => void; onOpen: (i
             className="bg-transparent outline-none text-[13px] w-full placeholder:text-white/60" />
         </div>
       </div>
-      <div className="max-w-250 mx-auto mt-14 px-8 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-y-12 justify-items-center">
+      <div className="max-w-250 mx-auto mt-14 max-sm:mt-8 px-8 max-sm:px-3 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-y-12 max-sm:gap-y-7 justify-items-center">
         {apps.map(app => (
-          <button key={app.id} type="button" className="flex flex-col items-center gap-2 w-27.5 group"
+          <button key={app.id} type="button" className="flex flex-col items-center gap-2 w-27.5 max-sm:w-20 group"
             onClick={(e) => { e.stopPropagation(); onOpen(app.id); onClose(); }}>
             <span className="transition-transform group-active:scale-90" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}>
-              <app.Icon size={84} />
+              <app.Icon size={phone ? 60 : 84} />
             </span>
             <span className="text-white text-[13px] font-medium text-center leading-tight" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>{app.label}</span>
           </button>
