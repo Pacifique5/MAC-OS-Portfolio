@@ -6,6 +6,7 @@
 // they never send packets anywhere, and say so in their output.
 
 import { PROJECTS as REPOS } from '../projects-data';
+import { TRASH_ITEMS, TRASH_CATEGORIES } from '../trash-data';
 
 export type LineKind = 'in' | 'out' | 'ok' | 'warn' | 'err' | 'info' | 'dim' | 'accent' | 'banner';
 
@@ -195,7 +196,7 @@ const WORDLIST = [
 
 const OPENABLE: Record<string, string> = {
   about: 'about', projects: 'projects', skills: 'skills', experience: 'experience', testimonials: 'testimonials',
-  contact: 'contact', photos: 'photos', finder: 'finder', github: 'github', linkedin: 'linkedin', x: 'x', slack: 'slack',
+  contact: 'contact', photos: 'photos', finder: 'finder', github: 'github', linkedin: 'linkedin', x: 'x', slack: 'slack', trash: 'trash',
 };
 
 const COMMANDS: Command[] = [
@@ -234,6 +235,36 @@ const COMMANDS: Command[] = [
       }
       c.print(`Opening ${a[0]}…`, 'ok');
       c.open(target);
+    },
+  },
+  {
+    name: 'trash', usage: 'trash', desc: 'Habits I left behind (ls ~/.Trash)', group: 'portfolio',
+    run: (_a, c) => {
+      TRASH_CATEGORIES.forEach(cat => {
+        c.print(`# ${cat}`, 'accent');
+        TRASH_ITEMS.filter(i => i.category === cat).forEach(i => c.print(`  ${i.name}  ->  ${i.replacedBy}`));
+      });
+      c.print("Run 'rm -rf bad-habits' to empty it, or 'open trash' for details.", 'dim');
+    },
+  },
+  {
+    name: 'rm', usage: 'rm -rf <path>', desc: 'Remove files', group: 'system',
+    run: async (a, c) => {
+      const target = a.filter(x => !x.startsWith('-')).join(' ');
+      if (!target) { c.print('usage: rm -rf <path>', 'warn'); return; }
+      if (target === '/' || target === '/*' || target === '~') {
+        c.print('rm: refusing to remove that. Nice try.', 'err');
+        return;
+      }
+      if (!/bad-habits|\.?trash/i.test(target)) {
+        c.print(`rm: ${target}: Permission denied (this portfolio is read-only)`, 'err');
+        return;
+      }
+      for (const i of TRASH_ITEMS) {
+        c.print(`removed '${i.name}'`, 'dim');
+        await c.sleep(60);
+      }
+      c.print(`${TRASH_ITEMS.length} habits removed. Lessons kept: ${TRASH_ITEMS.length}.`, 'ok');
     },
   },
 
