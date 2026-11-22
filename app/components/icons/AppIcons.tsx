@@ -143,7 +143,7 @@ export function SettingsIcon(p: IconProps) {
 }
 
 /** The Trash is the one Dock item without a squircle — a wire-mesh bin. */
-export function TrashIcon({ size = 56, className }: IconProps) {
+export function TrashIcon({ size = 56, className, full = false }: IconProps & { full?: boolean }) {
   const u = useUid();
   const ribs = [0, 1, 2, 3, 4, 5, 6].map(i => ({ top: 29 + i * 7, bottom: 36 + i * 4.7 }));
   return (
@@ -160,6 +160,15 @@ export function TrashIcon({ size = 56, className }: IconProps) {
       ))}
       <ellipse cx="50" cy="25" rx="28" ry="5.2" fill="#ececf0" stroke="#86868e" strokeWidth={1.2} />
       <ellipse cx="50" cy="25" rx="24.5" ry="3.4" fill="#8e8e96" />
+      {full && (
+        // Crumpled paper peeking over the rim
+        <g stroke="#a8a8b0" strokeWidth={0.8} strokeLinejoin="round">
+          <path d="M29 26 L31 15 L39 11 L45 17 L43 26 Z" fill="#ffffff" />
+          <path d="M41 26 L44 9 L54 6 L60 13 L58 26 Z" fill="#f4f4f7" />
+          <path d="M56 26 L58 14 L66 12 L72 19 L71 26 Z" fill="#fbfbfd" />
+          <path d="M47 12 L52 15 M62 16 L67 18 M34 17 L38 19" fill="none" strokeOpacity={0.7} />
+        </g>
+      )}
     </svg>
   );
 }

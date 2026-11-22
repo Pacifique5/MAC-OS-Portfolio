@@ -2,6 +2,7 @@
 import { useRef, useState } from 'react';
 import { APPS, DOCK_LAYOUT, WindowId } from './apps';
 import { useViewport } from './useViewport';
+import { TrashIcon } from './icons/AppIcons';
 
 const RANGE = 150;
 const PHONE_ICON = 44;
@@ -10,6 +11,7 @@ interface DockProps {
   running: WindowId[];
   minimized: WindowId[];
   bouncing: string | null;
+  trashFull: boolean;
   onAppClick: (id: string) => void;
   onRestore: (id: WindowId) => void;
   onContextMenu: (e: React.MouseEvent, id: string) => void;
@@ -17,7 +19,7 @@ interface DockProps {
 
 type Entry = { key: string; kind: 'app' | 'min' | 'sep'; id?: string };
 
-export default function Dock({ running, minimized, bouncing, onAppClick, onRestore, onContextMenu }: DockProps) {
+export default function Dock({ running, minimized, bouncing, trashFull, onAppClick, onRestore, onContextMenu }: DockProps) {
   const refs = useRef<(HTMLDivElement | null)[]>([]);
   const [sizes, setSizes] = useState<number[]>([]);
   const [hovered, setHovered] = useState<string | null>(null);
@@ -95,7 +97,7 @@ export default function Dock({ running, minimized, bouncing, onAppClick, onResto
                 className={`block outline-none ${bouncing === entry.id ? 'animate-dock-bounce' : ''}`}
                 style={{ width: size, height: size, transition: sizes.length ? 'none' : 'width 0.2s, height 0.2s', filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.3))' }}
               >
-                {entry.kind === 'min' ? <MinimizedThumb id={entry.id!} size={size} /> : <app.Icon size={size} />}
+                {entry.kind === 'min' ? <MinimizedThumb id={entry.id!} size={size} /> : entry.id === 'trash' ? <TrashIcon size={size} full={trashFull} /> : <app.Icon size={size} />}
               </button>
               <span className={`mt-0.75 w-1 h-1 rounded-full ${entry.kind === 'app' && isRunning(entry.id!) ? 'bg-black/70 dark:bg-white/80' : 'bg-transparent'}`} />
             </div>

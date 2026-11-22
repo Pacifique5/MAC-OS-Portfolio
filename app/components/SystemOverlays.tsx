@@ -21,6 +21,7 @@ const SPOTLIGHT_KEYWORDS: Record<string, string> = {
   terminal: 'shell console cli hacking security nmap zsh command',
   slack: 'workspace chat community',
   x: 'twitter social',
+  trash: 'bin deleted habits mistakes lessons journey',
 };
 
 export function Spotlight({ onClose, onOpen }: { onClose: () => void; onOpen: (id: string) => void }) {
@@ -29,7 +30,7 @@ export function Spotlight({ onClose, onOpen }: { onClose: () => void; onOpen: (i
 
   const q = query.trim().toLowerCase();
   const results: AppDef[] = q
-    ? Object.values(APPS).filter(a => a.id !== 'trash' && `${a.label} ${a.kind} ${SPOTLIGHT_KEYWORDS[a.id] ?? ''}`.toLowerCase().includes(q))
+    ? Object.values(APPS).filter(a => `${a.label} ${a.kind} ${SPOTLIGHT_KEYWORDS[a.id] ?? ''}`.toLowerCase().includes(q))
     : [];
   const selected = results[Math.min(index, results.length - 1)];
 

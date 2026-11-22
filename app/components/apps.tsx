@@ -7,7 +7,7 @@ import {
   ContactsIcon, ProjectsIcon, SkillsIcon, ExperienceIcon, MessagesIcon, MailIcon, BrandTile, SlackIcon,
 } from './icons/AppIcons';
 
-export type WindowId = 'finder' | 'photos' | 'terminal' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
+export type WindowId = 'finder' | 'photos' | 'terminal' | 'trash' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
 
 /** CV served from /public — replace the file and update this path when the CV changes. */
 export const CV_URL = '/Mugisha%20Pacifique%20CV.pdf';
@@ -62,7 +62,7 @@ export const APPS: Record<string, AppDef> = {
   x:            { id: 'x',            label: 'X',            kind: 'Website', Icon: XIcon,         action: { type: 'link', href: SOCIAL_LINKS.x } },
   slack:        { id: 'slack',        label: 'Slack',        kind: 'Website', Icon: SlackIcon,     action: { type: 'link', href: SOCIAL_LINKS.slack } },
   settings:     { id: 'settings',     label: 'System Settings', kind: 'Application', Icon: SettingsIcon, action: { type: 'controlcenter' } },
-  trash:        { id: 'trash',        label: 'Trash',        kind: 'Folder', Icon: TrashIcon,      action: { type: 'none' } },
+  trash:        { id: 'trash',        label: 'Trash',        kind: 'Folder', Icon: TrashIcon,      action: { type: 'window', window: 'trash' } },
 };
 
 /** The six portfolio sections, in desktop order. */
@@ -81,6 +81,7 @@ export const WINDOW_TITLES: Record<WindowId, string> = {
   finder: 'Finder',
   photos: 'Photos',
   terminal: 'Terminal',
+  trash: 'Trash',
   about: 'About Me',
   projects: 'Projects',
   skills: 'Skills',

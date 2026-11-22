@@ -17,8 +17,9 @@ import Skills from './components/sections/Skills';
 import Experience from './components/sections/Experience';
 import Testimonials from './components/sections/Testimonials';
 import Contact from './components/sections/Contact';
+import Trash from './components/sections/Trash';
 
-const ALL_WINDOWS: WindowId[] = ['finder', 'photos', 'terminal', ...SECTION_IDS];
+const ALL_WINDOWS: WindowId[] = ['finder', 'photos', 'terminal', ...SECTION_IDS, 'trash'];
 
 // `tone` tells the menu bar and desktop labels whether to use dark or light text,
 // the same way macOS adapts the menu bar to the wallpaper.
@@ -52,6 +53,7 @@ export default function Home() {
   const [zoomed, setZoomed] = useState<WindowId[]>([]);
   const [hud, setHud] = useState<string | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
+  const [trashFull, setTrashFull] = useState(true);
 
   const tone = WALLPAPERS[wallpaper].tone;
   const visible = order.filter(id => !minimized.includes(id));
@@ -186,6 +188,7 @@ export default function Home() {
       case 'experience': return <Experience onOpen={launch} />;
       case 'testimonials': return <Testimonials onOpen={launch} />;
       case 'contact': return <Contact />;
+      case 'trash': return <Trash full={trashFull} onEmpty={() => setTrashFull(false)} onRefill={() => setTrashFull(true)} />;
     }
   };
 
@@ -269,6 +272,7 @@ export default function Home() {
         running={order}
         minimized={minimized}
         bouncing={bouncing}
+        trashFull={trashFull}
         onAppClick={launch}
         onRestore={openWindow}
         onContextMenu={(e, id) => { e.preventDefault(); e.stopPropagation(); setContextMenu({ x: e.clientX, y: e.clientY - 10, target: id, kind: 'dock' }); }}
