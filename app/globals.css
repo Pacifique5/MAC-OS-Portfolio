@@ -152,6 +152,12 @@ body {
 }
 .animate-slide-in-right { animation: slide-in-right 0.25s cubic-bezier(0.2, 0.9, 0.3, 1); }
 
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+.animate-slide-in-left { animation: slide-in-left 0.22s cubic-bezier(0.2, 0.9, 0.3, 1); }
+
 @keyframes dock-bounce {
   0%, 100% { transform: translateY(0); }
   25% { transform: translateY(-22px); }
@@ -203,3 +209,7 @@ input[type='range']::-moz-range-thumb {
   background-clip: content-box;
 }
 .mac-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* Hide scrollbars on swipeable strips (the phone Dock) */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

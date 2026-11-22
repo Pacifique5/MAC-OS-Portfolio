@@ -1,20 +1,10 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { APPS, DOCK_LAYOUT, WindowId } from './apps';
+import { useViewport } from './useViewport';
 
 const RANGE = 150;
-
-/** Shrink the Dock on narrow screens so it never overflows, like macOS does. */
-function useDockBase(count: number) {
-  const [vw, setVw] = useState(1440);
-  useEffect(() => {
-    const update = () => setVw(window.innerWidth);
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
-  return Math.max(30, Math.min(50, Math.floor((vw - 70) / count) - 8));
-}
+const PHONE_ICON = 44;
 
 interface DockProps {
   running: WindowId[];
@@ -39,10 +29,19 @@ export default function Dock({ running, minimized, bouncing, onAppClick, onResto
     { key: 'trash', kind: 'app', id: 'trash' },
   ];
 
-  const BASE = useDockBase(entries.filter(e => e.kind !== 'sep').length);
+  const vp = useViewport();
+  const iconCount = entries.filter(e => e.kind !== 'sep').length;
+  // Larger screens shrink the Dock to fit, like macOS. When icons would get too small to use
+  // (phones, narrow windows), it switches to a fixed size and becomes a swipeable strip.
+  const fitted = Math.min(50, Math.floor((vp.width - 70) / iconCount) - 8);
+  const scroll = vp.phone || fitted < 34;
+  const BASE = vp.phone ? PHONE_ICON : scroll ? 38 : fitted;
   const MAX = Math.round(BASE * 1.6);
+  // Magnification and hover labels need a mouse and room to grow
+  const pointer = !vp.touch && !scroll;
 
   const handleMove = (e: React.MouseEvent) => {
+    if (!pointer) return;
     setSizes(entries.map((_, i) => {
       const el = refs.current[i];
       if (!el) return BASE;
@@ -61,16 +60,16 @@ export default function Dock({ running, minimized, bouncing, onAppClick, onResto
   };
 
   return (
-    <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 z-50" onClick={(e) => e.stopPropagation()}>
+    <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 z-50 max-w-[calc(100vw-12px)]" onClick={(e) => e.stopPropagation()}>
       <div
-        className="flex items-end px-1.5 pt-1.5 pb-1 rounded-[20px] bg-white/20 dark:bg-black/25 backdrop-blur-2xl backdrop-saturate-150"
+        className={`flex items-end px-1.5 pt-1.5 pb-1 rounded-[20px] bg-white/20 dark:bg-black/25 backdrop-blur-2xl backdrop-saturate-150 ${scroll ? 'overflow-x-auto no-scrollbar snap-x' : ''}`}
         style={{ boxShadow: '0 0 0 0.5px rgba(0,0,0,0.25), inset 0 0 0 0.5px rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.25)' }}
         onMouseMove={handleMove}
         onMouseLeave={() => { setSizes([]); setHovered(null); }}
       >
         {entries.map((entry, i) => {
           if (entry.kind === 'sep') {
-            return <div key={entry.key} className="w-px self-stretch mx-1.5 my-1.5 bg-black/20 dark:bg-white/25" style={{ boxShadow: '1px 0 0 rgba(255,255,255,0.25)' }} />;
+            return <div key={entry.key} className="w-px shrink-0 self-stretch mx-1.5 my-1.5 bg-black/20 dark:bg-white/25" style={{ boxShadow: '1px 0 0 rgba(255,255,255,0.25)' }} />;
           }
           const size = sizes[i] ?? BASE;
           const app = APPS[entry.id!];
@@ -79,8 +78,8 @@ export default function Dock({ running, minimized, bouncing, onAppClick, onResto
             <div
               key={entry.key}
               ref={el => { refs.current[i] = el; }}
-              className="relative flex flex-col items-center px-0.75"
-              onMouseEnter={() => setHovered(entry.key)}
+              className="relative flex flex-col items-center px-0.75 shrink-0 snap-start"
+              onMouseEnter={() => pointer && setHovered(entry.key)}
             >
               {hovered === entry.key && (
                 <div className="absolute bottom-full mb-2.5 pointer-events-none animate-fade-in" style={{ marginBottom: 10 + (size - BASE) * 0.15 }}>
