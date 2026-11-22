@@ -20,7 +20,7 @@ export const SOCIAL_LINKS = {
   x: 'https://x.com/_fiquem',
 };
 
-export type AppAction =
+type AppAction =
   | { type: 'window'; window: WindowId }
   | { type: 'link'; href: string }
   | { type: 'launchpad' }

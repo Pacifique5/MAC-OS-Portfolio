@@ -198,7 +198,7 @@ const OPENABLE: Record<string, string> = {
   contact: 'contact', photos: 'photos', finder: 'finder', github: 'github', linkedin: 'linkedin', x: 'x', slack: 'slack',
 };
 
-export const COMMANDS: Command[] = [
+const COMMANDS: Command[] = [
   /* ----------------------------- portfolio ----------------------------- */
   {
     name: 'about', usage: 'about', desc: 'Who I am', group: 'portfolio',

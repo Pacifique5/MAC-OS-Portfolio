@@ -110,14 +110,8 @@ body {
   background: var(--mac-blue);
   color: #fff;
 }
-.mac-menu-item:hover:not(:disabled) .mac-shortcut { color: rgba(255, 255, 255, 0.85); }
 .mac-menu-item:disabled,
 .mac-menu-item[aria-disabled="true"] { color: var(--menu-dim); }
-
-.mac-shortcut {
-  color: var(--menu-dim);
-  letter-spacing: 0.04em;
-}
 
 .mac-menu-sep {
   height: 1px;

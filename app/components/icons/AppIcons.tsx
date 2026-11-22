@@ -143,7 +143,7 @@ export function SettingsIcon(p: IconProps) {
 }
 
 /** The Trash is the one Dock item without a squircle — a wire-mesh bin. */
-export function TrashIcon({ size = 56, className, full = false }: IconProps & { full?: boolean }) {
+export function TrashIcon({ size = 56, className }: IconProps) {
   const u = useUid();
   const ribs = [0, 1, 2, 3, 4, 5, 6].map(i => ({ top: 29 + i * 7, bottom: 36 + i * 4.7 }));
   return (
@@ -158,7 +158,6 @@ export function TrashIcon({ size = 56, className, full = false }: IconProps & { 
       {[40, 55, 70, 84].map(y => (
         <line key={y} x1={24 + (y - 25) * 0.1} y1={y} x2={76 - (y - 25) * 0.1} y2={y} stroke="#9b9ba3" strokeWidth={0.8} strokeOpacity={0.35} />
       ))}
-      {full && <path d="M30 26 Q38 12 50 18 Q60 8 70 24 Z" fill="#f2f2f7" stroke="#b0b0b8" />}
       <ellipse cx="50" cy="25" rx="28" ry="5.2" fill="#ececf0" stroke="#86868e" strokeWidth={1.2} />
       <ellipse cx="50" cy="25" rx="24.5" ry="3.4" fill="#8e8e96" />
     </svg>
@@ -285,14 +284,14 @@ export function SlackIcon(p: IconProps) {
 }
 
 /** A squircle tile carrying a brand mark (GitHub, LinkedIn…). */
-export function BrandTile({ size = 56, className, bg, fg = '#fff', Glyph, glyphScale = 0.56 }: IconProps & { bg: [string, string]; fg?: string; Glyph: IconType; glyphScale?: number }) {
+export function BrandTile({ size = 56, className, bg, Glyph, glyphScale = 0.56 }: IconProps & { bg: [string, string]; Glyph: IconType; glyphScale?: number }) {
   const u = useUid();
   return (
     <div className={className} style={{ position: 'relative', width: size, height: size }}>
       <Frame size={size} defs={<LinearGrad id={u('bg')} from={bg[0]} to={bg[1]} />}>
         <rect width="100" height="100" fill={`url(#${u('bg')})`} />
       </Frame>
-      <Glyph style={{ position: 'absolute', inset: 0, margin: 'auto', color: fg, width: size * glyphScale, height: size * glyphScale }} />
+      <Glyph style={{ position: 'absolute', inset: 0, margin: 'auto', color: '#fff', width: size * glyphScale, height: size * glyphScale }} />
     </div>
   );
 }
@@ -335,8 +334,8 @@ export function FolderIcon({ size = 64, className, Glyph }: IconProps & { Glyph?
 }
 
 /** Monogram avatar like Contacts / Messages when no photo is set. */
-export function Monogram({ initials, size = 40, tint }: { initials: string; size?: number; tint?: [string, string] }) {
-  const [a, b] = tint ?? ['#a6a6ae', '#6e6e76'];
+export function Monogram({ initials, size = 40 }: { initials: string; size?: number }) {
+  const [a, b] = ['#a6a6ae', '#6e6e76'];
   return (
     <div
       style={{

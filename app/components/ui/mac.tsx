@@ -5,14 +5,14 @@
  * The single accent used inside portfolio windows (macOS system blue,
  * adapts to light/dark mode). Keep window content to this one hue plus neutrals.
  */
-export const ACCENT = 'var(--mac-blue)';
+const ACCENT = 'var(--mac-blue)';
 import { ReactNode } from 'react';
 import type { IconType } from 'react-icons';
 
 /* ---------------- Switch (NSSwitch) ---------------- */
-export function Toggle({ on, onChange, disabled, size = 'sm' }: { on: boolean; onChange?: (v: boolean) => void; disabled?: boolean; size?: 'sm' | 'md' }) {
-  const w = size === 'sm' ? 26 : 38;
-  const h = size === 'sm' ? 15 : 22;
+export function Toggle({ on, onChange, disabled }: { on: boolean; onChange?: (v: boolean) => void; disabled?: boolean }) {
+  const w = 26;
+  const h = 15;
   const k = h - 2;
   return (
     <button
@@ -58,7 +58,7 @@ export function CCSlider({ value, onChange, min = 0, max = 100, icon }: { value:
 }
 
 /* ---------------- Menus ---------------- */
-export function MenuItem({ children, onClick, checked, danger, hint }: { children: ReactNode; onClick?: () => void; checked?: boolean; danger?: boolean; hint?: ReactNode }) {
+export function MenuItem({ children, onClick, checked }: { children: ReactNode; onClick?: () => void; checked?: boolean }) {
   return (
     <button type="button" className="mac-menu-item" onClick={onClick}>
       <span className="flex items-center gap-1.5 min-w-0">
@@ -67,9 +67,8 @@ export function MenuItem({ children, onClick, checked, danger, hint }: { childre
             <svg viewBox="0 0 14 14" width="10" height="10" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7.5 L5.6 10.5 L11.5 3.5" /></svg>
           )}
         </span>
-        <span className={`truncate ${danger ? 'text-[#ff453a]' : ''}`}>{children}</span>
+        <span className="truncate">{children}</span>
       </span>
-      {hint && <span className="mac-shortcut">{hint}</span>}
     </button>
   );
 }
