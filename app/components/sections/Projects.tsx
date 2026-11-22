@@ -1,11 +1,11 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import type { IconType } from 'react-icons';
 import {
   IoGridOutline, IoStar, IoLogoGithub, IoOpenOutline, IoChevronForward, IoCheckmarkCircle, IoGlobeOutline,
-  IoCodeSlash, IoShieldCheckmark, IoSparkles, IoPhonePortraitOutline, IoHardwareChip, IoCube, IoSearch, IoRadio,
+  IoCodeSlash, IoShieldCheckmark, IoSparkles, IoPhonePortraitOutline, IoHardwareChip, IoCube, IoSearch, IoRadio, IoChevronBack,
 } from 'react-icons/io5';
-import { WindowLayout } from '../MacWindow';
+import { WindowLayout, useWindowSize } from '../MacWindow';
 import { SidebarItem, SidebarSection, PushButton } from '../ui/mac';
 import { SQUIRCLE } from '../icons/AppIcons';
 import { PROJECTS, CATEGORIES, GITHUB_PROFILE, Project, ProjectCategory } from '../projects-data';
@@ -27,15 +27,17 @@ const matches = (p: Project, f: Filter) =>
 /** App-icon style tile with the project's initials — one accent for every project. */
 function ProjectTile({ name, size = 44 }: { name: string; size?: number }) {
   const initials = name.replace(/[()]/g, '').split(/[\s-]+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  // Each tile needs its own gradient id: a shared id breaks when the SVG defining it is hidden.
+  const gradientId = `tile-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <svg viewBox="0 0 100 100" width={size} height={size} className="absolute inset-0" aria-hidden>
         <defs>
-          <linearGradient id="project-tile" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#4d9bff" /><stop offset="1" stopColor="#0a5fd9" />
           </linearGradient>
         </defs>
-        <path d={SQUIRCLE} fill="url(#project-tile)" />
+        <path d={SQUIRCLE} fill={`url(#${gradientId})`} />
       </svg>
       <span className="absolute inset-0 flex items-center justify-center text-white font-semibold" style={{ fontSize: size * 0.36 }}>{initials}</span>
     </div>
@@ -46,6 +48,9 @@ export default function Projects() {
   const [filter, setFilter] = useState<Filter>('All');
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(PROJECTS[0].name);
+  // Narrow windows show the list and the detail one at a time (master/detail)
+  const { compact } = useWindowSize();
+  const [showDetail, setShowDetail] = useState(false);
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -83,7 +88,7 @@ export default function Projects() {
     <WindowLayout title="Projects" subtitle={`${list.length} of ${PROJECTS.length} projects`} sidebar={sidebar} sidebarWidth={200}>
       <div className="flex h-full">
         {/* List column */}
-        <div className="w-64 shrink-0 border-r border-(--hairline) flex flex-col">
+        <div className={`flex flex-col ${compact ? (showDetail ? 'hidden' : 'flex-1 min-w-0') : 'w-64 shrink-0 border-r border-(--hairline)'}`}>
           <div className="p-2 border-b border-(--hairline)">
             <div className="flex items-center gap-1.5 h-6.5 px-2 rounded-md bg-black/6 dark:bg-white/8">
               <IoSearch className="text-[12px] opacity-45" />
@@ -94,9 +99,9 @@ export default function Projects() {
           <div className="flex-1 overflow-y-auto mac-scroll p-1.5">
             {list.length === 0 && <div className="p-6 text-center text-[12px] text-black/45 dark:text-white/45">No projects match “{query}”.</div>}
             {list.map(p => {
-              const active = project?.name === p.name;
+              const active = !compact && project?.name === p.name;
               return (
-                <button key={p.name} type="button" onClick={() => setSelected(p.name)}
+                <button key={p.name} type="button" onClick={() => { setSelected(p.name); setShowDetail(true); }}
                   className={`w-full flex items-center gap-2.5 p-2 rounded-md text-left ${active ? 'bg-macblue text-white' : 'hover:bg-black/4 dark:hover:bg-white/5'}`}>
                   <ProjectTile name={p.name} size={34} />
                   <div className="flex-1 min-w-0">
@@ -116,9 +121,14 @@ export default function Projects() {
         </div>
 
         {/* Detail */}
-        {project ? (
-          <div className="flex-1 min-w-0 overflow-y-auto mac-scroll px-7 py-6">
+        {compact && !showDetail ? null : project ? (
+          <div className="@container flex-1 min-w-0 overflow-y-auto mac-scroll px-4 py-5 @3xl:px-7 @3xl:py-6">
             <div className="max-w-180">
+              {compact && (
+                <button type="button" onClick={() => setShowDetail(false)} className="flex items-center gap-0.5 -ml-1 mb-3 text-[13px] text-macblue">
+                  <IoChevronBack /> Projects
+                </button>
+              )}
               <div className="flex items-start gap-4 mb-5">
                 <ProjectTile name={project.name} size={72} />
                 <div className="flex-1 min-w-0">
@@ -132,7 +142,7 @@ export default function Projects() {
               </div>
 
               {/* Quick facts */}
-              <div className="grid grid-cols-4 gap-2 mb-6">
+              <div className="grid grid-cols-2 @md:grid-cols-4 gap-2 mb-6">
                 {[
                   ['Status', project.live ? 'Live' : 'Source'],
                   ['Category', project.category],
