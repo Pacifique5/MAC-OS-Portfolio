@@ -4,7 +4,7 @@ import MacWindow from './components/MacWindow';
 import MenuBar, { OpenMenu, MenuActions } from './components/MenuBar';
 import Dock from './components/Dock';
 import { Spotlight, NotificationCenter, NotificationBanner, Launchpad, ContextMenu } from './components/SystemOverlays';
-import { FolderIcon, PdfIcon } from './components/icons/AppIcons';
+import { FolderIcon } from './components/icons/AppIcons';
 import { APPS, SECTION_IDS, WINDOW_TITLES, WindowId } from './components/apps';
 import { useSystem } from './components/useSystem';
 import { useViewport } from './components/useViewport';
@@ -116,6 +116,14 @@ export default function Home() {
         bounce(id);
         window.open(app.action.href, '_blank', 'noopener,noreferrer');
         break;
+      case 'download': {
+        const a = document.createElement('a');
+        a.href = app.action.href;
+        a.download = app.action.filename;
+        a.click();
+        showHud('Downloading My CV');
+        break;
+      }
       case 'launchpad':
         setLaunchpadOpen(v => !v);
         break;
@@ -243,7 +251,7 @@ export default function Home() {
               onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedIcon(id); setContextMenu({ x: e.clientX, y: e.clientY, target: id, kind: 'icon' }); }}
             >
               <span className={`p-0.75 rounded-md ${sel ? (tone === 'light' ? 'bg-black/10 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]' : 'bg-black/25 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.18)]') : ''}`}>
-                {id === 'cv' ? <PdfIcon size={size} /> : <FolderIcon size={size} Glyph={app.folderGlyph} />}
+                <FolderIcon size={size} Glyph={app.folderGlyph} />
               </span>
               <span
                 className={`text-[12px] font-medium leading-tight px-1.25 py-px rounded-sm ${sel ? 'bg-[#0a5fd6] text-white' : tone === 'light' ? 'text-[#1d1d1f]' : 'text-white'}`}
@@ -251,7 +259,7 @@ export default function Home() {
                   ? { textShadow: '0 0 4px rgba(255,255,255,0.9), 0 1px 1px rgba(255,255,255,0.8)' }
                   : { textShadow: '0 1px 2px rgba(0,0,0,0.75), 0 0 6px rgba(0,0,0,0.35)' }}
               >
-                {id === 'cv' ? 'My CV.pdf' : app.label}
+                {app.label}
               </span>
             </button>
           );

@@ -13,7 +13,7 @@ An interactive portfolio that looks and behaves like a macOS desktop. Live at **
   - **Terminal** — cyber-themed shell with real crypto tools, simulated recon and an endless live ops feed
   - **Calendar** — book a 30-minute call: live availability, no double bookings, and an instant email to me
   - **Trash** — habits left behind across software engineering, cybersecurity and robotics
-- **CV** — one click away: on the desktop, in the Dock, in Spotlight and in the Terminal (`cv`).
+- **CV** — one-click download from the "My CV" folder on the desktop, Spotlight or the Terminal (`cv`).
 - **Responsive** — adapts from phones to large desktops.
 
 ## Tech stack

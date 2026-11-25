@@ -255,9 +255,9 @@ const COMMANDS: Command[] = [
     },
   },
   {
-    name: 'cv', usage: 'cv', desc: 'Open my CV (PDF)', group: 'portfolio',
+    name: 'cv', usage: 'cv', desc: 'Download my CV', group: 'portfolio',
     run: (_a, c) => {
-      c.print('Opening Mugisha Pacifique CV.pdf in a new tab…', 'ok');
+      c.print('Downloading Mugisha Pacifique CV.pdf…', 'ok');
       c.open('cv');
     },
   },

@@ -1,10 +1,10 @@
 'use client';
 import type { IconType } from 'react-icons';
-import { IoLogoGithub, IoLogoLinkedin, IoPerson, IoHammer, IoSparkles, IoSchool, IoChatbubbles, IoMail } from 'react-icons/io5';
+import { IoLogoGithub, IoLogoLinkedin, IoPerson, IoHammer, IoSparkles, IoSchool, IoChatbubbles, IoMail, IoDownload } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
 import {
   FinderIcon, LaunchpadIcon, TerminalIcon, PhotosIcon, CalendarIcon, SettingsIcon, TrashIcon,
-  ContactsIcon, ProjectsIcon, SkillsIcon, ExperienceIcon, MessagesIcon, MailIcon, BrandTile, SlackIcon, PdfIcon,
+  ContactsIcon, ProjectsIcon, SkillsIcon, ExperienceIcon, MessagesIcon, MailIcon, BrandTile, SlackIcon, FolderIcon,
 } from './icons/AppIcons';
 
 export type WindowId = 'finder' | 'photos' | 'terminal' | 'trash' | 'calendar' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
@@ -23,6 +23,7 @@ export const SOCIAL_LINKS = {
 type AppAction =
   | { type: 'window'; window: WindowId }
   | { type: 'link'; href: string }
+  | { type: 'download'; href: string; filename: string }
   | { type: 'launchpad' }
   | { type: 'controlcenter' }
   | { type: 'notifications' }
@@ -41,6 +42,7 @@ export interface AppDef {
 
 const GitHubIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#3b4148', '#16191d']} Glyph={IoLogoGithub} />;
 const LinkedInIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#1c8ae6', '#0a58b0']} Glyph={IoLogoLinkedin} glyphScale={0.6} />;
+const CvIcon = ({ size }: { size?: number }) => <FolderIcon size={size} Glyph={IoDownload} />;
 const XIcon = ({ size }: { size?: number }) => <BrandTile size={size} bg={['#2a2a2c', '#000000']} Glyph={FaXTwitter} glyphScale={0.48} />;
 
 export const APPS: Record<string, AppDef> = {
@@ -49,7 +51,7 @@ export const APPS: Record<string, AppDef> = {
   terminal:     { id: 'terminal',     label: 'Terminal',     kind: 'Application', Icon: TerminalIcon,  action: { type: 'window', window: 'terminal' } },
   photos:       { id: 'photos',       label: 'Photos',       kind: 'Application', Icon: PhotosIcon,    action: { type: 'window', window: 'photos' } },
   calendar:     { id: 'calendar',     label: 'Calendar',     kind: 'Application', Icon: CalendarIcon,  action: { type: 'window', window: 'calendar' } },
-  cv:           { id: 'cv',           label: 'My CV',        kind: 'Document',    Icon: PdfIcon,       action: { type: 'link', href: CV_URL } },
+  cv:           { id: 'cv',           label: 'My CV',        kind: 'Download',    Icon: CvIcon,        action: { type: 'download', href: CV_URL, filename: 'Mugisha Pacifique CV.pdf' }, folderGlyph: IoDownload },
 
   about:        { id: 'about',        label: 'About Me',     kind: 'Folder', Icon: ContactsIcon,   action: { type: 'window', window: 'about' },        folderGlyph: IoPerson },
   projects:     { id: 'projects',     label: 'Projects',     kind: 'Folder', Icon: ProjectsIcon,   action: { type: 'window', window: 'projects' },     folderGlyph: IoHammer },
@@ -75,7 +77,7 @@ export const DOCK_LAYOUT: (string | null)[] = [
   null,
   ...SECTION_IDS,
   null,
-  'cv', 'github', 'linkedin', 'x', 'slack', 'settings',
+  'github', 'linkedin', 'x', 'slack', 'settings',
 ];
 
 export const WINDOW_TITLES: Record<WindowId, string> = {

@@ -113,25 +113,6 @@ export function CalendarIcon(p: IconProps) {
   );
 }
 
-/** A PDF document like the ones Finder shows on the desktop: folded corner, text lines, red PDF label. */
-export function PdfIcon({ size = 56, className }: IconProps) {
-  const u = useUid();
-  return (
-    <svg viewBox="0 0 100 100" width={size} height={size} className={className} aria-hidden>
-      <defs>
-        <LinearGrad id={u('page')} from="#ffffff" to="#ececf1" />
-      </defs>
-      <path d="M20 5 H64 L82 23 V91 Q82 95 78 95 H24 Q20 95 20 91 Z" fill={`url(#${u('page')})`} stroke="#b8b8c0" strokeWidth={1} />
-      <path d="M64 5 V19 Q64 23 68 23 H82" fill="#dcdce2" stroke="#b8b8c0" strokeWidth={1} strokeLinejoin="round" />
-      {[32, 39, 46, 53, 60].map((y, i) => (
-        <rect key={y} x="29" y={y} width={i % 2 ? 34 : 44} height="2.6" rx="1.3" fill="#c7c7cf" />
-      ))}
-      <rect x="20" y="70" width="62" height="17" fill="#e5322d" />
-      <text x="51" y="83" textAnchor="middle" fontSize="12.5" fontWeight="700" fill="#ffffff" fontFamily="-apple-system, BlinkMacSystemFont, Inter, sans-serif" letterSpacing="1">PDF</text>
-    </svg>
-  );
-}
-
 function gearPath(cx: number, cy: number, teeth: number, outer: number, inner: number) {
   const s = (Math.PI * 2) / teeth;
   const pts: string[] = [];
