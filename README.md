@@ -11,6 +11,9 @@ An interactive portfolio that looks and behaves like a macOS desktop. Live at **
   - **Skills**, **Experience**, **Testimonials**, **Contact** (opens your email app with the message filled in)
   - **Photos** — certificates and badges from `public/Photos`
   - **Terminal** — cyber-themed shell with real crypto tools, simulated recon and an endless live ops feed
+  - **Calendar** — book a 30-minute call: live availability, no double bookings, and an instant email to me
+  - **Trash** — habits left behind across software engineering, cybersecurity and robotics
+- **CV** — one click away: on the desktop, in the Dock, in Spotlight and in the Terminal (`cv`).
 - **Responsive** — adapts from phones to large desktops.
 
 ## Tech stack
@@ -42,8 +45,29 @@ app/
     ui/mac.tsx             Shared macOS controls
     photos-data.ts         Generated — see below
     projects-data.ts       Projects shown in the Projects app
+    booking-config.ts      Call booking rules: times, days, timezone
+    trash-data.ts          Items in the Trash
+  api/bookings/            Booking API: availability, booking, email
 scripts/generate-photos.mjs
 ```
+
+## Call booking setup
+
+The Calendar app books calls through `/api/bookings`. It needs two free services in production:
+
+1. **Upstash Redis** (stores bookings, so every visitor sees the same availability).
+   In Vercel: *Storage → Marketplace → Upstash → Redis*, connect it to this project. This adds
+   `KV_REST_API_URL` and `KV_REST_API_TOKEN` automatically.
+2. **Resend** (sends the email). Sign up at [resend.com](https://resend.com) **with the address that should
+   receive bookings**, create an API key and add it in Vercel as `RESEND_API_KEY`.
+
+Then redeploy. Optional variables are listed in `.env.example`.
+
+Until both are set, the live site falls back to "send your request by email". In local development
+it works without them: bookings are kept in memory and the email is printed in the terminal.
+
+To cancel a booking, delete its field from the `bookings:YYYY-MM` hash in the Upstash console.
+Change the offered times, working days or notice period in `app/components/booking-config.ts`.
 
 ## Updating content
 
