@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { buildIcs, isBookable, slotId } from '../../components/booking-config';
-import { bookedSlots, claimSlot, releaseSlot, countHit, storeConfigured, NotConfiguredError } from './store';
+import { bookedSlots, claimSlot, releaseSlot, countHit, refundHit,storeConfigured, NotConfiguredError } from './store';
 import { sendBookingEmail, mailConfigured } from './mail';
 
 export const dynamic = 'force-dynamic';
@@ -57,19 +57,26 @@ export async function POST(req: Request) {
 
   try {
     const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || req.headers.get('x-real-ip') || 'unknown';
-    if (await countHit(`ratelimit:booking:${ip}`, 3600) > MAX_BOOKINGS_PER_HOUR) {
-      return json({ error: 'Too many bookings from your network. Please try again later.' }, 429);
+    const limitKey = `ratelimit:booking:${ip}`;
+    // Only successful bookings count towards the limit: failed attempts are refunded below.
+    if (await countHit(limitKey, 3600) > MAX_BOOKINGS_PER_HOUR) {
+      await refundHit(limitKey).catch(() => {});
+      return json({ error: 'You’ve booked several calls in the last hour. Please try again later.' }, 429);
     }
 
     const id = slotId(booking.date, booking.time);
     const claimed = await claimSlot(id, JSON.stringify({ ...booking, createdAt: new Date().toISOString() }));
-    if (!claimed) return json({ error: 'Someone just booked that time. Please pick another.' }, 409);
+    if (!claimed) {
+      await refundHit(limitKey).catch(() => {});
+      return json({ error: 'Someone just booked that time. Please pick another.' }, 409);
+    }
 
     try {
       await sendBookingEmail(booking, buildIcs(booking));
     } catch (e) {
       // No email means Pacifique would never know, so don't keep a silent booking.
       await releaseSlot(id).catch(() => {});
+      await refundHit(limitKey).catch(() => {});
       console.error('[booking] email failed', e);
       return json({ error: 'Your booking could not be sent. Please try again or email me directly.' }, 502);
     }

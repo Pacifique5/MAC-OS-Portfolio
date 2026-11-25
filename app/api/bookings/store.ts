@@ -73,3 +73,14 @@ export async function countHit(key: string, windowSeconds: number): Promise<numb
   if (n === 1) await redis('EXPIRE', key, windowSeconds);
   return n;
 }
+
+/** Takes back one counted request, e.g. when the attempt failed. */
+export async function refundHit(key: string) {
+  if (useMemory) {
+    const c = memory.counters.get(key);
+    if (c && c.n > 0) c.n -= 1;
+    return;
+  }
+  const n = await redis<number>('DECR', key);
+  if (n <= 0) await redis('DEL', key);
+}
