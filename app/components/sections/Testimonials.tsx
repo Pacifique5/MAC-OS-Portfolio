@@ -7,10 +7,19 @@ import {
 import { WindowLayout } from '../MacWindow';
 import { Monogram, MessagesIcon } from '../icons/AppIcons';
 import { SidebarItem, SidebarSection, ToolbarButton, PushButton } from '../ui/mac';
-import { TESTIMONIALS, RELATIONSHIPS, TEXT_MIN, TEXT_MAX, Relationship } from '../testimonials-data';
+import { TESTIMONIALS, REAL_TESTIMONIAL_COUNT, RELATIONSHIPS, TEXT_MIN, TEXT_MAX, Relationship } from '../testimonials-data';
 
 const EMAIL = 'pacifiquem58@gmail.com';
 const EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]{2,}$/;
+
+/** Small label on illustrative entries so nobody mistakes them for real references. */
+function ExampleBadge({ inverted }: { inverted?: boolean }) {
+  return (
+    <span className={`shrink-0 px-1.5 py-px rounded-full text-[10px] font-semibold uppercase tracking-wide ${inverted ? 'bg-white/25 text-white' : 'bg-[#ff9500]/15 text-[#c26e00] dark:text-[#ffb340]'}`}>
+      Example
+    </span>
+  );
+}
 
 const initials = (name: string) => name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
 const firstName = (name: string) => name.split(/\s+/)[0];
@@ -162,6 +171,7 @@ export default function Testimonials({ onOpen }: { onOpen: (id: string) => void 
   }, [query]);
 
   const count = TESTIMONIALS.length;
+  const realCount = REAL_TESTIMONIAL_COUNT;
   const current = typeof view === 'number' ? TESTIMONIALS[view] : null;
 
   const sidebar = (
@@ -172,7 +182,7 @@ export default function Testimonials({ onOpen }: { onOpen: (id: string) => void 
           className="bg-transparent outline-none text-[13px] w-full placeholder:text-black/40 dark:placeholder:text-white/40" />
       </div>
       <SidebarSection>
-        <SidebarItem icon={<IoChatbubblesOutline />} label="All Recommendations" badge={count || undefined} active={view === 'wall'} onClick={() => setView('wall')} />
+        <SidebarItem icon={<IoChatbubblesOutline />} label="All Recommendations" badge={realCount || undefined} active={view === 'wall'} onClick={() => setView('wall')} />
         <SidebarItem icon={<IoPencil />} label="Write a Recommendation" active={view === 'write'} onClick={() => setView('write')} />
       </SidebarSection>
       {list.length > 0 && (
@@ -185,7 +195,7 @@ export default function Testimonials({ onOpen }: { onOpen: (id: string) => void 
                   className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-lg text-left ${sel ? 'bg-macblue text-white' : 'hover:bg-black/4 dark:hover:bg-white/5'}`}>
                   <Monogram initials={initials(t.name)} size={34} />
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-semibold truncate">{t.name}</div>
+                    <div className="flex items-center gap-1.5"><span className="text-[13px] font-semibold truncate">{t.name}</span>{t.example && <ExampleBadge inverted={sel} />}</div>
                     <div className={`text-[11px] truncate ${sel ? 'text-white/75' : 'text-black/45 dark:text-white/45'}`}>{t.relationship} · {t.organisation}</div>
                   </div>
                 </button>
@@ -199,7 +209,7 @@ export default function Testimonials({ onOpen }: { onOpen: (id: string) => void 
   );
 
   const title = view === 'write' ? 'New Recommendation' : current ? current.name : 'Recommendations';
-  const subtitle = view === 'write' ? 'To: Mugisha Pacifique' : current ? `${current.role} · ${current.organisation}` : count ? `${count} ${count === 1 ? 'person' : 'people'}` : 'Be the first';
+  const subtitle = view === 'write' ? 'To: Mugisha Pacifique' : current ? `${current.role} · ${current.organisation}` : realCount ? `${realCount} ${realCount === 1 ? 'person' : 'people'}` : count ? 'Examples' : 'Be the first';
 
   return (
     <WindowLayout
@@ -221,6 +231,7 @@ export default function Testimonials({ onOpen }: { onOpen: (id: string) => void 
               <div className="text-[12px] text-black/50 dark:text-white/50">{current.role} · {current.organisation}</div>
               <div className="flex items-center gap-2 mt-2">
                 <span className="px-2 py-0.5 rounded-full text-[11px] bg-macblue/12 text-macblue font-medium">{current.relationship}</span>
+                {current.example && <ExampleBadge />}
                 {current.linkedin && (
                   <a href={current.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[11px] text-macblue hover:underline">
                     <IoLogoLinkedin /> View profile
@@ -235,12 +246,21 @@ export default function Testimonials({ onOpen }: { onOpen: (id: string) => void 
                 {current.text}
               </div>
             </div>
-            <div className="flex justify-end">
-              <div className="max-w-[70%] px-3.5 py-2 rounded-[18px] rounded-br-md bg-[linear-gradient(180deg,#3d9bff,#0a7aff)] text-white text-[14px]">
-                Thank you, {firstName(current.name)}! That means a lot. 🙏
+            {current.example ? (
+              <div className="mx-auto max-w-90 text-center text-[12px] text-black/50 dark:text-white/50 leading-relaxed">
+                This is an example of how recommendations appear. Worked with me?{' '}
+                <button type="button" onClick={() => setView('write')} className="text-macblue hover:underline">Write a real one</button>.
               </div>
-            </div>
-            <div className="text-right text-[11px] text-black/40 dark:text-white/40 mt-1 pr-1">Delivered</div>
+            ) : (
+              <>
+                <div className="flex justify-end">
+                  <div className="max-w-[70%] px-3.5 py-2 rounded-[18px] rounded-br-md bg-[linear-gradient(180deg,#3d9bff,#0a7aff)] text-white text-[14px]">
+                    Thank you, {firstName(current.name)}! That means a lot. 🙏
+                  </div>
+                </div>
+                <div className="text-right text-[11px] text-black/40 dark:text-white/40 mt-1 pr-1">Delivered</div>
+              </>
+            )}
           </div>
           <div className="px-4 py-2.5 border-t border-(--hairline) flex items-center gap-2">
             <button type="button" onClick={() => onOpen('contact')}
@@ -284,7 +304,11 @@ export default function Testimonials({ onOpen }: { onOpen: (id: string) => void 
           <div className="flex flex-wrap items-end justify-between gap-3 mb-5">
             <div>
               <h2 className="text-[22px] font-semibold">What people say</h2>
-              <p className="text-[13px] text-black/50 dark:text-white/50">{count} {count === 1 ? 'person has' : 'people have'} shared what it’s like to work with me.</p>
+              <p className="text-[13px] text-black/50 dark:text-white/50">
+                {realCount
+                  ? `${realCount} ${realCount === 1 ? 'person has' : 'people have'} shared what it’s like to work with me.`
+                  : 'Real recommendations are on the way. Worked with me? Be one of the first.'}
+              </p>
             </div>
             <PushButton onClick={() => setView('write')}><IoPencil /> Write One</PushButton>
           </div>
@@ -297,7 +321,7 @@ export default function Testimonials({ onOpen }: { onOpen: (id: string) => void 
                 <div className="flex items-center gap-2.5 mt-3.5">
                   <Monogram initials={initials(t.name)} size={34} />
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-semibold truncate">{t.name}</div>
+                    <div className="flex items-center gap-1.5"><span className="text-[13px] font-semibold truncate">{t.name}</span>{t.example && <ExampleBadge />}</div>
                     <div className="text-[11px] text-black/50 dark:text-white/50 truncate">{t.role} · {t.organisation}</div>
                   </div>
                   <IoChevronForward className="text-[12px] opacity-0 group-hover:opacity-40 transition-opacity" />

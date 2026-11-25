@@ -5,7 +5,7 @@ import { APPS, AppDef } from './apps';
 import { SearchGlyph } from './icons/SystemIcons';
 import { MessagesIcon, MailIcon } from './icons/AppIcons';
 import { MenuItem, MenuSeparator } from './ui/mac';
-import { TESTIMONIALS } from './testimonials-data';
+import { REAL_TESTIMONIAL_COUNT } from './testimonials-data';
 
 /* ------------------------------------------------------------------ */
 /* Spotlight                                                           */
@@ -161,7 +161,7 @@ export function NotificationCenter({ onOpen, onBookDate, focusOn }: { onOpen: (i
             <div className="flex-1 min-w-0">
               <div className="flex justify-between text-[13px]"><span className="font-semibold">Messages</span><span className="opacity-45 text-[11px]">now</span></div>
               <div className="text-[13px] font-semibold">Recommendations</div>
-              <div className="text-[13px] opacity-75 leading-snug">{TESTIMONIALS.length ? `${TESTIMONIALS.length} ${TESTIMONIALS.length === 1 ? 'person' : 'people'} shared what it’s like working with me. Tap to read.` : 'Worked with me? Tap to write a recommendation.'}</div>
+              <div className="text-[13px] opacity-75 leading-snug">{REAL_TESTIMONIAL_COUNT ? `${REAL_TESTIMONIAL_COUNT} ${REAL_TESTIMONIAL_COUNT === 1 ? 'person' : 'people'} shared what it’s like working with me. Tap to read.` : 'Worked with me? Tap to write a recommendation.'}</div>
             </div>
           </button>
           <button type="button" onClick={() => onOpen('contact')} className="mac-panel rounded-[18px]! p-3 flex gap-2.5 w-full text-left">
