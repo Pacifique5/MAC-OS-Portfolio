@@ -4,7 +4,8 @@
 import { CALL_MINUTES, TZ_LABEL, slotStart } from '../../components/booking-config';
 
 const KEY = process.env.RESEND_API_KEY;
-const TO = process.env.BOOKING_EMAIL_TO ?? 'Pacifiquem58@gmail.com';
+// Lowercase: Resend's testing mode matches the account address exactly, case included.
+const TO = (process.env.BOOKING_EMAIL_TO ?? 'pacifiquem58@gmail.com').trim().toLowerCase();
 // onboarding@resend.dev works without a domain, but only delivers to the Resend account's own email.
 const FROM = process.env.BOOKING_EMAIL_FROM ?? 'Portfolio Bookings <onboarding@resend.dev>';
 
