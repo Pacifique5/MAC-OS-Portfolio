@@ -8,7 +8,8 @@ An interactive portfolio that looks and behaves like a macOS desktop. Live at **
 - **Apps**
   - **About Me** — contact card, stats and CV download
   - **Projects** — real GitHub repositories with live links, categories and search
-  - **Skills**, **Experience**, **Testimonials**, **Contact** (opens your email app with the message filled in)
+  - **Skills**, **Experience**, **Contact** (opens your email app with the message filled in)
+  - **Testimonials** — real recommendations only: people submit one through the app, it's emailed to me, and I publish the ones I approve
   - **Photos** — certificates and badges from `public/Photos`
   - **Terminal** — cyber-themed shell with real crypto tools, simulated recon and an endless live ops feed
   - **Calendar** — book a 30-minute call: live availability, no double bookings, and an instant email to me
@@ -47,7 +48,10 @@ app/
     projects-data.ts       Projects shown in the Projects app
     booking-config.ts      Call booking rules: times, days, timezone
     trash-data.ts          Items in the Trash
+    testimonials-data.ts   Published recommendations
   api/bookings/            Booking API: availability, booking, email
+  api/recommendations/     Emails me recommendations to review
+  api/mailer.ts            Shared Resend email sender
 scripts/generate-photos.mjs
 ```
 
@@ -76,4 +80,5 @@ Change the offered times, working days or notice period in `app/components/booki
 | Photos | Add images to `public/Photos`, then run `npm run photos` |
 | Projects | `app/components/projects-data.ts` |
 | CV | Replace the PDF in `public/` and update `CV_URL` in `app/components/apps.tsx` |
+| Testimonials | Each submission arrives by email with a ready-made entry: paste the ones you approve into `TESTIMONIALS` in `app/components/testimonials-data.ts` |
 | Social links | `SOCIAL_LINKS` in `app/components/apps.tsx` |
