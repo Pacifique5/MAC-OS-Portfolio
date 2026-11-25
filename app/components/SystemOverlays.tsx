@@ -22,6 +22,8 @@ const SPOTLIGHT_KEYWORDS: Record<string, string> = {
   slack: 'workspace chat community',
   x: 'twitter social',
   trash: 'bin deleted habits mistakes lessons journey',
+  calendar: 'book call meeting schedule appointment interview availability',
+  cv: 'resume curriculum vitae pdf download',
 };
 
 export function Spotlight({ onClose, onOpen }: { onClose: () => void; onOpen: (id: string) => void }) {
@@ -116,7 +118,7 @@ export function Spotlight({ onClose, onOpen }: { onClose: () => void; onOpen: (i
 /* Notification Center                                                 */
 /* ------------------------------------------------------------------ */
 
-function CalendarWidget() {
+function CalendarWidget({ onPick }: { onPick: (date: string) => void }) {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
@@ -126,7 +128,7 @@ function CalendarWidget() {
 
   return (
     <div className="mac-panel rounded-[20px]! p-3.5">
-      <div className="text-[11px] font-bold text-[#ff3b30] uppercase tracking-wide mb-1.5">
+      <div className="text-[11px] font-bold text-[#ff3b30] uppercase tracking-wide mb-1.5" title="Pick a day to book a call">
         {now.toLocaleDateString('en-US', { month: 'long' })}
       </div>
       <div className="grid grid-cols-7 gap-y-1 text-center text-[10px]">
@@ -134,9 +136,10 @@ function CalendarWidget() {
         {cells.map((d, i) => (
           <div key={i} className="flex items-center justify-center h-4.5">
             {d && (
-              <span className={`w-4.5 h-4.5 leading-4.5 rounded-full font-medium ${d === now.getDate() ? 'bg-[#ff3b30] text-white' : (i % 7 === 0 || i % 7 === 6) ? 'opacity-50' : ''}`}>
+              <button type="button" aria-label={`Book a call on ${d}`} onClick={() => onPick(`${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`)}
+                className={`w-4.5 h-4.5 leading-4.5 rounded-full font-medium hover:ring-1 hover:ring-macblue ${d === now.getDate() ? 'bg-[#ff3b30] text-white' : (i % 7 === 0 || i % 7 === 6) ? 'opacity-50' : ''}`}>
                 {d}
-              </span>
+              </button>
             )}
           </div>
         ))}
@@ -145,7 +148,7 @@ function CalendarWidget() {
   );
 }
 
-export function NotificationCenter({ onOpen, focusOn }: { onOpen: (id: string) => void; focusOn: boolean }) {
+export function NotificationCenter({ onOpen, onBookDate, focusOn }: { onOpen: (id: string) => void; onBookDate: (date: string) => void; focusOn: boolean }) {
   return (
     <div className="absolute top-9 right-2 z-60 w-86 max-sm:left-2 max-sm:w-auto space-y-2.5 animate-slide-in-right" onClick={(e) => e.stopPropagation()}>
       {focusOn ? (
@@ -171,7 +174,7 @@ export function NotificationCenter({ onOpen, focusOn }: { onOpen: (id: string) =
         </>
       )}
       <div className="grid grid-cols-2 gap-2.5">
-        <CalendarWidget />
+        <CalendarWidget onPick={onBookDate} />
         <div className="mac-panel rounded-[20px]! p-3.5 flex flex-col">
           <div className="text-[11px] font-bold text-[#ff3b30] uppercase tracking-wide">Up Next</div>
           <div className="mt-2 flex gap-2">
@@ -181,13 +184,13 @@ export function NotificationCenter({ onOpen, focusOn }: { onOpen: (id: string) =
               <div className="text-[11px] opacity-55">All day</div>
             </div>
           </div>
-          <div className="mt-2 flex gap-2">
-            <span className="w-0.75 rounded-full bg-[#007aff]" />
+          <button type="button" onClick={() => onOpen('calendar')} className="mt-2 flex gap-2 text-left rounded-md hover:bg-black/5 dark:hover:bg-white/8 -mx-1 px-1 py-0.5">
+            <span className="w-0.75 self-stretch rounded-full bg-macblue" />
             <div>
-              <div className="text-[12px] font-semibold leading-tight">Building with Next.js</div>
-              <div className="text-[11px] opacity-55">Every day</div>
+              <div className="text-[12px] font-semibold leading-tight">Book a call with me</div>
+              <div className="text-[11px] opacity-55">Mon–Fri · pick a time</div>
             </div>
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -197,7 +200,7 @@ export function NotificationCenter({ onOpen, focusOn }: { onOpen: (id: string) =
 /** Banner that slides in from the top-right, like a macOS notification. */
 export function NotificationBanner({ onOpen, onDismiss }: { onOpen: () => void; onDismiss: () => void }) {
   return (
-    <div className="absolute top-9 right-2 z-58 w-86 max-sm:left-2 max-sm:w-auto animate-slide-in-right group" onClick={(e) => e.stopPropagation()}>
+    <div className="absolute top-9 right-2 z-58 w-86 max-sm:left-2 max-sm:w-auto max-sm:top-auto max-sm:bottom-20 animate-slide-in-right group" onClick={(e) => e.stopPropagation()}>
       <button type="button" onClick={onOpen} className="mac-panel rounded-[18px]! p-3 flex gap-2.5 w-full text-left">
         <APPS.finder.Icon size={34} />
         <div className="flex-1 min-w-0">

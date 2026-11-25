@@ -196,7 +196,7 @@ const WORDLIST = [
 
 const OPENABLE: Record<string, string> = {
   about: 'about', projects: 'projects', skills: 'skills', experience: 'experience', testimonials: 'testimonials',
-  contact: 'contact', photos: 'photos', finder: 'finder', github: 'github', linkedin: 'linkedin', x: 'x', slack: 'slack', trash: 'trash',
+  contact: 'contact', photos: 'photos', finder: 'finder', github: 'github', linkedin: 'linkedin', x: 'x', slack: 'slack', trash: 'trash', calendar: 'calendar', cv: 'cv',
 };
 
 const COMMANDS: Command[] = [
@@ -245,6 +245,20 @@ const COMMANDS: Command[] = [
         TRASH_ITEMS.filter(i => i.category === cat).forEach(i => c.print(`  ${i.name}  ->  ${i.replacedBy}`));
       });
       c.print("Run 'rm -rf bad-habits' to empty it, or 'open trash' for details.", 'dim');
+    },
+  },
+  {
+    name: 'book', usage: 'book', desc: 'Book a call with me', group: 'portfolio',
+    run: (_a, c) => {
+      c.print('Opening Calendar: pick a free day and time, and I get an email straight away.', 'ok');
+      c.open('calendar');
+    },
+  },
+  {
+    name: 'cv', usage: 'cv', desc: 'Open my CV (PDF)', group: 'portfolio',
+    run: (_a, c) => {
+      c.print('Opening Mugisha Pacifique CV.pdf in a new tab…', 'ok');
+      c.open('cv');
     },
   },
   {

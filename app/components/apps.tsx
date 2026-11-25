@@ -4,10 +4,10 @@ import { IoLogoGithub, IoLogoLinkedin, IoPerson, IoHammer, IoSparkles, IoSchool,
 import { FaXTwitter } from 'react-icons/fa6';
 import {
   FinderIcon, LaunchpadIcon, TerminalIcon, PhotosIcon, CalendarIcon, SettingsIcon, TrashIcon,
-  ContactsIcon, ProjectsIcon, SkillsIcon, ExperienceIcon, MessagesIcon, MailIcon, BrandTile, SlackIcon,
+  ContactsIcon, ProjectsIcon, SkillsIcon, ExperienceIcon, MessagesIcon, MailIcon, BrandTile, SlackIcon, PdfIcon,
 } from './icons/AppIcons';
 
-export type WindowId = 'finder' | 'photos' | 'terminal' | 'trash' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
+export type WindowId = 'finder' | 'photos' | 'terminal' | 'trash' | 'calendar' | 'about' | 'projects' | 'skills' | 'experience' | 'testimonials' | 'contact';
 
 /** CV served from /public — replace the file and update this path when the CV changes. */
 export const CV_URL = '/Mugisha%20Pacifique%20CV.pdf';
@@ -48,7 +48,8 @@ export const APPS: Record<string, AppDef> = {
   launchpad:    { id: 'launchpad',    label: 'Launchpad',    kind: 'Application', Icon: LaunchpadIcon, action: { type: 'launchpad' } },
   terminal:     { id: 'terminal',     label: 'Terminal',     kind: 'Application', Icon: TerminalIcon,  action: { type: 'window', window: 'terminal' } },
   photos:       { id: 'photos',       label: 'Photos',       kind: 'Application', Icon: PhotosIcon,    action: { type: 'window', window: 'photos' } },
-  calendar:     { id: 'calendar',     label: 'Calendar',     kind: 'Application', Icon: CalendarIcon,  action: { type: 'notifications' } },
+  calendar:     { id: 'calendar',     label: 'Calendar',     kind: 'Application', Icon: CalendarIcon,  action: { type: 'window', window: 'calendar' } },
+  cv:           { id: 'cv',           label: 'My CV',        kind: 'Document',    Icon: PdfIcon,       action: { type: 'link', href: CV_URL } },
 
   about:        { id: 'about',        label: 'About Me',     kind: 'Folder', Icon: ContactsIcon,   action: { type: 'window', window: 'about' },        folderGlyph: IoPerson },
   projects:     { id: 'projects',     label: 'Projects',     kind: 'Folder', Icon: ProjectsIcon,   action: { type: 'window', window: 'projects' },     folderGlyph: IoHammer },
@@ -74,7 +75,7 @@ export const DOCK_LAYOUT: (string | null)[] = [
   null,
   ...SECTION_IDS,
   null,
-  'github', 'linkedin', 'x', 'slack', 'settings',
+  'cv', 'github', 'linkedin', 'x', 'slack', 'settings',
 ];
 
 export const WINDOW_TITLES: Record<WindowId, string> = {
@@ -82,6 +83,7 @@ export const WINDOW_TITLES: Record<WindowId, string> = {
   photos: 'Photos',
   terminal: 'Terminal',
   trash: 'Trash',
+  calendar: 'Calendar',
   about: 'About Me',
   projects: 'Projects',
   skills: 'Skills',

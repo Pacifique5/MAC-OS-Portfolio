@@ -4,7 +4,7 @@ import MacWindow from './components/MacWindow';
 import MenuBar, { OpenMenu, MenuActions } from './components/MenuBar';
 import Dock from './components/Dock';
 import { Spotlight, NotificationCenter, NotificationBanner, Launchpad, ContextMenu } from './components/SystemOverlays';
-import { FolderIcon } from './components/icons/AppIcons';
+import { FolderIcon, PdfIcon } from './components/icons/AppIcons';
 import { APPS, SECTION_IDS, WINDOW_TITLES, WindowId } from './components/apps';
 import { useSystem } from './components/useSystem';
 import { useViewport } from './components/useViewport';
@@ -18,8 +18,12 @@ import Experience from './components/sections/Experience';
 import Testimonials from './components/sections/Testimonials';
 import Contact from './components/sections/Contact';
 import Trash from './components/sections/Trash';
+import Calendar from './components/sections/Calendar';
 
-const ALL_WINDOWS: WindowId[] = ['finder', 'photos', 'terminal', ...SECTION_IDS, 'trash'];
+const ALL_WINDOWS: WindowId[] = ['finder', 'photos', 'terminal', 'calendar', ...SECTION_IDS, 'trash'];
+
+// The CV sits first on the desktop (top-right), where it is easiest to spot
+const DESKTOP_ITEMS = ['cv', ...SECTION_IDS];
 
 // `tone` tells the menu bar and desktop labels whether to use dark or light text,
 // the same way macOS adapts the menu bar to the wallpaper.
@@ -54,6 +58,8 @@ export default function Home() {
   const [hud, setHud] = useState<string | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const [trashFull, setTrashFull] = useState(true);
+  // Day picked in the Notification Center calendar, opened in the booking app
+  const [bookingDate, setBookingDate] = useState<string | null>(null);
 
   const tone = WALLPAPERS[wallpaper].tone;
   const visible = order.filter(id => !minimized.includes(id));
@@ -188,6 +194,7 @@ export default function Home() {
       case 'experience': return <Experience onOpen={launch} />;
       case 'testimonials': return <Testimonials onOpen={launch} />;
       case 'contact': return <Contact />;
+      case 'calendar': return <Calendar key={bookingDate ?? 'none'} initialDate={bookingDate} />;
       case 'trash': return <Trash full={trashFull} onEmpty={() => setTrashFull(false)} onRefill={() => setTrashFull(true)} />;
     }
   };
@@ -222,9 +229,10 @@ export default function Home() {
         className="absolute top-9 right-3 bottom-22 z-10 grid grid-flow-col auto-cols-[96px] grid-rows-[repeat(auto-fill,96px)] gap-x-1 [direction:rtl]
           max-sm:left-2 max-sm:right-2 max-sm:bottom-auto max-sm:top-10 max-sm:grid-flow-row max-sm:grid-cols-4 max-sm:auto-cols-auto max-sm:grid-rows-none max-sm:gap-y-3 max-sm:[direction:ltr]"
       >
-        {SECTION_IDS.map(id => {
+        {DESKTOP_ITEMS.map(id => {
           const app = APPS[id];
           const sel = selectedIcon === id;
+          const size = vp.phone ? 58 : 64;
           return (
             <button
               key={id}
@@ -235,7 +243,7 @@ export default function Home() {
               onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedIcon(id); setContextMenu({ x: e.clientX, y: e.clientY, target: id, kind: 'icon' }); }}
             >
               <span className={`p-0.75 rounded-md ${sel ? (tone === 'light' ? 'bg-black/10 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]' : 'bg-black/25 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.18)]') : ''}`}>
-                <FolderIcon size={vp.phone ? 58 : 64} Glyph={app.folderGlyph} />
+                {id === 'cv' ? <PdfIcon size={size} /> : <FolderIcon size={size} Glyph={app.folderGlyph} />}
               </span>
               <span
                 className={`text-[12px] font-medium leading-tight px-1.25 py-px rounded-sm ${sel ? 'bg-[#0a5fd6] text-white' : tone === 'light' ? 'text-[#1d1d1f]' : 'text-white'}`}
@@ -243,7 +251,7 @@ export default function Home() {
                   ? { textShadow: '0 0 4px rgba(255,255,255,0.9), 0 1px 1px rgba(255,255,255,0.8)' }
                   : { textShadow: '0 1px 2px rgba(0,0,0,0.75), 0 0 6px rgba(0,0,0,0.35)' }}
               >
-                {app.label}
+                {id === 'cv' ? 'My CV.pdf' : app.label}
               </span>
             </button>
           );
@@ -308,7 +316,7 @@ export default function Home() {
         </div>
       )}
 
-      {notificationsOpen && <NotificationCenter focusOn={sys.focusOn} onOpen={(id) => { setNotificationsOpen(false); launch(id); }} />}
+      {notificationsOpen && <NotificationCenter focusOn={sys.focusOn} onOpen={(id) => { setNotificationsOpen(false); launch(id); }} onBookDate={(date) => { setNotificationsOpen(false); setBookingDate(date); launch('calendar'); }} />}
       {banner && !notificationsOpen && !openMenu && !sys.focusOn && (
         <NotificationBanner onOpen={() => { setBanner(false); openWindow('finder'); }} onDismiss={() => setBanner(false)} />
       )}
