@@ -1,22 +1,11 @@
-// Sends the "new call booked" email through Resend's HTTP API (no SDK needed).
-// Without RESEND_API_KEY, local development prints the email to the server console instead.
-//
+// The "new call booked" email.
 // The HTML uses tables and inline styles on purpose: Gmail and Outlook ignore most modern CSS.
 
 import { CALL_MINUTES, TZ_LABEL, slotId, slotStart } from '../../components/booking-config';
-
-const KEY = process.env.RESEND_API_KEY;
-// Lowercase: Resend's testing mode matches the account address exactly, case included.
-const TO = (process.env.BOOKING_EMAIL_TO ?? 'pacifiquem58@gmail.com').trim().toLowerCase();
-// onboarding@resend.dev works without a domain, but only delivers to the Resend account's own email.
-const FROM = process.env.BOOKING_EMAIL_FROM ?? 'Portfolio Bookings <onboarding@resend.dev>';
-const SITE = 'https://mfique5.vercel.app';
-
-export const mailConfigured = Boolean(KEY);
+import { SITE, EMAIL_FONT, esc, sendToOwner } from '../mailer';
 
 export interface Booking { date: string; time: string; name: string; email: string; topic: string }
 
-const esc = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 const kigali = (d: Date, opts: Intl.DateTimeFormatOptions) => d.toLocaleString('en-GB', { ...opts, timeZone: 'Africa/Kigali' });
 const gcalDate = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 
@@ -44,7 +33,7 @@ function details(b: Booking) {
 
 function html(b: Booking) {
   const d = details(b);
-  const font = `-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,Helvetica,Arial,sans-serif`;
+  const font = EMAIL_FONT;
   const row = (label: string, value: string) => `
     <tr>
       <td style="padding:12px 0;border-top:1px solid #ececf0;width:88px;vertical-align:top;font-size:13px;color:#86868b">${label}</td>
@@ -144,27 +133,12 @@ function text(b: Booking) {
 
 export async function sendBookingEmail(b: Booking, ics: string) {
   const d = details(b);
-  const subject = `📅 ${b.name} · ${d.day}, ${d.range}`;
-
-  if (!KEY) {
-    if (process.env.NODE_ENV === 'production') throw new Error('RESEND_API_KEY is not set');
-    console.info(`\n[booking] Email not sent (no RESEND_API_KEY). It would go to ${TO}:\n${subject}\n${text(b)}\n`);
-    return;
-  }
-
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      from: FROM,
-      to: [TO],
-      reply_to: b.email,
-      subject,
-      text: text(b),
-      html: html(b),
-      attachments: [{ filename: 'call.ics', content: Buffer.from(ics).toString('base64') }],
-    }),
+  await sendToOwner({
+    subject: `📅 ${b.name} · ${d.day}, ${d.range}`,
+    text: text(b),
+    html: html(b),
+    replyTo: b.email,
+    attachments: [{ filename: 'call.ics', content: Buffer.from(ics).toString('base64') }],
   });
-  if (!res.ok) throw new Error(`Resend ${res.status}: ${await res.text()}`);
 }
 

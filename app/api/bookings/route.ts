@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { buildIcs, isBookable, slotId } from '../../components/booking-config';
 import { bookedSlots, claimSlot, releaseSlot, storeConfigured, NotConfiguredError } from './store';
-import { sendBookingEmail, mailConfigured } from './mail';
+import { sendBookingEmail } from './mail';
+import { mailConfigured } from '../mailer';
 
 export const dynamic = 'force-dynamic';
 
