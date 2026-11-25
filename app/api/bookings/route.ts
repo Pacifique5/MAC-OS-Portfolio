@@ -18,7 +18,11 @@ const ready = () => process.env.NODE_ENV !== 'production' || (storeConfigured &&
 export async function GET(req: Request) {
   const month = new URL(req.url).searchParams.get('month') ?? '';
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return json({ error: 'Invalid month' }, 400);
-  if (!ready()) return json({ configured: false, booked: [] });
+  if (!ready()) {
+    // Say which service is missing (never the values) so setup problems are easy to spot
+    const missing = [!storeConfigured && 'storage (KV_REST_API_URL / KV_REST_API_TOKEN)', !mailConfigured && 'email (RESEND_API_KEY)'].filter(Boolean);
+    return json({ configured: false, missing, booked: [] });
+  }
   try {
     return json({ configured: true, booked: await bookedSlots(month) });
   } catch (e) {
