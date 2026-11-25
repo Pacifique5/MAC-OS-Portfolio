@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
 import { buildIcs, isBookable, slotId } from '../../components/booking-config';
-import { bookedSlots, claimSlot, releaseSlot, countHit, refundHit,storeConfigured, NotConfiguredError } from './store';
+import { bookedSlots, claimSlot, releaseSlot, storeConfigured, NotConfiguredError } from './store';
 import { sendBookingEmail, mailConfigured } from './mail';
 
 export const dynamic = 'force-dynamic';
 
 const NO_STORE = { 'Cache-Control': 'no-store' };
-const MAX_BOOKINGS_PER_HOUR = 5;
 const EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]{2,}$/;
 
 const json = (body: unknown, status = 200) => NextResponse.json(body, { status, headers: NO_STORE });
@@ -56,27 +55,16 @@ export async function POST(req: Request) {
   if (!isBookable(booking.date, booking.time)) return json({ error: 'That time is no longer available. Please pick another.' }, 400);
 
   try {
-    const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || req.headers.get('x-real-ip') || 'unknown';
-    const limitKey = `ratelimit:booking:${ip}`;
-    // Only successful bookings count towards the limit: failed attempts are refunded below.
-    if (await countHit(limitKey, 3600) > MAX_BOOKINGS_PER_HOUR) {
-      await refundHit(limitKey).catch(() => {});
-      return json({ error: 'You’ve booked several calls in the last hour. Please try again later.' }, 429);
-    }
-
+    // Anyone can book; the only reason to refuse is that the time is already taken.
     const id = slotId(booking.date, booking.time);
     const claimed = await claimSlot(id, JSON.stringify({ ...booking, createdAt: new Date().toISOString() }));
-    if (!claimed) {
-      await refundHit(limitKey).catch(() => {});
-      return json({ error: 'Someone just booked that time. Please pick another.' }, 409);
-    }
+    if (!claimed) return json({ error: 'That time has just been booked by someone else. Please pick another.' }, 409);
 
     try {
       await sendBookingEmail(booking, buildIcs(booking));
     } catch (e) {
       // No email means Pacifique would never know, so don't keep a silent booking.
       await releaseSlot(id).catch(() => {});
-      await refundHit(limitKey).catch(() => {});
       console.error('[booking] email failed', e);
       return json({ error: 'Your booking could not be sent. Please try again or email me directly.' }, 502);
     }

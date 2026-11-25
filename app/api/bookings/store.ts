@@ -10,9 +10,9 @@ const TOKEN = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TO
 export const storeConfigured = Boolean(URL && TOKEN);
 const useMemory = !storeConfigured && process.env.NODE_ENV !== 'production';
 
-type Memory = { hashes: Map<string, Map<string, string>>; counters: Map<string, { n: number; until: number }> };
+type Memory = { hashes: Map<string, Map<string, string>> };
 const g = globalThis as unknown as { __bookingMemory?: Memory };
-const memory = (g.__bookingMemory ??= { hashes: new Map(), counters: new Map() });
+const memory = (g.__bookingMemory ??= { hashes: new Map() });
 
 async function redis<T>(...command: (string | number)[]): Promise<T> {
   const res = await fetch(URL!, {
@@ -57,30 +57,4 @@ export async function claimSlot(slot: string, value: string): Promise<boolean> {
 export async function releaseSlot(slot: string) {
   if (useMemory) { memory.hashes.get(monthKey(slot))?.delete(slot); return; }
   await redis('HDEL', monthKey(slot), slot);
-}
-
-/** Counts a request for rate limiting and returns how many this key made in the window. */
-export async function countHit(key: string, windowSeconds: number): Promise<number> {
-  ensure();
-  if (useMemory) {
-    const now = Date.now();
-    const c = memory.counters.get(key);
-    const next = c && c.until > now ? { n: c.n + 1, until: c.until } : { n: 1, until: now + windowSeconds * 1000 };
-    memory.counters.set(key, next);
-    return next.n;
-  }
-  const n = await redis<number>('INCR', key);
-  if (n === 1) await redis('EXPIRE', key, windowSeconds);
-  return n;
-}
-
-/** Takes back one counted request, e.g. when the attempt failed. */
-export async function refundHit(key: string) {
-  if (useMemory) {
-    const c = memory.counters.get(key);
-    if (c && c.n > 0) c.n -= 1;
-    return;
-  }
-  const n = await redis<number>('DECR', key);
-  if (n <= 0) await redis('DEL', key);
 }
